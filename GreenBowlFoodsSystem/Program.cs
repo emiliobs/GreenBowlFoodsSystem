@@ -6,6 +6,10 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
+// Enable Session Service
+builder.Services.AddSession();
+builder.Services.AddHttpContextAccessor();
+
 // Database Connection Configuration
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
@@ -24,6 +28,9 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseRouting();
+
+//Use Session Middleware
+app.UseSession();
 
 app.UseAuthorization();
 

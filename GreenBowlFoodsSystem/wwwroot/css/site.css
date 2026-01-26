@@ -1,31 +1,247 @@
+/* Green Bowl Foods - Final Stable Version */
+:root {
+    /* Tu HTML necesita esto para pintar "Foods" de verde */
+    --primary-green: #10b981;
+    /* Variables del tema */
+    --brand-primary: #10b981;
+    --brand-hover: #059669;
+    --brand-glow: rgba(16, 185, 129, 0.4);
+    --bg-main: #0f172a;
+    --bg-card: rgba(30, 41, 59, 0.7);
+    --text-main: #f8fafc;
+    --text-muted: #94a3b8;
+    --border-subtle: rgba(255, 255, 255, 0.08);
+}
+
+/* --- FIX DE ESTABILIDAD (La Magia) --- */
 html {
-  font-size: 14px;
-}
-
-@media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
-}
-
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
-}
-
-html {
-  position: relative;
-  min-height: 100%;
+    scrollbar-gutter: stable; /* Reserva el espacio del scroll para que no brinque */
 }
 
 body {
-  margin-bottom: 60px;
+    background-color: var(--bg-main);
+    background-image: radial-gradient(circle at 50% 0%, #1e293b 0%, var(--bg-main) 100%);
+    color: var(--text-main);
+    font-family: 'Outfit', 'Segoe UI', system-ui, sans-serif;
+    /* CAMBIO CLAVE: Usamos 'dvh' para máxima estabilidad en Edge y Móviles */
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
 }
 
-.form-floating > .form-control-plaintext::placeholder, .form-floating > .form-control::placeholder {
-  color: var(--bs-secondary-color);
-  text-align: end;
+    /* --- Layout Principal (Empuja el footer) --- */
+    body > .container {
+        flex: 1; /* Ocupa todo el espacio disponible */
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        padding-bottom: 2rem; /* Espacio para respirar antes del footer */
+    }
+
+footer {
+    margin-top: auto; /* Se pega al fondo suavemente */
+    width: 100%;
 }
 
-.form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
-  text-align: start;
+/* --- Navbar (Identidad Verde) --- */
+.navbar {
+    background: linear-gradient(90deg, #064e3b 0%, #065f46 100%) !important;
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(16, 185, 129, 0.3) !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+}
+
+.navbar-brand {
+    font-weight: 800;
+    color: #ffffff; /* Sin !important para que el span verde funcione */
+    letter-spacing: 0.5px;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+    .navbar-brand span {
+        text-shadow: 0 0 10px rgba(16, 185, 129, 0.6);
+    }
+
+.nav-link {
+    color: rgba(255, 255, 255, 0.85) !important;
+    transition: 0.3s;
+    font-weight: 500;
+}
+
+    .nav-link:hover {
+        color: #a3e635 !important;
+        transform: translateY(-1px);
+        text-shadow: 0 0 10px rgba(163, 230, 53, 0.5);
+    }
+
+/* --- Tarjetas y Login --- */
+.card, .card-login {
+    background: var(--bg-card);
+    backdrop-filter: blur(16px);
+    border: 1px solid var(--border-subtle);
+    border-radius: 20px;
+    box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.5);
+    color: var(--text-main);
+}
+
+.card-header, .login-header {
+    background: transparent;
+    border-bottom: 1px solid var(--border-subtle);
+    padding: 1.5rem;
+}
+
+/* --- Inputs --- */
+.form-control {
+    background: rgba(15, 23, 42, 0.6);
+    border: 1px solid var(--border-subtle);
+    color: var(--text-main);
+    padding: 0.8rem 1rem;
+    border-radius: 10px;
+}
+
+    .form-control:focus {
+        background: rgba(15, 23, 42, 0.8);
+        border-color: var(--brand-primary);
+        box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1);
+        color: white;
+    }
+
+/* --- Botones --- */
+.btn-primary {
+    background: var(--brand-primary);
+    border: none;
+    color: #fff;
+    padding: 0.8rem 1.5rem;
+    border-radius: 50px;
+    font-weight: 600;
+    box-shadow: 0 4px 15px var(--brand-glow);
+    transition: all 0.3s ease;
+}
+
+    .btn-primary:hover {
+        background: var(--brand-hover);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px var(--brand-glow);
+    }
+
+.btn-back-custom {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 24px;
+    color: rgba(255, 255, 255, 0.6);
+    text-decoration: none;
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 50px;
+    font-size: 0.9rem;
+    transition: all 0.3s;
+}
+
+    .btn-back-custom:hover {
+        background: rgba(16, 185, 129, 0.1);
+        border-color: var(--brand-primary);
+        color: white;
+        transform: translateY(-2px);
+    }
+
+.btn-logout-custom {
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    color: #ffffff;
+    background: transparent;
+    border-radius: 50px;
+    padding: 5px 15px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+    .btn-logout-custom:hover {
+        background-color: rgba(220, 38, 38, 0.8);
+        border-color: transparent;
+        color: white;
+        box-shadow: 0 0 15px rgba(220, 38, 38, 0.4);
+        transform: translateY(-1px);
+    }
+
+/* --- Tablas de Cristal --- */
+.table {
+    --bs-table-bg: transparent;
+    --bs-table-color: var(--text-main);
+    border-collapse: separate;
+    border-spacing: 0 8px;
+    margin-top: 1rem;
+}
+
+    .table thead th {
+        background-color: rgba(6, 78, 59, 0.4);
+        color: #a3e635;
+        border: none;
+        text-transform: uppercase;
+        font-size: 0.85rem;
+        letter-spacing: 1px;
+        padding: 15px;
+    }
+
+    .table tbody tr {
+        background-color: rgba(30, 41, 59, 0.5);
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+
+        .table tbody tr:hover {
+            background-color: rgba(16, 185, 129, 0.15);
+            transform: scale(1.01);
+        }
+
+    .table td {
+        border: none;
+        padding: 15px;
+        vertical-align: middle;
+        color: rgba(255, 255, 255, 0.9);
+    }
+
+    .table tbody tr td:first-child {
+        border-top-left-radius: 10px;
+        border-bottom-left-radius: 10px;
+    }
+
+    .table tbody tr td:last-child {
+        border-top-right-radius: 10px;
+        border-bottom-right-radius: 10px;
+    }
+
+    /* Botones de acción en tabla */
+    .table a {
+        text-decoration: none;
+        padding: 5px;
+        transition: 0.2s;
+    }
+
+        .table a:hover {
+            filter: brightness(1.2);
+            transform: scale(1.1);
+        }
+
+/* --- Animación Corazón Latido (Necesario para el footer) --- */
+@keyframes heartbeat {
+    0% {
+        transform: scale(1);
+    }
+
+    15% {
+        transform: scale(1.2);
+    }
+
+    30% {
+        transform: scale(1);
+    }
+
+    45% {
+        transform: scale(1.2);
+    }
+
+    60% {
+        transform: scale(1);
+    }
 }

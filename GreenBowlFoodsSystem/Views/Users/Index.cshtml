@@ -1,47 +1,72 @@
 ﻿@model IEnumerable<GreenBowlFoodsSystem.Models.User>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Users Management";
 }
 
-<h1>Index</h1>
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1 class="display-6 fw-bold text-white">Users Management</h1>
+        <p class="text-white-50">Manage system access and roles.</p>
+    </div>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Username)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Password)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Role)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Username)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Password)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Role)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+    <a asp-action="Create" class="btn btn-primary shadow-lg">
+        <i class="bi bi-plus-lg me-2"></i> Create New User
+    </a>
+</div>
+
+<div class="card shadow-lg border-0 animate-fade-up">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead>
+                    <tr>
+                        <th class="ps-4">Username</th>
+                        <th>Role</th>
+                        <th>Password <span class="text-muted fw-normal" style="font-size:0.7em">(Encrypted)</span></th>
+                        <th class="text-end pe-4">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td class="ps-4 fw-bold">
+                                <div class="d-flex align-items-center">
+                                    <div class="rounded-circle bg-white bg-opacity-10 p-2 me-3 text-center" style="width:40px; height:40px;">
+                                        <i class="bi bi-person-fill text-success fs-5"></i>
+                                    </div>
+                                    @Html.DisplayFor(modelItem => item.Username)
+                                </div>
+                            </td>
+                            <td>
+                                @if (item.Role == "Admin")
+                                {
+                                    <span class="badge bg-warning text-dark rounded-pill px-3">Admin</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-secondary bg-opacity-50 text-white rounded-pill px-3">Staff</span>
+                                }
+                            </td>
+                            <td class="text-white-50">
+                                ••••••••
+                            </td>
+                            <td class="text-end pe-4">
+                                <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm" style="color: #38bdf8;" title="Edit">
+                                    <i class="bi bi-pencil-fill"></i>
+                                </a>
+                                <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm" style="color: #a3e635;" title="Details">
+                                    <i class="bi bi-eye-fill"></i>
+                                </a>
+                                <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm" style="color: #f87171;" title="Delete">
+                                    <i class="bi bi-trash-fill"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
