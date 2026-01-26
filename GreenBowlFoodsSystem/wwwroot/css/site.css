@@ -245,3 +245,21 @@ footer {
         transform: scale(1);
     }
 }
+
+/* --- Input Groups (Iconos dentro de los inputs) --- */
+.input-group-text {
+    background-color: rgba(15, 23, 42, 0.6); /* Mismo fondo que el input */
+    border: 1px solid var(--border-subtle);
+    border-right: none; /* Quitamos la línea derecha para unirlo al input */
+    color: var(--brand-primary);
+}
+
+/* Ajuste para cuando el input tiene un grupo */
+.input-group .form-control {
+    border-left: none; /* Quitamos la línea izquierda del input */
+}
+
+.input-group:focus-within .input-group-text {
+    border-color: var(--brand-primary);
+    box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1); /* El brillo afecta al icono también */
+}

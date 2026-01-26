@@ -1,8 +1,69 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Welcome";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="d-flex align-items-center justify-content-center" style="min-height: 70vh;">
+
+    <div class="text-center animate-fade-up">
+
+        <div class="mb-4">
+            <div class="d-inline-block p-4 rounded-circle shadow-lg"
+                 style="background: radial-gradient(circle, rgba(16,185,129,0.2) 0%, rgba(15,23,42,0) 70%);">
+                <i class="bi bi-basket2-fill display-1 text-success"></i>
+            </div>
+        </div>
+
+        <h1 class="display-3 fw-bold text-white mb-2">
+            Green Bowl <span style="color: var(--primary-green);">Foods</span>
+        </h1>
+        <p class="lead text-muted mb-5">Internal Management System & Operations Control</p>
+
+        @if (Context.Session.GetString("UserSession") != null)
+        {
+            <div class="card shadow-lg border-0" style="background: rgba(30, 41, 59, 0.6); backdrop-filter: blur(10px); max-width: 600px; margin: 0 auto;">
+                <div class="card-body p-4">
+                    <h5 class="text-white mb-4">Quick Actions</h5>
+
+                    <div class="row g-3 justify-content-center">
+                        @if (Context.Session.GetString("UserRole") == "Admin")
+                        {
+                            <div class="col-md-4 col-6">
+                                <a asp-controller="Users" asp-action="Index" class="btn btn-outline-light w-100 p-3 h-100 border-0" style="background: rgba(255,255,255,0.05);">
+                                    <i class="bi bi-people-fill fs-1 d-block mb-2 text-warning"></i>
+                                    <span class="small">Users</span>
+                                </a>
+                            </div>
+                        }
+
+                        <div class="col-md-4 col-6">
+                            <a asp-controller="Suppliers" asp-action="Index" class="btn btn-outline-light w-100 p-3 h-100 border-0" style="background: rgba(255,255,255,0.05);">
+                                <i class="bi bi-truck fs-1 d-block mb-2 text-info"></i>
+                                <span class="small">Suppliers</span>
+                            </a>
+                        </div>
+
+                        <div class="col-md-4 col-6">
+                            <a asp-controller="RawMaterials" asp-action="Index" class="btn btn-outline-light w-100 p-3 h-100 border-0" style="background: rgba(255,255,255,0.05);">
+                                <i class="bi bi-box-seam-fill fs-1 d-block mb-2 text-success"></i>
+                                <span class="small">Inventory</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="mt-4">
+                <p class="text-white-50 mb-4" style="max-width: 500px; margin: 0 auto;">
+                    Welcome to the internal portal. Please identify yourself to access the inventory, production, and supplier management modules.
+                </p>
+
+                <a asp-controller="Account" asp-action="Login" class="btn btn-primary btn-lg px-5 py-3 shadow-lg rounded-pill">
+                    <i class="bi bi-box-arrow-in-right me-2"></i> Access System
+                </a>
+            </div>
+        }
+
+    </div>
 </div>
