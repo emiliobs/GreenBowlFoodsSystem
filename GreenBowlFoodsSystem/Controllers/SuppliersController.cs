@@ -58,10 +58,21 @@ public class SuppliersController : Controller
     {
         if (ModelState.IsValid)
         {
-            _context.Add(supplier);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            try
+            {
+                _context.Add(supplier);
+                await _context.SaveChangesAsync();
+
+                TempData["SuccessMessage"] = "New supplier registered successfully!";
+
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = $"Error registering supplier: {ex.Message}";
+            }
         }
+
         return View(supplier);
     }
 
@@ -99,11 +110,15 @@ public class SuppliersController : Controller
             {
                 _context.Update(supplier);
                 await _context.SaveChangesAsync();
+
+                TempData["SuccessMessage"] = "Supplier details updated successfully!";
             }
             catch (DbUpdateConcurrencyException)
             {
                 if (!SupplierExists(supplier.Id))
                 {
+                    TempData["ErrorMessage"] = "Supplier not fount, it might have been deleted.";
+
                     return NotFound();
                 }
                 else
@@ -111,6 +126,11 @@ public class SuppliersController : Controller
                     throw;
                 }
             }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = $"Could not update supplier. Try again: {ex.Message}";
+            }
+
             return RedirectToAction(nameof(Index));
         }
         return View(supplier);
@@ -124,8 +144,7 @@ public class SuppliersController : Controller
             return NotFound();
         }
 
-        var supplier = await _context.Suppliers
-            .FirstOrDefaultAsync(m => m.Id == id);
+        var supplier = await _context.Suppliers.FirstOrDefaultAsync(m => m.Id == id);
         if (supplier == null)
         {
             return NotFound();
@@ -139,13 +158,23 @@ public class SuppliersController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> DeleteConfirmed(int id)
     {
-        var supplier = await _context.Suppliers.FindAsync(id);
-        if (supplier != null)
+        try
         {
-            _context.Suppliers.Remove(supplier);
+            var supplier = await _context.Suppliers.FindAsync(id);
+            if (supplier != null)
+            {
+                _context.Suppliers.Remove(supplier);
+            }
+
+            await _context.SaveChangesAsync();
+
+            TempData["SuccessMessage"] = "Supplier removed from the system.";
+        }
+        catch (Exception ex)
+        {
+            TempData["ErrorMessahe"] = $"Cannot delete supplier. It may have related records: {ex.Message}";
         }
 
-        await _context.SaveChangesAsync();
         return RedirectToAction(nameof(Index));
     }
 

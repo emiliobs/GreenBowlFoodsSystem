@@ -56,20 +56,30 @@ namespace GreenBowlFoodsSystem.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Username,Password,Role")] User user)
         {
-            // Check if the username already exists in the database
-            var usernameExist = _context.Users.Any(u => u.Username == user.Username);
-
-            if (usernameExist)
+            try
             {
-                // Add a model error to indicate that the username is already taken
-                ModelState.AddModelError("Username", "Username already exists. Please choose a different username.");
+                // Check if the username already exists in the database
+                var usernameExist = _context.Users.Any(u => u.Username == user.Username);
+
+                if (usernameExist)
+                {
+                    // Add a model error to indicate that the username is already taken
+                    ModelState.AddModelError("Username", "Username already exists. Please choose a different username.");
+                }
+
+                if (ModelState.IsValid)
+                {
+                    _context.Add(user);
+                    await _context.SaveChangesAsync();
+
+                    TempData["SuccessMessage"] = "New user registered successfully!";
+
+                    return RedirectToAction(nameof(Index));
+                }
             }
-
-            if (ModelState.IsValid)
+            catch (Exception ex)
             {
-                _context.Add(user);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                TempData["ErrorMessage"] = $"Error registering user: {ex.Message}";
             }
             return View(user);
         }
@@ -114,17 +124,24 @@ namespace GreenBowlFoodsSystem.Controllers
                 {
                     _context.Update(user);
                     await _context.SaveChangesAsync();
+
+                    TempData["SuccessMessage"] = "User details updated successfully!";
                 }
                 catch (DbUpdateConcurrencyException)
                 {
                     if (!UserExists(user.Id))
                     {
+                        TempData["ErrorMessage"] = "User not fount, it might have been deleted.";
                         return NotFound();
                     }
                     else
                     {
                         throw;
                     }
+                }
+                catch (Exception ex)
+                {
+                    TempData["ErrorMessage"] = $"Could not update user. Try again: {ex.Message}";
                 }
                 return RedirectToAction(nameof(Index));
             }
@@ -154,13 +171,22 @@ namespace GreenBowlFoodsSystem.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var user = await _context.Users.FindAsync(id);
-            if (user != null)
+            try
             {
-                _context.Users.Remove(user);
-            }
+                var user = await _context.Users.FindAsync(id);
+                if (user != null)
+                {
+                    _context.Users.Remove(user);
+                }
 
-            await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync();
+
+                TempData["SuccessMessage"] = "User removed from the system.";
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessahe"] = $"Cannot delete user. It may have related records: {ex.Message}";
+            }
             return RedirectToAction(nameof(Index));
         }
 
