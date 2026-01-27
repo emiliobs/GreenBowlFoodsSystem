@@ -263,3 +263,27 @@ footer {
     border-color: var(--brand-primary);
     box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1); /* El brillo afecta al icono también */
 }
+
+/* --- FIX PLACEHOLDERS (Hacer visible el texto de ayuda) --- */
+.form-control::placeholder {
+    color: rgba(255, 255, 255, 0.4) !important; /* Blanco al 40% */
+    opacity: 1; /* Necesario para que Firefox no lo haga transparente */
+}
+
+/* Para navegadores antiguos (Edge viejo / IE) */
+.form-control::-ms-input-placeholder {
+    color: rgba(255, 255, 255, 0.4) !important;
+}
+
+/* --- FIX DATE PICKER ICON (Make calendar visible in dark mode) --- */
+input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: invert(1); /* Inverts black icon to white */
+    cursor: pointer; /* Shows hand cursor on hover */
+    opacity: 0.8; /* Slight transparency */
+    transition: 0.3s;
+}
+
+    input[type="date"]::-webkit-calendar-picker-indicator:hover {
+        opacity: 1; /* Full brightness on hover */
+        transform: scale(1.1); /* Slight zoom effect */
+    }

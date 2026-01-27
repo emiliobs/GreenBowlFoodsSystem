@@ -12,6 +12,7 @@ namespace GreenBowlFoodsSystem.Controllers;
 
 public class RawMaterialsController : Controller
 {
+    // Dependency Injection: Access the database context
     private readonly ApplicationDbContext _context;
 
     public RawMaterialsController(ApplicationDbContext context)
@@ -19,53 +20,54 @@ public class RawMaterialsController : Controller
         _context = context;
     }
 
+    // Display the main List (Inventory)
     // GET: RawMaterials
     public async Task<IActionResult> Index()
     {
+        //
         var applicationDbContext = _context.RawMaterials.Include(r => r.Supplier);
         return View(await applicationDbContext.ToListAsync());
     }
 
-    // GET: RawMaterials/Details/5
-    public async Task<IActionResult> Details(int? id)
-    {
-        if (id == null)
-        {
-            return NotFound();
-        }
-
-        var rawMaterial = await _context.RawMaterials
-            .Include(r => r.Supplier)
-            .FirstOrDefaultAsync(m => m.Id == id);
-        if (rawMaterial == null)
-        {
-            return NotFound();
-        }
-
-        return View(rawMaterial);
-    }
-
     // GET: RawMaterials/Create
+    // Renders the form to add a new materia
     public IActionResult Create()
     {
-        ViewData["SupplierId"] = new SelectList(_context.Suppliers, "Id", "Email");
+        // Prepare the Dropdown List for suppliers,
+        ViewData["SupplierId"] = new SelectList(_context.Suppliers, "Id", "SupplierName");
         return View();
     }
 
     // POST: RawMaterials/Create
     // To protect from overposting attacks, enable the specific properties you want to bind to.
-    // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+    // Receives the form data and saves the new material to the database.
     [HttpPost]
-    [ValidateAntiForgeryToken]
+    [ValidateAntiForgeryToken] // Security measure to prevent CSRF attacks
     public async Task<IActionResult> Create([Bind("Id,MaterialName,LotNumber,QuantityInStock,Unit,ExpiryDate,SupplierId")] RawMaterial rawMaterial)
     {
         if (ModelState.IsValid)
         {
-            _context.Add(rawMaterial);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            try
+            {
+                _context.Add(rawMaterial);
+                await _context.SaveChangesAsync();
+
+                // Succces Message: Triggers the green SweetAlert in _Layout.cshtml
+
+                TempData["SuccessMessage"] = "Materia added to inventory!";
+
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception ex)
+            {
+                // Error Message: Triggers the red SweetAlert in _Layout.cshtml
+                TempData[""] = $"Error adding material: {ex.Message}";
+            }
         }
-        ViewData["SupplierId"] = new SelectList(_context.Suppliers, "Id", "Email", rawMaterial.SupplierId);
+
+        // If validation fails, reload the Supplier Dropdown so it's not empty
+        ViewData["SupplierId"] = new SelectList(_context.Suppliers, "Id", "SupplierName", rawMaterial.SupplierId);
+
         return View(rawMaterial);
     }
 
@@ -82,13 +84,15 @@ public class RawMaterialsController : Controller
         {
             return NotFound();
         }
-        ViewData["SupplierId"] = new SelectList(_context.Suppliers, "Id", "Email", rawMaterial.SupplierId);
+
+        // Reload the suppliar Dropdown, selecting the current suplier
+        ViewData["SupplierId"] = new SelectList(_context.Suppliers, "Id", "SupplierName", rawMaterial.SupplierId);
+
         return View(rawMaterial);
     }
 
     // POST: RawMaterials/Edit/5
     // To protect from overposting attacks, enable the specific properties you want to bind to.
-    // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Edit(int id, [Bind("Id,MaterialName,LotNumber,QuantityInStock,Unit,ExpiryDate,SupplierId")] RawMaterial rawMaterial)
@@ -104,6 +108,9 @@ public class RawMaterialsController : Controller
             {
                 _context.Update(rawMaterial);
                 await _context.SaveChangesAsync();
+
+                // Succces Message: Triggers the green SweetAlert in _Layout.cshtml
+                TempData["SuccessMessage"] = "Material details updated successfully!";
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -116,9 +123,37 @@ public class RawMaterialsController : Controller
                     throw;
                 }
             }
+            catch (Exception ex)
+            {
+                // Error Message: Triggers the red SweetAlert in _Layout.cshtml
+                ViewData["ErroMessage"] = $"Error updating material: {ex.Message}";
+            }
+
             return RedirectToAction(nameof(Index));
         }
-        ViewData["SupplierId"] = new SelectList(_context.Suppliers, "Id", "Email", rawMaterial.SupplierId);
+
+        ViewData["SupplierId"] = new SelectList(_context.Suppliers, "Id", "SupplierName", rawMaterial.SupplierId);
+
+        return View(rawMaterial);
+    }
+
+    // GET: RawMaterials/Details/5
+    public async Task<IActionResult> Details(int? id)
+    {
+        if (id == null)
+        {
+            return NotFound();
+        }
+
+        var rawMaterial = await _context.RawMaterials
+            .Include(r => r.Supplier)
+            .FirstOrDefaultAsync(m => m.Id == id);
+
+        if (rawMaterial == null)
+        {
+            return NotFound();
+        }
+
         return View(rawMaterial);
     }
 
@@ -131,8 +166,9 @@ public class RawMaterialsController : Controller
         }
 
         var rawMaterial = await _context.RawMaterials
-            .Include(r => r.Supplier)
+            .Include(r => r.Supplier) // Include Supplier to show name in confirmation screen
             .FirstOrDefaultAsync(m => m.Id == id);
+
         if (rawMaterial == null)
         {
             return NotFound();
@@ -146,13 +182,25 @@ public class RawMaterialsController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> DeleteConfirmed(int id)
     {
-        var rawMaterial = await _context.RawMaterials.FindAsync(id);
-        if (rawMaterial != null)
+        try
         {
-            _context.RawMaterials.Remove(rawMaterial);
+            var rawMaterial = await _context.RawMaterials.FindAsync(id);
+            if (rawMaterial != null)
+            {
+                _context.RawMaterials.Remove(rawMaterial);
+            }
+
+            await _context.SaveChangesAsync();
+
+            // Succces Message: Triggers the green SweetAlert in _Layout.cshtml
+            TempData["SuccessMessage"] = "Material deleted from inventory!";
+        }
+        catch (Exception ex)
+        {
+            // Error Message: Triggers the red SweetAlert in _Layout.cshtml
+            TempData["ErrorMessage"] = $"Error deleting material: {ex.Message}";
         }
 
-        await _context.SaveChangesAsync();
         return RedirectToAction(nameof(Index));
     }
 

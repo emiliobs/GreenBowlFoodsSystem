@@ -1,59 +1,90 @@
 ﻿@model GreenBowlFoodsSystem.Models.RawMaterial
 
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Edit Material";
 }
 
-<h1>Edit</h1>
+<div class="row justify-content-center">
+    <div class="col-md-8">
 
-<h4>RawMaterial</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="Id" />
-            <div class="form-group">
-                <label asp-for="MaterialName" class="control-label"></label>
-                <input asp-for="MaterialName" class="form-control" />
-                <span asp-validation-for="MaterialName" class="text-danger"></span>
+        <div class="text-center mb-4 animate-fade-up">
+            <h1 class="display-6 fw-bold text-white">Edit Material</h1>
+            <p class="text-muted">Update inventory details.</p>
+        </div>
+
+        <div class="card shadow-lg border-0 animate-fade-up" style="animation-delay: 0.1s;">
+            <div class="card-body p-5">
+                <form asp-action="Edit">
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                    <input type="hidden" asp-for="Id" />
+
+                    <div class="row">
+                        <div class="col-md-6 mb-4">
+                            <label asp-for="MaterialName" class="form-label text-white small fw-bold">Name</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-tag"></i></span>
+                                <input asp-for="MaterialName" class="form-control" />
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-4">
+                            <label asp-for="LotNumber" class="form-label text-white small fw-bold">Lot #</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-upc-scan"></i></span>
+                                <input asp-for="LotNumber" class="form-control" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-4">
+                            <label asp-for="QuantityInStock" class="form-label text-white small fw-bold">Qty</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-123"></i></span>
+                                <input asp-for="QuantityInStock" class="form-control" />
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-4">
+                            <label asp-for="Unit" class="form-label text-white small fw-bold">Unit</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-speedometer2"></i></span>
+                                <input asp-for="Unit" class="form-control" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label asp-for="ExpiryDate" class="form-label text-white small fw-bold">Expiry Date</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-calendar-date"></i></span>
+                            <input asp-for="ExpiryDate" class="form-control" />
+                        </div>
+                    </div>
+
+                    <div class="mb-5">
+                        <label asp-for="SupplierId" class="form-label text-white small fw-bold">Supplier</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-truck"></i></span>
+                            <select asp-for="SupplierId" class="form-control" asp-items="ViewBag.SupplierId" style="background-color: rgba(15, 23, 42, 0.6); color: white;"></select>
+                        </div>
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary btn-lg shadow-sm">
+                            <i class="bi bi-save me-2"></i> Save Changes
+                        </button>
+                        <a asp-action="Index" class="btn btn-back-custom text-center justify-content-center mt-2">
+                            <i class="bi bi-arrow-left me-2"></i> Back to List
+                        </a>
+                    </div>
+                </form>
             </div>
-            <div class="form-group">
-                <label asp-for="LotNumber" class="control-label"></label>
-                <input asp-for="LotNumber" class="form-control" />
-                <span asp-validation-for="LotNumber" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="QuantityInStock" class="control-label"></label>
-                <input asp-for="QuantityInStock" class="form-control" />
-                <span asp-validation-for="QuantityInStock" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Unit" class="control-label"></label>
-                <input asp-for="Unit" class="form-control" />
-                <span asp-validation-for="Unit" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="ExpiryDate" class="control-label"></label>
-                <input asp-for="ExpiryDate" class="form-control" />
-                <span asp-validation-for="ExpiryDate" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="SupplierId" class="control-label"></label>
-                <select asp-for="SupplierId" class="form-control" asp-items="ViewBag.SupplierId"></select>
-                <span asp-validation-for="SupplierId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
-            </div>
-        </form>
+        </div>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }

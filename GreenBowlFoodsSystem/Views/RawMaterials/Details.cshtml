@@ -1,54 +1,62 @@
 ﻿@model GreenBowlFoodsSystem.Models.RawMaterial
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Material Details";
 }
 
-<h1>Details</h1>
+<div class="row justify-content-center">
+    <div class="col-md-6">
 
-<div>
-    <h4>RawMaterial</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.MaterialName)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.MaterialName)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.LotNumber)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.LotNumber)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.QuantityInStock)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.QuantityInStock)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Unit)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Unit)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ExpiryDate)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ExpiryDate)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Supplier)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Supplier.Email)
-        </dd>
-    </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+        <div class="text-center mb-4 animate-fade-up">
+            <h1 class="display-6 fw-bold text-white">Material Details</h1>
+            <p class="text-muted">Full inventory record.</p>
+        </div>
+
+        <div class="card shadow-lg border-0 animate-fade-up" style="animation-delay: 0.1s;">
+            <div class="card-body p-5">
+
+                <div class="text-center mb-5">
+                    <div class="rounded-circle bg-white bg-opacity-10 p-4 d-inline-block shadow-sm">
+                        <i class="bi bi-box-seam-fill text-success display-4"></i>
+                    </div>
+                    <h2 class="mt-3 fw-bold text-white">@Html.DisplayFor(model => model.MaterialName)</h2>
+                    <span class="badge bg-secondary font-monospace">LOT: @Html.DisplayFor(model => model.LotNumber)</span>
+                </div>
+
+                <div class="row g-3">
+                    <div class="col-6">
+                        <div class="p-3 rounded h-100" style="background: rgba(0,0,0,0.2);">
+                            <label class="small text-white text-uppercase fw-bold ls-1 mb-1">Stock</label>
+                            <div class="text-white fw-bold">@Html.DisplayFor(model => model.QuantityInStock) @Html.DisplayFor(model => model.Unit)</div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="p-3 rounded h-100" style="background: rgba(0,0,0,0.2);">
+                            <label class="small text-white text-uppercase fw-bold ls-1 mb-1">Expiry</label>
+                            <div class="text-white">@Model.ExpiryDate.ToShortDateString()</div>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="p-3 rounded h-100" style="background: rgba(0,0,0,0.2);">
+                            <label class="small text-white text-uppercase fw-bold ls-1 mb-1">Supplier</label>
+                            <div class="text-white d-flex align-items-center">
+                                <i class="bi bi-truck me-2 text-info"></i>
+                                @Html.DisplayFor(model => model.Supplier!.SupplierName)
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-grid gap-2 mt-5">
+                    <a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-primary btn-lg shadow-sm">
+                        <i class="bi bi-pencil-square me-2"></i> Edit Record
+                    </a>
+                    <a asp-action="Index" class="btn btn-back-custom text-center justify-content-center mt-2">
+                        <i class="bi bi-arrow-left me-2"></i> Back to List
+                    </a>
+                </div>
+
+            </div>
+        </div>
+    </div>
 </div>
