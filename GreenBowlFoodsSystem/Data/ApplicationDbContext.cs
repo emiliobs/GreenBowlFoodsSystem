@@ -68,71 +68,71 @@ public class ApplicationDbContext : DbContext
         // Seed data (Initial test Data)
 
         // User
-        modelBuilder.Entity<User>().HasData(
+        //modelBuilder.Entity<User>().HasData(
 
-               new User { Id = 1, Username = "Admin", Password = "123", Role = "Admin" },
-               new User { Id = 2, Username = "Emilio", Password = "123", Role = "Staff" }
+        //       new User { Id = 1, Username = "Admin", Password = "123", Role = "Admin" },
+        //       new User { Id = 2, Username = "Emilio", Password = "123", Role = "Staff" }
 
-            );
+        //    );
 
         // Supplier
-        modelBuilder.Entity<Supplier>().HasData(
+        //modelBuilder.Entity<Supplier>().HasData(
 
-            new Supplier
-            {
-                Id = 1,
-                SupplierName = "Raaz Food Ingredients",
-                ContactPerson = "Alice Johnson",
-                Phone = "555-1234",
-                Email = "Raaz@yopmail.com"
-            }
+        //    new Supplier
+        //    {
+        //        Id = 1,
+        //        SupplierName = "Raaz Food Ingredients",
+        //        ContactPerson = "Alice Johnson",
+        //        Phone = "555-1234",
+        //        Email = "Raaz@yopmail.com"
+        //    }
 
-            );
+        //    );
 
         // Customer
-        modelBuilder.Entity<Customer>().HasData(
+        //modelBuilder.Entity<Customer>().HasData(
 
-             new Customer
-             {
-                 Id = 1,
-                 CustomerName = "Costco Wholesale",
-                 Email = "costco@yopmail.com",
-                 Phone = "123-1234",
-                 ContactName = "Emiliano Barrera",
-                 BillingAddress = "Street London 55"
-             }
+        //     new Customer
+        //     {
+        //         Id = 1,
+        //         CustomerName = "Costco Wholesale",
+        //         Email = "costco@yopmail.com",
+        //         Phone = "123-1234",
+        //         ContactName = "Emiliano Barrera",
+        //         BillingAddress = "Street London 55"
+        //     }
 
-            );
+        //    );
 
         // Product
-        modelBuilder.Entity<FinishedProduct>().HasData(
+        //modelBuilder.Entity<FinishedProduct>().HasData(
 
-              new FinishedProduct
-              {
-                  Id = 1,
-                  ProductName = "Quinoa Salad",
-                  SKU = "QB-001",
-                  UnitPrice = 12.50m,
-                  QuantityAvailable = 100,
-              }
+        //      new FinishedProduct
+        //      {
+        //          Id = 1,
+        //          ProductName = "Quinoa Salad",
+        //          SKU = "QB-001",
+        //          UnitPrice = 12.50m,
+        //          QuantityAvailable = 100,
+        //      }
 
-            );
+        //    );
 
         // Raw Material
-        modelBuilder.Entity<RawMaterial>().HasData(
+        //modelBuilder.Entity<RawMaterial>().HasData(
 
-               new RawMaterial
-               {
-                   Id = 1,
-                   MaterialName = "Basmati Rice",
-                   LotNumber = "L-8821",
-                   QuantityInStock = 500,
-                   Unit = "kg",
-                   ExpiryDate = new DateTime(2025, 1, 1),
-                   SupplierId = 1,
-                   Supplier = null
-               }
+        //       new RawMaterial
+        //       {
+        //           Id = 1,
+        //           MaterialName = "Basmati Rice",
+        //           LotNumber = "L-8821",
+        //           QuantityInStock = 500,
+        //           Unit = "kg",
+        //           ExpiryDate = new DateTime(2025, 1, 1),
+        //           SupplierId = 1,
+        //           Supplier = null
+        //       }
 
-            );
+        //    );
     }
 }
