@@ -1,15 +1,15 @@
-﻿@model GreenBowlFoodsSystem.Models.RawMaterial
+﻿@model GreenBowlFoodsSystem.Models.FinishedProduct
 
 @{
-    ViewData["Title"] = "Delete Material";
+    ViewData["Title"] = "Delete Product";
 }
 
 <div class="row justify-content-center">
     <div class="col-md-6">
 
         <div class="text-center mb-4 animate-fade-up">
-            <h1 class="display-6 fw-bold text-danger">Remove Material?</h1>
-            <p class="text-white">Are you sure you want to delete from inventory? This action cannot be undone..</p>
+            <h1 class="display-6 fw-bold text-danger">Delete Product?</h1>
+            <p class="text-white">Are you sure you want to delete this Product? This action cannot be undone..</p>
         </div>
 
         <div class="card shadow-lg animate-fade-up" style="animation-delay: 0.1s; border: 1px solid rgba(220, 38, 38, 0.3);">
@@ -17,22 +17,21 @@
 
                 <div class="mb-4">
                     <div class="rounded-circle bg-danger bg-opacity-10 p-4 d-inline-block">
-                        <i class="bi bi-trash3-fill text-danger display-4"></i>
+                        <i class="bi bi-bag-x-fill text-danger display-4"></i>
                     </div>
                 </div>
 
-                <h3 class="text-white mb-2">@Html.DisplayFor(model => model.MaterialName)</h3>
-                <p class="badge bg-secondary font-monospace mb-4">LOT: @Html.DisplayFor(model => model.LotNumber)</p>
+                <h3 class="text-white mb-2">@Html.DisplayFor(model => model.ProductName)</h3>
+                <p class="badge badge bg-secondary  mb-3">SKU: @Html.DisplayFor(model => model.SKU)</p>
 
                 <div class="p-3 rounded mb-4 text-start" style="background: rgba(0,0,0,0.2);">
                     <div class="d-flex justify-content-between border-bottom border-secondary pb-2 mb-2">
-                        <span class="text-white small">STOCK</span>
-                        <span class="text-white">@Html.DisplayFor(model => model.QuantityInStock) @Html.DisplayFor(model => model.Unit)</span>
+                        <span class="text-white small">CURRENT STOCK</span>
+                        <span class="text-white">@Html.DisplayFor(model => model.QuantityAvailable) units</span>
                     </div>
-                   
                     <div class="d-flex justify-content-between">
-                        <span class="text-white small">SUPPLIER</span>
-                        <span class="text-white">@Html.DisplayFor(model => model.Supplier!.SupplierName)</span>
+                        <span class="text-white small">UNIT PRICE</span>
+                        <span class="text-white">@Html.DisplayFor(model => model.UnitPrice)</span>
                     </div>
                 </div>
 

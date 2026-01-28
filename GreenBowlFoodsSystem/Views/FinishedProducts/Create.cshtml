@@ -1,0 +1,78 @@
+﻿@model GreenBowlFoodsSystem.Models.FinishedProduct
+
+@{
+    ViewData["Title"] = "Create Product";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-8">
+
+        <div class="text-center mb-4 animate-fade-up">
+            <h1 class="display-6 fw-bold text-white">New Product</h1>
+            <p class="text-white">Register a new finished good item.</p>
+        </div>
+
+        <div class="card shadow-lg border-0 animate-fade-up" style="animation-delay: 0.1s;">
+            <div class="card-body p-5">
+                <form asp-action="Create">
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-4">
+                            <label asp-for="ProductName" class="form-label text-white small fw-bold">Product Name</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-tag-fill"></i></span>
+                                <input asp-for="ProductName" class="form-control" placeholder="e.g. Quinoa Salad" />
+                            </div>
+                            <span asp-validation-for="ProductName" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-md-6 mb-4">
+                            <label asp-for="SKU" class="form-label text-white small fw-bold">SKU Code</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-barcode"></i></span>
+                                <input asp-for="SKU" class="form-control" placeholder="e.g. QP-001" />
+                            </div>
+                            <span asp-validation-for="SKU" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-4">
+                            <label asp-for="UnitPrice" class="form-label text-white small fw-bold">Unit Price (£)</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-currency-pound"></i></span>
+                                <input asp-for="UnitPrice" class="form-control" placeholder="0.00" />
+                            </div>
+                            <span asp-validation-for="UnitPrice" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-md-6 mb-5">
+                            <label asp-for="QuantityAvailable" class="form-label text-white small fw-bold">Initial Stock</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-box-seam"></i></span>
+                                <input asp-for="QuantityAvailable" class="form-control" placeholder="0" />
+                            </div>
+                            <span asp-validation-for="QuantityAvailable" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary btn-lg shadow-sm">
+                            <i class="bi bi-check-lg me-2"></i> Create Product
+                        </button>
+                        <a asp-action="Index" class="btn btn-back-custom text-center justify-content-center mt-2">
+                            <i class="bi bi-arrow-left me-2"></i> Back to List
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

@@ -1,16 +1,16 @@
-﻿@model IEnumerable<GreenBowlFoodsSystem.Models.RawMaterial>
+﻿@model IEnumerable<GreenBowlFoodsSystem.Models.FinishedProduct>
 
 @{
-    ViewData["Title"] = "Inventory";
+    ViewData["Title"] = "Product Catalog";
 }
 
 <div class="d-flex justify-content-between align-items-center mb-4 animate-fade-up">
     <div>
-        <h1 class="display-6 fw-bold text-white">Raw Materials</h1>
-        <p class="text-white-50">Track stock levels and expiry dates.</p>
+        <h1 class="display-6 fw-bold text-white">Finished Products</h1>
+        <p class="text-white-50">Manage ready-to-eat meals and pricing.</p>
     </div>
     <a asp-action="Create" class="btn btn-primary shadow-lg">
-        <i class="bi bi-box-seam-fill me-2"></i> Add Material
+        <i class="bi bi-bag-plus-fill me-2"></i> New Product
     </a>
 </div>
 
@@ -20,54 +20,47 @@
             <table class="table table-hover align-middle mb-0">
                 <thead>
                     <tr>
-                        <th class="ps-4">Material Name</th>
-                        <th>Lot Number</th>
-                        <th>Stock Level</th>
-                        <th>Expiry Date</th>
-                        <th>Supplier</th>
+                        <th class="ps-4">Product Name</th>
+                        <th>SKU<span class="text-white fw-normal" style="font-size:0.7em">(Stock Keeping Unit)</span></th>
+                        <th>Price</th>
+                        <th>Stock Status</th>
                         <th class="text-end pe-4">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach (var item in Model)
                     {
-                        
-                            bool isExpired = item.ExpiryDate < DateTime.Now;
-                            // If expired, set text color to Red, otherwise White
-                            string expiryColor = isExpired ? "text-danger fw-bold" : "text-white";
-                                                
+                        // Logic: Visual alert for Low Stock (< 20 units)
+                        bool isLowStock = item.QuantityAvailable < 20;
+                        string stockColor = isLowStock ? "text-danger fw-bold" : "text-info fw-bold";
+
                         <tr>
                             <td class="ps-4 fw-bold">
                                 <div class="d-flex align-items-center">
                                     <div class="rounded-circle bg-white bg-opacity-10 p-2 me-3 text-center" style="width:40px; height:40px;">
-                                        <i class="bi bi-box-seam text-info fs-5"></i>
+                                        <i class="bi bi-bag-heart-fill text-info fs-5"></i>
                                     </div>
-                                    @Html.DisplayFor(modelItem => item.MaterialName)
+                                    @Html.DisplayFor(modelItem => item.ProductName)
                                 </div>
                             </td>
                             <td>
-                                <span class="badge bg-secondary bg-opacity-50 rounded-pill px-3 text-white">
-                                    @Html.DisplayFor(modelItem => item.LotNumber)
+                                <span class="badge bg-secondary bg-opacity-50 text-white">
+                                    @Html.DisplayFor(modelItem => item.SKU)
                                 </span>
                             </td>
                             <td>
-                                <span class="fw-bold text-white">
-                                    @Html.DisplayFor(modelItem => item.QuantityInStock) 
-                                    <span class="small text-white">@Html.DisplayFor(modelItem => item.Unit)</span>
+                                <span class="text-white fw-bold">
+                                    @Html.DisplayFor(modelItem => item.UnitPrice)
                                 </span>
                             </td>
                             <td>
-                                <span class="@expiryColor">
-                                    <i class="bi bi-calendar-event text-info me-1"></i>
-                                    @item.ExpiryDate.ToShortDateString()
+                                <span class="@stockColor">
+                                    @Html.DisplayFor(modelItem => item.QuantityAvailable) units
                                 </span>
-                                @if(isExpired) { <span class="badge bg-danger ms-1">EXPIRED</span> }
-                            </td>
-                            <td>
-                                <span class="text-white-50">
-                                    <i class="bi bi-truck text-info me-1"></i>
-                                    @Html.DisplayFor(modelItem => item.Supplier!.SupplierName)
-                                </span>
+                                @if (isLowStock)
+                                {
+                                    <span class="badge bg-danger ms-1">LOW STOCK</span>
+                                }
                             </td>
                             <td class="text-end pe-4">
                                 <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm" style="color: #38bdf8;" title="Edit">

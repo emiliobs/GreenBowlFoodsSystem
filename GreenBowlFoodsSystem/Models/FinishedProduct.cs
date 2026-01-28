@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace GreenBowlFoodsSystem.Models;
 
@@ -24,5 +25,7 @@ public class FinishedProduct
     [DataType(DataType.Currency)]
     [Range(0.01, 10000, ErrorMessage = "Price must be greater than 0")]
     [Display(Name = "Unit Price")]
+    [DisplayFormat(DataFormatString = "£{0:N2}", ApplyFormatInEditMode = false)]
+    [Column(TypeName = "decimal(18,2)")]
     public decimal UnitPrice { get; set; } // e.g., 12.50
 }

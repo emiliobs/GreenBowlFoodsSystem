@@ -16,7 +16,7 @@
         <h1 class="display-3 fw-bold text-white mb-2">
             Green Bowl <span style="color: var(--primary-green);">Foods</span>
         </h1>
-        <p class="lead text-muted mb-5">Internal Management System & Operations Control</p>
+        <p class="lead text-white mb-5">Internal Management System & Operations Control</p>
 
         @if (Context.Session.GetString("UserSession") != null)
         {
@@ -27,7 +27,7 @@
                     <div class="row g-3 justify-content-center">
                         @if (Context.Session.GetString("UserRole") == "Admin")
                         {
-                            <div class="col-md-4 col-6">
+                            <div class="col-md-3 col-6">
                                 <a asp-controller="Users" asp-action="Index" class="btn btn-outline-light w-100 p-3 h-100 border-0" style="background: rgba(255,255,255,0.05);">
                                     <i class="bi bi-people-fill fs-1 d-block mb-2 text-warning"></i>
                                     <span class="small">Users</span>
@@ -35,17 +35,24 @@
                             </div>
                         }
 
-                        <div class="col-md-4 col-6">
+                        <div class="col-md-3 col-6">
                             <a asp-controller="Suppliers" asp-action="Index" class="btn btn-outline-light w-100 p-3 h-100 border-0" style="background: rgba(255,255,255,0.05);">
                                 <i class="bi bi-truck fs-1 d-block mb-2 text-info"></i>
                                 <span class="small">Suppliers</span>
                             </a>
                         </div>
 
-                        <div class="col-md-4 col-6">
+                        <div class="col-md-3 col-6">
                             <a asp-controller="RawMaterials" asp-action="Index" class="btn btn-outline-light w-100 p-3 h-100 border-0" style="background: rgba(255,255,255,0.05);">
                                 <i class="bi bi-box-seam-fill fs-1 d-block mb-2 text-success"></i>
                                 <span class="small">Inventory</span>
+                            </a>
+                        </div>
+
+                        <div class="col-md-3 col-6">
+                            <a asp-controller="FinishedProducts" asp-action="Index" class="btn btn-outline-light w-100 p-3 h-100 border-0" style="background: rgba(255,255,255,0.05);">
+                                <i class="bi bi-bag-heart-fill fs-1 d-block mb-2 text-danger"></i>
+                                <span class="small">Products</span>
                             </a>
                         </div>
                     </div>
