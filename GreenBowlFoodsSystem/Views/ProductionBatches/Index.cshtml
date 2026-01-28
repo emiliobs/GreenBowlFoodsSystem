@@ -1,0 +1,89 @@
+﻿@model IEnumerable<GreenBowlFoodsSystem.Models.ProductionBatch>
+
+@{
+    ViewData["Title"] = "Production Schedule";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4 animate-fade-up">
+    <div>
+        <h1 class="display-6 fw-bold text-white">Production Schedule</h1>
+        <p class="text-white-50">Manage daily batch orders and efficiency.</p>
+    </div>
+    <a asp-action="Create" class="btn btn-primary shadow-lg">
+        <i class="bi bi-calendar-plus me-2"></i> Schedule Batch
+    </a>
+</div>
+
+<div class="card shadow-lg border-0 animate-fade-up" style="animation-delay: 0.1s;">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead>
+                    <tr>
+                        <th class="ps-4">Batch #</th>
+                        <th>Date</th>
+                        <th>Product</th>
+                        <th>Target vs Actual</th>
+                        <th>Status</th>
+                        <th>Supervisor</th>
+                        <th class="text-end pe-4">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        // Dynamic Status Badge Color
+                        string badgeClass = item.Status switch
+                        {
+                                    "Completed" => "bg-success",
+                                    "In Progress" => "bg-warning text-dark",
+                                    "QA Hold" => "bg-danger",
+                                    "Cancelled" => "bg-secondary",
+                            _ => "bg-primary" // Planned
+                        };
+
+                        <tr>
+                            <td class="ps-4 fw-bold font-monospace text-info">
+                                @Html.DisplayFor(modelItem => item.BatchNumber)
+                            </td>
+                            <td class="text-white">
+                                @item.ProductionDate.ToShortDateString()
+                            </td>
+                            <td class="fw-bold text-white">
+                                @Html.DisplayFor(modelItem => item.FinishedProduct!.ProductName)
+                            </td>
+                            <td>
+                                <div class="d-flex flex-column">
+                                    <span class="text-info small">Target: @item.TargetQuantity</span>
+                                    <span class="text-white small">Actual: @item.QuantityProduced</span>
+                                </div>
+                            </td>
+                            <td>
+                                <span class="badge @badgeClass rounded-pill">
+                                    @Html.DisplayFor(modelItem => item.Status)
+                                </span>
+                            </td>
+                            <td>
+                                <div class="d-flex align-items-center text-white">
+                                    <i class="bi bi-person-circle me-2 text-info"></i>
+                                    @Html.DisplayFor(modelItem => item.Supervisor!.Username)
+                                </div>
+                            </td>
+                            <td class="text-end pe-4">
+                                <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm" style="color: #38bdf8;" title="Edit">
+                                    <i class="bi bi-pencil-fill"></i>
+                                </a>
+                                <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm" style="color: #a3e635;" title="Details">
+                                    <i class="bi bi-eye-fill"></i>
+                                </a>
+                                <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm" style="color: #f87171;" title="Delete">
+                                    <i class="bi bi-trash-fill"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

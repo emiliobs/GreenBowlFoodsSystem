@@ -27,7 +27,7 @@ using (var scope = app.Services.CreateScope())
         var context = services.GetRequiredService<ApplicationDbContext>();
 
         // Call the initializ method new just created
-        DbInitializer.Initializer(context);
+        DbInitializer.Initialize(context);
     }
     catch (Exception ex)
     {
