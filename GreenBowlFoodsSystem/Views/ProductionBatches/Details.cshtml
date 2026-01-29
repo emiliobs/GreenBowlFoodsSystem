@@ -1,66 +1,56 @@
 ﻿@model GreenBowlFoodsSystem.Models.ProductionBatch
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Batch Details";
 }
 
-<h1>Details</h1>
+<div class="row justify-content-center">
+    <div class="col-md-6">
 
-<div>
-    <h4>ProductionBatch</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.BatchNumber)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.BatchNumber)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ProductionDate)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ProductionDate)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.FinishedProduct)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.FinishedProduct.ProductName)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Supervisor)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Supervisor.Password)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.TargetQuantity)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.TargetQuantity)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.QuantityProduced)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.QuantityProduced)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.DowntimeMinutes)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.DowntimeMinutes)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Status)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Status)
-        </dd>
-    </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+        <div class="text-center mb-4 animate-fade-up">
+            <h1 class="display-6 fw-bold text-white">Batch Report</h1>
+            <p class="text-white">@Model.BatchNumber</p>
+        </div>
+
+        <div class="card shadow-lg border-0 animate-fade-up" style="animation-delay: 0.1s;">
+            <div class="card-body p-5">
+
+                <div class="text-center mb-4">
+                    <h2 class="text-info fw-bold">@Model.FinishedProduct!.ProductName</h2>
+                    <span class="badge bg-secondary">@Model.ProductionDate.ToShortDateString()</span>
+                    <span class="badge bg-primary ms-2">@Model.Status</span>
+                </div>
+
+                <div class="p-3 rounded mb-4" style="background: rgba(0,0,0,0.2);">
+                    <div class="row text-center">
+                        <div class="col-4 border-end border-secondary">
+                            <small class="text-white d-block">TARGET</small>
+                            <span class="text-white fs-4 fw-bold">@Model.TargetQuantity</span>
+                        </div>
+                        <div class="col-4 border-end border-secondary">
+                            <small class="text-white d-block">ACTUAL</small>
+                            <span class="text-success fs-4 fw-bold">@Model.QuantityProduced</span>
+                        </div>
+                        <div class="col-4">
+                            <small class="text-white d-block">DOWNTIME</small>
+                            <span class="text-warning fs-4 fw-bold">@Model.DowntimeMinutes m</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <label class="small text-muted text-uppercase fw-bold">Supervisor</label>
+                    <div class="text-white">
+                        <i class="bi bi-person-badge-fill me-2"></i> @Model.Supervisor.Username
+                    </div>
+                </div>
+
+                <div class="d-grid gap-2 mt-5">
+                    <a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-primary btn-lg shadow-sm">Update Report</a>
+                    <a asp-action="Index" class="btn btn-back-custom text-center justify-content-center mt-2">Back to List</a>
+                </div>
+
+            </div>
+        </div>
+    </div>
 </div>

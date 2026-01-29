@@ -1,66 +1,106 @@
 ﻿@model GreenBowlFoodsSystem.Models.ProductionBatch
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Schedule Batch";
 }
 
-<h1>Create</h1>
+<div class="row justify-content-center">
+    <div class="col-md-8">
 
-<h4>ProductionBatch</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="BatchNumber" class="control-label"></label>
-                <input asp-for="BatchNumber" class="form-control" />
-                <span asp-validation-for="BatchNumber" class="text-danger"></span>
+        <div class="text-center mb-4 animate-fade-up">
+            <h1 class="display-6 fw-bold text-white">Schedule Batch</h1>
+            <p class="text-white">Create a new production order.</p>
+        </div>
+
+        <div class="card shadow-lg border-0 animate-fade-up" style="animation-delay: 0.1s;">
+            <div class="card-body p-5">
+                <form asp-action="Create">
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-4">
+                            <label asp-for="BatchNumber" class="form-label text-white small fw-bold">Batch #</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-upc"></i></span>
+                                <input asp-for="BatchNumber" class="form-control" placeholder="BATCH-2026-X" />
+                            </div>
+                            <span asp-validation-for="BatchNumber" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6 mb-4">
+                            <label asp-for="ProductionDate" class="form-label text-white small fw-bold">Date</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-calendar-event"></i></span>
+                                <input asp-for="ProductionDate" class="form-control" />
+                            </div>
+                            <span asp-validation-for="ProductionDate" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-4">
+                            <label asp-for="FinishedProductId" class="form-label text-white small fw-bold">Product to Cook</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-bag-heart"></i></span>
+                                <select asp-for="FinishedProductId" class="form-control" asp-items="ViewBag.FinishedProductId" style="background-color: rgba(15, 23, 42, 0.6); color: white;">
+                                    <option value="" disabled selected>-- Select Product --</option>
+                                </select>
+                            </div>
+                            <span asp-validation-for="FinishedProductId" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6 mb-4">
+                            <label asp-for="SupervisorId" class="form-label text-white small fw-bold">Supervisor</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-person-badge"></i></span>
+                                <select asp-for="SupervisorId" class="form-control" asp-items="ViewBag.SupervisorId" style="background-color: rgba(15, 23, 42, 0.6); color: white;">
+                                    <option value="" disabled selected>-- Select Supervisor --</option>
+                                </select>
+                            </div>
+                            <span asp-validation-for="SupervisorId" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-4">
+                            <label asp-for="TargetQuantity" class="form-label text-white small fw-bold">Target Qty (Planned)</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-bullseye"></i></span>
+                                <input asp-for="TargetQuantity" class="form-control" placeholder="0" />
+                            </div>
+                            <span asp-validation-for="TargetQuantity" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6 mb-5">
+                            <label asp-for="Status" class="form-label text-white small fw-bold">Initial Status</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-flag"></i></span>
+                                <select asp-for="Status" class="form-control" style="background-color: rgba(15, 23, 42, 0.6); color: white;">
+                                    <option value="" disabled selected>Select Status</option>
+                                    <option value="Planned">Planned</option>
+                                    <option value="In Progress">In Progress</option>
+                                </select>
+                            </div>
+                            <span asp-validation-for="Status" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <input type="hidden" asp-for="QuantityProduced" value="0" />
+                    <input type="hidden" asp-for="DowntimeMinutes" value="0" />
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary btn-lg shadow-sm">
+                            <i class="bi bi-check-lg me-2"></i> Create Schedule
+                        </button>
+                        <a asp-action="Index" class="btn btn-back-custom text-center justify-content-center mt-2">
+                            <i class="bi bi-arrow-left me-2"></i> Back to List
+                        </a>
+                    </div>
+                </form>
             </div>
-            <div class="form-group">
-                <label asp-for="ProductionDate" class="control-label"></label>
-                <input asp-for="ProductionDate" class="form-control" />
-                <span asp-validation-for="ProductionDate" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="FinishedProductId" class="control-label"></label>
-                <select asp-for="FinishedProductId" class ="form-control" asp-items="ViewBag.FinishedProductId"></select>
-            </div>
-            <div class="form-group">
-                <label asp-for="SupervisorId" class="control-label"></label>
-                <select asp-for="SupervisorId" class ="form-control" asp-items="ViewBag.SupervisorId"></select>
-            </div>
-            <div class="form-group">
-                <label asp-for="TargetQuantity" class="control-label"></label>
-                <input asp-for="TargetQuantity" class="form-control" />
-                <span asp-validation-for="TargetQuantity" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="QuantityProduced" class="control-label"></label>
-                <input asp-for="QuantityProduced" class="form-control" />
-                <span asp-validation-for="QuantityProduced" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="DowntimeMinutes" class="control-label"></label>
-                <input asp-for="DowntimeMinutes" class="form-control" />
-                <span asp-validation-for="DowntimeMinutes" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Status" class="control-label"></label>
-                <input asp-for="Status" class="form-control" />
-                <span asp-validation-for="Status" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
-        </form>
+        </div>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }

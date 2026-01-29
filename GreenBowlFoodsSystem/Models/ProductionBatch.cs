@@ -34,7 +34,8 @@ public class ProductionBatch
     [Display(Name = "Target Qty")]
     public int TargetQuantity { get; set; } // Planned Output
 
-    [Range(1, 100000, ErrorMessage = "Target Quantity must be positive")]
+    [Required]
+    [Range(0, 100000, ErrorMessage = "Target Quantity must be positive")]
     [Display(Name = "Quantity Produced")]
     public int QuantityProduced { get; set; } // Actual Output
 
