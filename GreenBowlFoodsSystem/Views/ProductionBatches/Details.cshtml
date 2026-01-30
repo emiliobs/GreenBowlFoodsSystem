@@ -5,11 +5,10 @@
 }
 
 <div class="row justify-content-center">
-    <div class="col-md-6">
-
+    <div class="col-md-8">
         <div class="text-center mb-4 animate-fade-up">
             <h1 class="display-6 fw-bold text-white">Batch Report</h1>
-            <p class="text-white">@Model.BatchNumber</p>
+            <p class="text-white font-monospace">@Model.BatchNumber</p>
         </div>
 
         <div class="card shadow-lg border-0 animate-fade-up" style="animation-delay: 0.1s;">
@@ -21,7 +20,7 @@
                     <span class="badge bg-primary ms-2">@Model.Status</span>
                 </div>
 
-                <div class="p-3 rounded mb-4" style="background: rgba(0,0,0,0.2);">
+                <div class="p-3 rounded mb-3" style="background: rgba(0,0,0,0.2);">
                     <div class="row text-center">
                         <div class="col-4 border-end border-secondary">
                             <small class="text-white d-block">TARGET</small>
@@ -33,38 +32,139 @@
                         </div>
                         <div class="col-4">
                             <small class="text-white d-block">DOWNTIME</small>
-                            <span class="text-warning fs-4 fw-bold">@Model.DowntimeMinutes m</span>
+                            <span class="text-warning fs-4 fw-bold">@Model.DowntimeMinutes <small class="fs-6">m</small></span>
                         </div>
                     </div>
                 </div>
 
-                <div class="mb-4">
-                    <label class="small text-muted text-uppercase fw-bold">Supervisor</label>
-                    <div class="text-white">
-                        <i class="bi bi-person-badge-fill me-2"></i> @Model.Supervisor!.Username
+                <div class="mb-0 text-start">
+                     <div class="text-white">
+                        <small class="text-white text-uppercase fw-bold">Supervisor</small> :
+                        <i class="bi bi-person-badge-fill me-"></i> @Model.Supervisor!.Username
                     </div>
                 </div>
 
-                <hr class="border-secondary my-4" />
+                <div class="card shadow-lg border-0 mt-3 mb-5 animate-fade-up" style="background: linear-gradient(145deg, #1e293b 0%, #0f172a 100%);">
 
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h5 class="text-info mb-0"><i class="bi bi-basket3-fill me-2"></i>Ingredients Used</h5>
+                    <div class="card-header bg-transparent border-secondary d-flex justify-content-between align-items-center py-3">
+                        <h5 class="mb-0 text-white">
+                            <i class="bi bi-basket3-fill me-2 text-info"></i>Ingredients Consumed
+                        </h5>
 
-                    <a asp-controller="ProductionMaterials" asp-action="Create" asp-route-batchId="@Model.Id" class="btn btn-sm btn-outline-warning">
-                        <i class="bi bi-plus-lg"></i> Add Ingredient
+                        @if (Model.Status != "Completed" && Model.Status != "Cancelled")
+                        {
+                            <a asp-controller="ProductionMaterials" asp-action="Create" asp-route-batchId="@Model.Id" class="btn btn-sm btn-outline-warning fw-bold">
+                                <i class="bi bi-plus-lg me-1"></i> Add Ingredient
+                            </a>
+                        }
+                    </div>
+
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-dark table-hover align-middle mb-0" style="background-color: transparent;">
+                                <thead class="text-white-50 text-uppercase small" style="background-color: rgba(0,0,0,0.2);">
+                                    <tr>
+                                        <th class="ps-4">Ingredient</th>
+                                        <th class="text-end">Qty Used</th>
+                                        <th class="text-end pe-4">Unit</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @if (Model.ProductionMaterials != null && Model.ProductionMaterials.Any())
+                                    {
+                                        @foreach (var item in Model.ProductionMaterials)
+                                        {
+                                            <tr>
+                                                <td class="fw-bold text-white ps-4">
+                                                    <i class="bi bi-box-seam text-info me-2"></i>
+                                                    @item.RawMaterial?.MaterialName
+                                                </td>
+                                                <td class="text-end font-monospace text-warning">
+                                                    -@item.QuantityUsed.ToString("N2")
+                                                </td>
+                                                <td class="text-end text-white small pe-4">
+                                                    @item.RawMaterial?.Unit
+                                                </td>
+                                            </tr>
+                                        }
+
+                                        <tr class="bg-transparent border-top border-secondary">
+                                            <td colspan="3" class="text-end text-info  fst-italic py-3 pe-4">
+                                                Total items deducted: <span class="text-wa">@Model.ProductionMaterials.Count</span>
+                                            </td>
+                                        </tr>
+                                    }
+                                    else
+                                    {
+                                        <tr>
+                                            <td colspan="3" class="text-center py-5 text-white-50">
+                                                <div class="opacity-50 mb-2">
+                                                    <i class="bi bi-inbox fs-1"></i>
+                                                </div>
+                                                <p class="mb-0">No ingredients added yet.</p>
+                                                <small>Click "Add Ingredient" to deduct stock.</small>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-center align-items-center gap-3 animate-fade-up mt-5" style="animation-delay: 0.2s;">
+
+                    @if (Model.Status != "Completed" && Model.Status != "Cancelled")
+                    {
+                        <form asp-action="FinishBatch" asp-route-id="@Model.Id" id="finishForm" class="d-inline">
+                            <button type="button" onclick="confirmFinish()" class="btn btn-success btn-lg shadow fw-bold px-4 rounded-pill d-inline-flex align-items-center justify-content-center">
+                                <i class="bi bi-check-circle-fill me-2"></i> Complete Batch
+                            </button>
+                        </form>
+
+                        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary btn-lg shadow fw-bold px-4 rounded-pill d-inline-flex align-items-center justify-content-center">
+                            <i class="bi bi-pencil-square me-2"></i> Update Results
+                        </a>
+                    }
+                    else
+                    {
+                        <span class="badge bg-success p-3 fs-6 shadow rounded-pill d-inline-flex align-items-center justify-content-center">
+                            <i class="bi bi-lock-fill me-2"></i> Batch Locked (Completed)
+                        </span>
+                    }
+
+                    <a asp-action="Index" class="btn btn-outline-secondary btn-lg shadow fw-bold px-4 rounded-pill d-inline-flex align-items-center justify-content-center">
+                        <i class="bi bi-arrow-left me-2"></i> Back to List
                     </a>
-                </div>
-
-                <div class="alert alert-secondary bg-transparent border-secondary text-white-50">
-                    Ingredients list coming soon...
-                </div>
-
-                <div class="d-grid gap-2 mt-5">
-                    <a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-primary btn-lg shadow-sm">Update Report</a>
-                    <a asp-action="Index" class="btn btn-back-custom text-center justify-content-center mt-2">Back to List</a>
                 </div>
 
             </div>
         </div>
     </div>
-</div>
+</div> 
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script>
+        function confirmFinish() {
+            Swal.fire({
+                title: 'Finish Production?',
+                text: "This will add @Model.QuantityProduced units to Finished Goods inventory and lock this batch.",
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#10b981', // Green
+                cancelButtonColor: '#334155',  // Dark Blue
+                confirmButtonText: 'Yes, Complete it!',
+                background: '#1e293b',
+                color: '#ffffff'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById('finishForm').submit();
+                }
+            })
+        }
+    </script>
+}

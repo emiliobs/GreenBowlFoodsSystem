@@ -46,4 +46,7 @@ public class ProductionBatch
     [Required]
     [RegularExpression("^(Planned|In Progress|Completed|QA Hold|Cancelled)$", ErrorMessage = "Invalid Status")]
     public string Status { get; set; } = "Planned"; // "Planned", "In Progress", "Completed", "QA Hold"
+
+    // Thi talls Entity Framework: "A Production Batch can have MANY ingredients used"
+    public List<ProductionMaterial>? ProductionMaterials { get; set; }
 }
