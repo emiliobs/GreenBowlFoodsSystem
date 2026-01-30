@@ -1,0 +1,100 @@
+﻿@model GreenBowlFoodsSystem.Models.ProductionMaterial
+
+@{
+    ViewData["Title"] = "Add Ingredient";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-6">
+
+        <div class="text-center mb-4 animate-fade-up">
+            <h1 class="display-6 fw-bold text-white">Add Ingredient</h1>
+            <p class="text-white">Deduct raw materials from inventory for this production batch.</p>
+        </div>
+
+        <div class="card shadow-lg border-0 animate-fade-up" style="animation-delay: 0.1s;">
+            <div class="card-body p-5">
+                <form asp-action="Create" id="deductForm">
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                    <input type="hidden" name="ProductionBatchId" value="@ViewBag.ProductionBatchId" />
+
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <label class="form-label text-white small fw-bold">Batch Reference</label>
+                            <input class="form-control font-monospace" value="@ViewBag.ProductionBatchNumber" readonly style="background-color: rgba(255,255,255,0.1); color: #38bdf8; border: 1px solid #38bdf8;" />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label text-white small fw-bold">Product</label>
+                            <input class="form-control" value="@ViewBag.ProductName" readonly style="background-color: rgba(255,255,255,0.1); color: #a3e635; border: 1px solid #a3e635;" />
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label asp-for="RawMaterialId" class="form-label text-white small fw-bold">Select Ingredient</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-basket"></i></span>
+                            <select asp-for="RawMaterialId" class="form-control" asp-items="ViewBag.RawMaterialId" style="background-color: rgba(15, 23, 42, 0.6); color: white;">
+                                <option value="" disabled selected>-- Choose Raw Material --</option>
+                            </select>
+                        </div>
+                        <span asp-validation-for="RawMaterialId" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-5">
+                        <label asp-for="QuantityUsed" class="form-label text-white small fw-bold">Quantity to Use</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-speedometer2"></i></span>
+                            <input asp-for="QuantityUsed" id="qtyInput" class="form-control" placeholder="e.g. 50.5 Kg" />
+                        </div>
+                        <div class="form-text text-white">This amount will be subtracted from the warehouse immediately.</div>
+                        <span asp-validation-for="QuantityUsed" class="text-danger small fw-bold"></span>
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button type="button" onclick="confirmDeduction()" class="btn btn-warning btn-lg shadow-sm text-dark fw-bold">
+                            <i class="bi bi-box-seam me-2"></i> Deduct from Stock
+                        </button>
+
+                        <a href="@Url.Action("Details", "ProductionBatches", new { id = ViewBag.ProductionBatchId })" class="btn btn-back-custom text-center justify-content-center mt-2">
+                            Cancel
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script>
+        function confirmDeduction() {
+            var qty = document.getElementById('qtyInput').value;
+
+            if (!qty) {
+                document.getElementById('deductForm').submit();
+                return;
+            }
+
+            Swal.fire({
+                title: 'Confirm Inventory Deduction?',
+                text: "You are about to remove " + qty + " units from the warehouse.",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#f59e0b',
+                cancelButtonColor: '#334155',
+                confirmButtonText: 'Yes, deduct it!',
+                background: '#1e293b',
+                color: '#ffffff'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById('deductForm').submit();
+                }
+            })
+        }
+    </script>
+}

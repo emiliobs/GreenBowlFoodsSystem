@@ -14,6 +14,7 @@ public class ProductionMaterial
     public ProductionBatch? ProductionBatch { get; set; }
 
     [Required(ErrorMessage = "Select an Ingredient")]
+    [Display(Name = "Raw Material (Ingredient)")]
     public int RawMaterialId { get; set; }
 
     [ForeignKey("RawMaterialId")]
@@ -21,7 +22,8 @@ public class ProductionMaterial
     public RawMaterial? RawMaterial { get; set; }
 
     [Required]
-    [Range(0.01, 10000, ErrorMessage = "Quantity used must be greater than 0")]
-    [Display(Name = "Qty Used (Kg/L)")]
-    public decimal QuantityUsed { get; set; } // e.g., 50.00 Kg, Deducted from stock
+    [Range(0.0001, 1000, ErrorMessage = "Quantity must be greater than 0")]
+    [Column(TypeName = "decimal(18,4)")] // 4 decimals for precision (e.g. 0.005 kg of saffron)
+    [Display(Name = "Quantity Required (per Unit)")]
+    public decimal QuantityUsed { get; set; } // e.g., 0.25 (meaning 0.25 Kg per Salad)
 }

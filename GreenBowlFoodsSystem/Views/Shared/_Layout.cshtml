@@ -151,39 +151,44 @@
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
-    @await RenderSectionAsync("Scripts", required: false)
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
 
     <script>
-
-          // Comprobamos si hay mensajes de éxito desde el servidor
+        // Check if the server sent a Success Message via TempData
         var successMessage = '@TempData["SuccessMessage"]';
-        var errorMessage = '@TempData["ErrorMessage"]';
 
         if (successMessage) {
             Swal.fire({
                 title: 'Success!',
                 text: successMessage,
                 icon: 'success',
-                background: '#1e293b',  // Fondo oscuro
-                color: '#fff',          // Texto blanco
-                confirmButtonColor: '#10b981' // Tu verde de marca
+                background: '#1e293b',  // Dark Mode Background
+                color: '#ffffff',       // White Text
+                confirmButtonColor: '#10b981', // Green Brand Color
+                confirmButtonText: 'Great!'
             });
         }
 
+        // Check if the server sent an Error Message via TempData
+        var errorMessage = '@TempData["ErrorMessage"]';
+
         if (errorMessage) {
-        Swal.fire({
-            title: 'Error!',
-            text: errorMessage,
-            icon: 'error',
-            background: '#1e293b',
-            color: '#fff',
-            confirmButtonColor: '#ef4444'
-        });
+            Swal.fire({
+                title: 'Error!',
+                text: errorMessage,
+                icon: 'error',
+                background: '#1e293b',
+                color: '#ffffff',
+                confirmButtonColor: '#ef4444', // Red Brand Color
+                confirmButtonText: 'OK'
+            });
         }
 
     </script>
+
+    @await RenderSectionAsync("Scripts", required: false)
 
 </body>
 </html>

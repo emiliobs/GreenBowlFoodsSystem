@@ -179,5 +179,56 @@ public static class DbInitializer
                 context.SaveChanges();
             }
         }
+
+        // =============================================================
+        // 6. SEED PRODUCTION MATERIALS (Ingredients used in a Batch)
+        // =============================================================
+
+        // Check if Materials are already assigned to batches
+        if (!context.ProductionMaterials.Any())
+        {
+            // Get the Batch (The Parent)
+            // We look for the completed batch we created earlier
+            var batch1 = context.ProductionBatches.FirstOrDefault(b => b.BatchNumber == "BATCH-2026-001");
+
+            // Get the Ingredients (Raw Materials)
+            var quinoa = context.RawMaterials.FirstOrDefault(m => m.MaterialName.Contains("Quinoa"));
+            var spinach = context.RawMaterials.FirstOrDefault(m => m.MaterialName.Contains("Spinach"));
+            var oliveOil = context.RawMaterials.FirstOrDefault(m => m.MaterialName.Contains("Olive Oil"));
+
+            //  Create the Usage Records
+            if (batch1 != null && quinoa != null && spinach != null && oliveOil != null)
+            {
+                var materialsUsed = new ProductionMaterial[]
+                {
+                        // Log: Used 20kg of Quinoa for Batch 001
+                        new ProductionMaterial
+                        {
+                            ProductionBatchId = batch1.Id,
+                            RawMaterialId = quinoa.Id,
+                            QuantityUsed = 20.0m
+                        },
+
+                        // Log: Used 5kg of Spinach for Batch 001
+                        new ProductionMaterial
+                        {
+                            ProductionBatchId = batch1.Id,
+                            RawMaterialId = spinach.Id,
+                            QuantityUsed = 5.0m
+                        },
+
+                        // Log: Used 2 Liters of Oil for Batch 001
+                        new ProductionMaterial
+                        {
+                            ProductionBatchId = batch1.Id,
+                            RawMaterialId = oliveOil.Id,
+                            QuantityUsed = 2.0m
+                        }
+                };
+
+                context.ProductionMaterials.AddRange(materialsUsed);
+                context.SaveChanges();
+            }
+        }
     }
 }

@@ -38,7 +38,7 @@ namespace GreenBowlFoodsSystem.Controllers
                     await _context.SaveChangesAsync();
 
                     // Success Alert
-                    TempData[""] = "Product created successfully!";
+                    TempData["SuccessMessage"] = "Product created successfully!";
                     return RedirectToAction(nameof(Index));
                 }
                 catch (Exception ex)
