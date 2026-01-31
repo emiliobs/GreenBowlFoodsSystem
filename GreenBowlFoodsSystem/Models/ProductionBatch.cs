@@ -14,8 +14,13 @@ public class ProductionBatch
 
     [DataType(DataType.Date)]
     [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
-    [Display(Name = "Production Date")]
+    [Display(Name = "Started At")]
     public DateTime ProductionDate { get; set; } = DateTime.Now;
+
+    [DataType(DataType.Date)]
+    [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
+    [Display(Name = "Completed At")]
+    public DateTime? EndDate { get; set; } // Nullable: Empty until we click "Finish"
 
     [Required(ErrorMessage = "Select the Product being produced")]
     public int FinishedProductId { get; set; }
@@ -30,7 +35,7 @@ public class ProductionBatch
     [ForeignKey("SupervisorId")]
     public User? Supervisor { get; set; }
 
-    // --- Efficiency KPIs ---
+    // Efficiency KPIs
     [Display(Name = "Target Qty")]
     public int TargetQuantity { get; set; } // Planned Output
 

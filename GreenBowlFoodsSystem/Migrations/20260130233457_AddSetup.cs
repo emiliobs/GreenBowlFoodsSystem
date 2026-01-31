@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace GreenBowlFoodsSystem.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialSetup : Migration
+    public partial class AddSetup : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -175,6 +175,7 @@ namespace GreenBowlFoodsSystem.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     BatchNumber = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     ProductionDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    EndDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     FinishedProductId = table.Column<int>(type: "int", nullable: false),
                     SupervisorId = table.Column<int>(type: "int", nullable: false),
                     TargetQuantity = table.Column<int>(type: "int", nullable: false),

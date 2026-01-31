@@ -206,7 +206,7 @@ public class ProductionBatchesController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> FinishBatch(int id)
     {
-        // 1. Retrieve the Batch including the Product info
+        //  Retrieve the Batch including the Product info
         var batch = await _context.ProductionBatches
             .Include(b => b.FinishedProduct)
             .FirstOrDefaultAsync(b => b.Id == id);
@@ -216,7 +216,7 @@ public class ProductionBatchesController : Controller
             return NotFound();
         }
 
-        // 2. Validation: Prevent closing an already closed batch
+        // Validation: Prevent closing an already closed batch
         // If we run this twice, we would duplicate inventory!
         if (batch.Status == "Completed" || batch.Status == "Cancelled")
         {
@@ -226,7 +226,7 @@ public class ProductionBatchesController : Controller
 
         try
         {
-            // 3. UPDATE INVENTORY (The Magic Moment 📈)
+            //  UPDATE INVENTORY (The Magic Moment 📈)
             // We add the produced quantity to the Finished Product stock
             if (batch.FinishedProduct != null)
             {
@@ -234,10 +234,11 @@ public class ProductionBatchesController : Controller
                 _context.Update(batch.FinishedProduct);
             }
 
-            // 4. CLOSE THE BATCH
+            // CLOSE THE BATCH
             batch.Status = "Completed";
+
             // Optional: Capture the exact completion time if you have an EndDate column
-            // batch.EndDate = DateTime.Now;
+            batch.EndDate = DateTime.Now;
 
             _context.Update(batch);
             await _context.SaveChangesAsync();

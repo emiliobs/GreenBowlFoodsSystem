@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GreenBowlFoodsSystem.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260128120553_InitialSetup")]
-    partial class InitialSetup
+    [Migration("20260131003802_UpdateShipmentModel")]
+    partial class UpdateShipmentModel
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -228,6 +228,9 @@ namespace GreenBowlFoodsSystem.Migrations
                     b.Property<int>("DowntimeMinutes")
                         .HasColumnType("int");
 
+                    b.Property<DateTime?>("EndDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<int>("FinishedProductId")
                         .HasColumnType("int");
 
@@ -414,8 +417,22 @@ namespace GreenBowlFoodsSystem.Migrations
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("DeliveryFormId")
+                    b.Property<int?>("DeliveryFormId")
                         .HasColumnType("int");
+
+                    b.Property<int>("FinishedProductId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("QuantityShipped")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<decimal>("TotalValue")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("TrackingNumber")
                         .HasMaxLength(50)
@@ -426,6 +443,8 @@ namespace GreenBowlFoodsSystem.Migrations
                     b.HasIndex("CustomerId");
 
                     b.HasIndex("DeliveryFormId");
+
+                    b.HasIndex("FinishedProductId");
 
                     b.ToTable("Shipments");
                 });
@@ -596,7 +615,7 @@ namespace GreenBowlFoodsSystem.Migrations
             modelBuilder.Entity("GreenBowlFoodsSystem.Models.ProductionMaterial", b =>
                 {
                     b.HasOne("GreenBowlFoodsSystem.Models.ProductionBatch", "ProductionBatch")
-                        .WithMany()
+                        .WithMany("ProductionMaterials")
                         .HasForeignKey("ProductionBatchId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -663,13 +682,19 @@ namespace GreenBowlFoodsSystem.Migrations
 
                     b.HasOne("GreenBowlFoodsSystem.Models.DeliveryForm", "DeliveryForm")
                         .WithMany()
-                        .HasForeignKey("DeliveryFormId")
+                        .HasForeignKey("DeliveryFormId");
+
+                    b.HasOne("GreenBowlFoodsSystem.Models.FinishedProduct", "FinishedProduct")
+                        .WithMany()
+                        .HasForeignKey("FinishedProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Customer");
 
                     b.Navigation("DeliveryForm");
+
+                    b.Navigation("FinishedProduct");
                 });
 
             modelBuilder.Entity("GreenBowlFoodsSystem.Models.XRayCheck", b =>
@@ -694,6 +719,11 @@ namespace GreenBowlFoodsSystem.Migrations
             modelBuilder.Entity("GreenBowlFoodsSystem.Models.Invoice", b =>
                 {
                     b.Navigation("Items");
+                });
+
+            modelBuilder.Entity("GreenBowlFoodsSystem.Models.ProductionBatch", b =>
+                {
+                    b.Navigation("ProductionMaterials");
                 });
 #pragma warning restore 612, 618
         }
