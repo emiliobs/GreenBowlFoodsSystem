@@ -33,7 +33,6 @@ public class ShipmentsController : Controller
         // Load dropdown list for the view
         ViewData["CustomerId"] = new SelectList(_context.Customers, "Id", "CustomerName");
         ViewData["FinishedProductId"] = new SelectList(_context.FinishedProducts, "Id", "ProductName");
-       
 
         return View();
     }
@@ -61,7 +60,7 @@ public class ShipmentsController : Controller
                     if (productInDb.QuantityAvailable < shipment.QuantityShipped)
                     {
                         // Error: Insufficient stock
-                        TempData["ErrorMessasge"] = $"Not enough stock! Only {productInDb.QuantityAvailable} units available.";
+                        TempData["ErrorMessage"] = $"Not enough stock! Only {productInDb.QuantityAvailable} units available.";
                         ModelState.AddModelError("QuantityShipped", "Insufficient inventory.");
                     }
                     else
@@ -79,7 +78,7 @@ public class ShipmentsController : Controller
                         _context.Update(productInDb);// Update Inventory
                         await _context.SaveChangesAsync();
 
-                        TempData[""] = "Shipment creates successfully! Inventory updated.";
+                        TempData["SuccessMessage"] = "Shipment created successfully! Inventory updated.";
                         return RedirectToAction(nameof(Index));
                     }
                 }
@@ -98,7 +97,6 @@ public class ShipmentsController : Controller
         // Reload dropdowns if something failed so the user doesn't lose tyhe form
         ViewData["CustomerId"] = new SelectList(_context.Customers, "Id", "CustomerName");
         ViewData["FinishedProductId"] = new SelectList(_context.FinishedProducts, "Id", "ProductName");
-     
 
         return View(shipment);
     }
