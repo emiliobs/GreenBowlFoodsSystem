@@ -51,6 +51,7 @@ namespace GreenBowlFoodsSystem.Models
         // Stores the monetary value of the shipment for "Sales for a specific period" reports.
         [DataType(DataType.Currency)]
         [Column(TypeName = "decimal(18,2)")]
+        [DisplayFormat(DataFormatString = "£{0:N2}", ApplyFormatInEditMode = false)]
         [Display(Name = "Total Value")]
         public decimal TotalValue { get; set; }
 

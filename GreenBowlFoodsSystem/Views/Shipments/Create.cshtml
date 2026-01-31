@@ -1,0 +1,105 @@
+﻿@model GreenBowlFoodsSystem.Models.Shipment
+
+@{
+    ViewData["Title"] = "New Shipment";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-8">
+
+        <div class="text-center mb-4 animate-fade-up">
+            <h1 class="display-6 fw-bold text-white">New Shipment</h1>
+            <p class="text-white">Register outgoing products and deduct inventory.</p>
+        </div>
+
+        <div class="card shadow-lg border-0 animate-fade-up" style="animation-delay: 0.1s;">
+            <div class="card-body p-5">
+
+                <form asp-action="Create">
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                    <h5 class="text-white mb-3"><i class="bi bi-truck me-2 text-info"></i>Logistics Details</h5>
+
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <label asp-for="Date" class="form-label text-white small fw-bold">Shipment Date</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-calendar-event"></i></span>
+                                <input asp-for="Date" type="date" class="form-control" />
+                            </div>
+                            <span asp-validation-for="Date" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="CustomerId" class="form-label text-white small fw-bold">Customer / Destination</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-person-badge"></i></span>
+                                <select asp-for="CustomerId" class="form-control" asp-items="ViewBag.CustomerId">
+                                    <option value="" disabled selected>-- Select Customer --</option>
+                                </select>
+                            </div>
+                            <span asp-validation-for="CustomerId" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label asp-for="Carrier" class="form-label text-white small fw-bold">Carrier</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-send"></i></span>
+                                <input asp-for="Carrier" class="form-control" placeholder="e.g. FedEx" />
+                            </div>
+                            <span asp-validation-for="Carrier" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="TrackingNumber" class="form-label text-white small fw-bold">Tracking Number</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-upc-scan"></i></span>
+                                <input asp-for="TrackingNumber" class="form-control" placeholder="#TRK-0000" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <h5 class="text-white mb-3"><i class="bi bi-box-seam me-2 text-warning"></i>Inventory Deduction</h5>
+
+                    <div class="mb-4">
+                        <label asp-for="FinishedProductId" class="form-label text-white small fw-bold">Product to Ship</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-bag-check"></i></span>
+                            <select asp-for="FinishedProductId" class="form-control" asp-items="ViewBag.FinishedProductId">
+                                <option value="" disabled selected>-- Select Product --</option>
+                            </select>
+                        </div>
+                        <span asp-validation-for="FinishedProductId" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-5">
+                        <label asp-for="QuantityShipped" class="form-label text-white small fw-bold">Quantity (Units)</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-layers"></i></span>
+                            <input asp-for="QuantityShipped" type="number" class="form-control text-white" placeholder="0" />
+                        </div>
+                        <div class="form-text text-white">This amount will be deducted from warehouse immediately.</div>
+                        <span asp-validation-for="QuantityShipped" class="text-danger small"></span>
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary btn-lg shadow-sm" style="background-color: #10b981; border: none;">
+                            <i class="bi bi-check-lg me-2"></i> Confirm Shipment
+                        </button>
+
+                        <a asp-action="Index" class="btn btn-back-custom text-center justify-content-center mt-2">
+                            <i class="bi bi-arrow-left me-1"></i> Back to List
+                        </a>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

@@ -1,0 +1,124 @@
+﻿@model IEnumerable<GreenBowlFoodsSystem.Models.Shipment>
+
+@{
+    ViewData["Title"] = "Shipments Log";
+}
+
+
+
+<div class="d-flex justify-content-between align-items-center mb-4 animate-fade-up">
+        <div>
+            <h1 class="display-6 fw-bold text-white mb-0">Shipments & Sales</h1>
+            <p class="text-white">Track outgoing inventory and revenue.</p>
+        </div>
+        <a asp-action="Create" class="btn btn-primary shadow-lg" style="background-color: #10b981; border: none;">
+            <i class="bi bi-plus-lg me-2"></i> New Shipment
+        </a>
+    </div>
+
+    <div class="card shadow-lg border-0 animate-fade-up" style="animation-delay: 0.1s;">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+               <table class="table table-hover align-middle mb-0">
+                    <thead class="text-white-50 text-uppercase small">
+                        <tr>
+                            <th class="ps-4 py-3">Date</th>
+                            <th>Customer</th>
+                            <th>Product</th>
+                            <th class="text-end">Qty</th>
+                            <th class="text-end">Value</th>
+                            <th class="text-center">Status</th>
+                            <th class="text-end pe-4">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model.Any())
+                        {
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td class="ps-4">
+                                        <div class="d-flex flex-column">
+                                             <span class="fw-bold text-white">@item.Date.ToShortDateString()</span>
+                                            @if (!string.IsNullOrEmpty(item.TrackingNumber))
+                                            {
+                                                <small class="text-info font-monospace" style="font-size: 0.75rem;">
+                                                    <i class="bi bi-upc-scan me-1"></i> @item.TrackingNumber
+                                                </small>
+                                            }
+                                        </div>
+                                    </td>
+
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <div class="rounded-circle bg-dark border border-secondary d-flex justify-content-center align-items-center me-3" style="width:35px; height:35px;">
+                                                <i class="bi bi-truck text-info fs-5"></i>
+                                            </div>
+                                            <div>
+                                                
+                                                <span class="d-block text-white fw-bold">@item.Customer?.CustomerName</span>
+                                                <small class="text-info">via @item.Carrier</small>
+                                            </div>
+                                        </div>
+                                    </td>
+
+                                    <td>
+                                        <span class="text-info">
+                                            <i class="bi bi-bag-heart-fill text-info fs-5"></i>
+                                            @item.FinishedProduct?.ProductName
+                                        </span>
+                                    </td>
+
+                                    <td class="text-end">
+                                        <span class="badge bg-secondary font-monospace text-warning">
+                                            -@item.QuantityShipped
+                                        </span>
+                                    </td>
+
+                                    <td class="text-end">
+                                        <span class="text-warning fw-bold font-monospace">
+                                            @* @item.TotalValue *@
+                                            @Html.DisplayFor(modelItem => item.TotalValue)
+                                        </span>
+                                    </td>
+
+                                    <td class="text-center">
+                                        <span class="badge bg-dark border border-success text-success rounded-pill px-3">
+                                            @item.Status
+                                        </span>
+                                    </td>
+
+                                    <td class="text-end pe-4">     
+                                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm" style="color: #38bdf8;" title="Edit">
+                                                <i class="bi bi-pencil-fill"></i>
+                                            </a>
+
+                                        <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm" style="color: #a3e635;" title="Details">
+                                                <i class="bi bi-eye-fill"></i>
+                                            </a>
+
+                                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm" style="color: #f87171;" title="Delete">
+                                                <i class="bi bi-trash-fill"></i>
+                                            </a>
+                                                                                   
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="7" class="text-center py-5">
+                                    <div class="text-white-50 opacity-25 mb-3">
+                                        <i class="bi bi-truck fs-1"></i>
+                                    </div>
+                                    <h5 class="text-white">No Shipments Yet</h5>
+                                    <p class="text-white-50 small">Create your first shipment to start tracking sales.</p>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
