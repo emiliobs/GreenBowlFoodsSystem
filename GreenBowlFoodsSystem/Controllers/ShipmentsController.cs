@@ -125,6 +125,27 @@ public class ShipmentsController : Controller
         return View(shipment);
     }
 
+    // GET: Shipments/Details/5
+    public async Task<IActionResult> Details(int? id)
+    {
+        if (id is null)
+        {
+            return NotFound();
+        }
+
+        var shipment = await _context.Shipments
+            .Include(s => s.Customer) // brint dtas from the Customers
+            .Include(s => s.FinishedProduct) // Brint datas from Products
+            .FirstOrDefaultAsync(m => m.Id == id);
+
+        if (shipment is null)
+        {
+            return NotFound();
+        }
+
+        return View(shipment);
+    }
+
     // POST: Shipments/dit/5
     [HttpPost]
     [ValidateAntiForgeryToken]
