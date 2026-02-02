@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 
 namespace GreenBowlFoodsSystem.Controllers;
 
@@ -99,5 +100,152 @@ public class ShipmentsController : Controller
         ViewData["FinishedProductId"] = new SelectList(_context.FinishedProducts, "Id", "ProductName");
 
         return View(shipment);
+    }
+
+    // Edit Action: (with Inventory adjustment)
+    // GET: Shipments/Edit/5
+    [HttpGet]
+    public async Task<IActionResult> Edit(int? id)
+    {
+        if (id is null)
+        {
+            return NotFound();
+        }
+
+        var shipment = await _context.Shipments.FindAsync(id);
+
+        if (shipment is null)
+        {
+            return NotFound();
+        }
+
+        ViewData["CustomerId"] = new SelectList(_context.Customers, "Id", "CustomerName", shipment.CustomerId);
+        ViewData["FinishedProductId"] = new SelectList(_context.FinishedProducts, "Id", "ProductName", shipment.FinishedProductId);
+
+        return View(shipment);
+    }
+
+    // POST: Shipments/dit/5
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Edit(int id, Shipment shipment)
+    {
+        if (id != shipment.Id) return NotFound();
+
+        // Skip validation for navigation properties
+        ModelState.Remove("Customer");
+        ModelState.Remove("FinishedProduct");
+        ModelState.Remove("DeliveryForm");
+
+        if (ModelState.IsValid)
+        {
+            try
+            {
+                //  Get the original shipment from DB (without tracking) to see the OLD quantity
+                var originalShipment = await _context.Shipments
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync(s => s.Id == id);
+
+                //  Get the product to adjust stock
+                var productInDb = await _context.FinishedProducts.FindAsync(shipment.FinishedProductId);
+
+                if (originalShipment != null && productInDb != null)
+                {
+                    // Calculate the Difference
+                    // New Qty (80) - Old Qty (50) = +30 (We need to deduct 30 more)
+                    // New Qty (20) - Old Qty (50) = -30 (We need to return 30 to stock)
+                    int difference = shipment.QuantityShipped - originalShipment.QuantityShipped;
+
+                    // 4. Validate Stock Availability (Only if we are taking MORE)
+                    if (difference > 0 && productInDb.QuantityAvailable < difference)
+                    {
+                        ModelState.AddModelError("QuantityShipped", $"Not enough stock for this increase. Only {productInDb.QuantityAvailable} available.");
+                        ViewData["CustomerId"] = new SelectList(_context.Customers, "Id", "CustomerName", shipment.CustomerId);
+                        ViewData["FinishedProductId"] = new SelectList(_context.FinishedProducts, "Id", "ProductName", shipment.FinishedProductId);
+                        return View(shipment);
+                    }
+
+                    // Apply Inventory Adjustment
+                    // Note: If difference is negative (e.g., -30), subtracting a negative adds stock (-(-30) = +30)
+                    productInDb.QuantityAvailable -= difference;
+
+                    // Recalculate Financial Value
+                    shipment.TotalValue = shipment.QuantityShipped * productInDb.UnitPrice;
+
+                    //  Save Changes
+                    _context.Update(shipment);
+                    _context.Update(productInDb);
+                    await _context.SaveChangesAsync();
+
+                    TempData["SuccessMessage"] = "Shipment updated and inventory adjusted!";
+                    return RedirectToAction(nameof(Index));
+                }
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!_context.Shipments.Any(e => e.Id == id)) return NotFound();
+                else throw;
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = $"Error to editing shipment: {ex.Message}";
+            }
+        }
+
+        ViewData["CustomerId"] = new SelectList(_context.Customers, "Id", "CustomerName", shipment.CustomerId);
+        ViewData["FinishedProductId"] = new SelectList(_context.FinishedProducts, "Id", "ProductName", shipment.FinishedProductId);
+        return View(shipment);
+    }
+
+    // Delete actions (Restory Inventory)
+    // GET: Shipments/Delete/5
+    public async Task<IActionResult> Delete(int? id)
+    {
+        if (id == null) return NotFound();
+
+        var shipment = await _context.Shipments
+            .Include(s => s.Customer)
+            .Include(s => s.FinishedProduct)
+            .FirstOrDefaultAsync(m => m.Id == id);
+
+        if (shipment == null) return NotFound();
+
+        return View(shipment);
+    }
+
+    // POST: Shipments/Delete/5
+    [HttpPost, ActionName("Delete")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> DeleteConfirmed(int id)
+    {
+        try
+        {
+            var shipment = await _context.Shipments.FindAsync(id);
+
+            if (shipment != null)
+            {
+                // 1. RESTORE INVENTORY 🔄
+                // We are canceling the shipment, so the items go back to the warehouse.
+                var product = await _context.FinishedProducts.FindAsync(shipment.FinishedProductId);
+
+                if (product != null)
+                {
+                    product.QuantityAvailable += shipment.QuantityShipped;
+                    _context.Update(product);
+                }
+
+                // 2. Delete the Record
+                _context.Shipments.Remove(shipment);
+                await _context.SaveChangesAsync();
+
+                TempData["SuccessMessage"] = "Shipment deleted and stock restored.";
+            }
+        }
+        catch (Exception ex)
+        {
+            TempData["ErroMessage"] = $"Error to deleting shipment: {ex.Message}";
+        }
+
+        return RedirectToAction(nameof(Index));
     }
 }

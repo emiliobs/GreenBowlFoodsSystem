@@ -1,0 +1,65 @@
+﻿@model GreenBowlFoodsSystem.Models.Shipment
+
+@{
+    ViewData["Title"] = "Delete Shipment";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-6">
+
+        <div class="text-center mb-4 animate-fade-up">
+            <h1 class="display-6 fw-bold text-danger">Delete Shipment?</h1>
+            <p class="text-white">This action cannot be undone.</p>
+        </div>
+
+        <div class="card shadow-lg animate-fade-up" style="animation-delay: 0.1s; border: 1px solid rgba(220, 38, 38, 0.3);">
+
+            <div class="card-body p-5 text-center">
+
+                <div class="mb-4 text-danger opacity-75">
+                    <i class="bi bi-trash-fill" style="font-size: 3rem;"></i>
+                </div>
+
+                <h4 class="text-white mb-3">
+                    Are you sure you want to delete the shipment for <br />
+                    <strong class="text-danger">@Model.QuantityShipped units</strong> of
+                    <strong class="text-info">@Model.FinishedProduct?.ProductName</strong>?
+                </h4>
+
+                <div class="alert alert-danger bg-transparent border-danger text-danger small mb-4">
+                    <i class="bi bi-arrow-counterclockwise me-2"></i>
+                    <strong>Warning:</strong> This action will RESTORE items to inventory.
+                </div>
+
+                <div class="bg-dark rounded p-3 mb-4 mx-1 text-start border border-secondary">
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="text-white">Date:</span>
+                        <span class="text-white">@Model.Date.ToShortDateString()</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="text-white">Customer:</span>
+                        <span class="text-white">@Model.Customer?.CustomerName</span>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <span class="text-white">Tracking:</span>
+                        <span class="font-monospace text-info">@(Model.TrackingNumber ?? "N/A")</span>
+                    </div>
+                </div>
+
+                <form asp-action="Delete">
+                    <input type="hidden" asp-for="Id" />
+                    <div class="d-grid gap-2 mt-2">
+                        <button type="submit" class="btn btn-lg text-white shadow" style="background-color: #dc3545; border-radius: 50px;">
+                            <i class="bi bi-trash-fill me-2"></i> Confirm Delete & Restore Stock
+                        </button>
+
+                        <a asp-action="Index" class="btn btn-back-custom text-center justify-content-center mt-2 text-white-50 text-decoration-none">
+                            Cancel
+                        </a>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,125 @@
+﻿@model GreenBowlFoodsSystem.Models.Shipment
+
+@{
+    ViewData["Title"] = "Edit Shipment";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-8">
+
+        <div class="text-center mb-2 animate-fade-up">
+            <h1 class="display-6 fw-bold text-white">Edit Shipment</h1>
+            <p class="text-white">Update logistics details or adjust inventory.</p>
+        </div>
+
+        <div class="card shadow-lg border-0 animate-fade-up" style="animation-delay: 0.1s;">
+            <div class="card-body p-5">
+
+                <form asp-action="Edit">
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                    <input type="hidden" asp-for="Id" />
+
+                    <h5 class="text-white mb-2"><i class="bi bi-truck me-2 text-info"></i>Logistics Details</h5>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label asp-for="Date" class="form-label text-white small fw-bold">Shipment Date</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-calendar-event"></i></span>
+                                <input asp-for="Date" type="date" class="form-control" />
+                            </div>
+                            <span asp-validation-for="Date" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="Status" class="form-label text-white small fw-bold">Current Status</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-flag-fill"></i></span>
+                                <select asp-for="Status" class="form-control">
+                                    <option value="Pending">Pending</option>
+                                    <option value="Shipped">Shipped</option>
+                                    <option value="Delivered">Delivered</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="CustomerId" class="form-label text-white small fw-bold">Customer / Destination</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-building"></i></span>
+                            <select asp-for="CustomerId" class="form-control" asp-items="ViewBag.CustomerId"></select>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label asp-for="Carrier" class="form-label text-white small fw-bold">Carrier</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-send"></i></span>
+                                <input asp-for="Carrier" class="form-control" />
+                            </div>
+                            <span asp-validation-for="Carrier" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="TrackingNumber" class="form-label text-white small fw-bold">Tracking #</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-upc-scan"></i></span>
+                                <input asp-for="TrackingNumber" class="form-control" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <h5 class="text-warning mb-3 d-flex align-items-center">
+                        <i class="bi bi-box-seam me-2"></i> Inventory Impact
+                    </h5>
+
+                    <div class="alert alert-dark border-warning d-flex align-items-start mb-3 p-3" role="alert" style="background-color: rgba(255, 193, 7, 0.05);">
+                        <i class="bi bi-exclamation-triangle-fill text-warning me-3 fs-5 mt-1"></i>
+                        <div class="text-white-50 small" style="line-height: 1.4;">
+                            <strong class="text-warning d-block mb-1">Stock Adjustment</strong>
+                            Changing the quantity here will automatically update the warehouse levels based on the difference.
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">                         
+                            <label asp-for="FinishedProductId" class="orm-label text-white small fw-bold">Product</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="bi bi-bag"></i></span>
+                                    <select asp-for="FinishedProductId" class="form-control" asp-items="ViewBag.FinishedProductId"></select>
+                                </div>                       
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="QuantityShipped" class="form-label text-white small fw-bold">Quantity</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-layers"></i></span>
+                                <input asp-for="QuantityShipped" type="number" class="form-control" />
+                            </div>
+                            <span asp-validation-for="QuantityShipped" class="text-danger small"></span>
+                        </div>
+                    </div>
+                        
+                    
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary btn-lg shadow-sm" style="background-color: #10b981; border: none;">
+                            <i class="bi bi-check-lg me-2"></i> Save Changes
+                        </button>
+
+                        <a asp-action="Index" class="btn btn-back-custom text-center justify-content-center mt-2">
+                            <i class="bi bi-arrow-left me-1"></i> Back to List
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

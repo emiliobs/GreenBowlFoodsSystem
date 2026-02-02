@@ -1,5 +1,21 @@
 ﻿@using Microsoft.AspNetCore.Http
 @inject IHttpContextAccessor HttpContextAccessor
+
+@{
+    // Helper function to determine if a menu item is active
+    string GetActiveClass(string controllerName)
+    {
+        var currentController = ViewContext.RouteData.Values["Controller"]?.ToString();
+
+        // If the current controller matches the link, return "active"
+        if (string.Equals(currentController, controllerName, StringComparison.OrdinalIgnoreCase))
+        {
+            return "active";
+        }
+        return "";
+    }
+}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -16,11 +32,26 @@
         <nav class="navbar navbar-expand-xl navbar-toggleable-xl navbar-dark border-bottom box-shadow mb-3" style="background-color: #0f172a;">
             <div class="container-fluid px-4">
 
-                <a class="navbar-brand fw-bold fs-4 tracking-wide" style="font-style:italic; font-weight:bold;" asp-area="" asp-controller="Home" asp-action="Index">
-                    <i class="bi bi-heart-fill me-0" style="color: #10b981;"></i>
-                    <span style="color: #ffffff;">Green Bowl</span> <span style="color: #10b981;">Foods!</span>
-                </a>
+               <a class="navbar-brand d-flex align-items-center" asp-area="" asp-controller="Home" asp-action="Index">
+    
+                <img src="~/images/logo.png" alt="GreenBowl Logo" class="navbar-brand-icon me-2">
 
+                <div class="d-flex flex-column" style="line-height: 1.2;">
+        
+                    <div style="font-size:1.5rem;">
+                       <span class="fw-bold fst-italic" style="color: #ffffff;">Green Bowl</span>
+                       <span class="fw-bold" style="color: #10b981;">Foods!</span>
+                    </div>
+
+                    <span class="text-white" style="font-size: 0.8rem; font-weight: normal;">
+                      Inventory Management
+                    </span>
+        
+                </div>
+              </a>
+                    
+                
+                
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation" style="border: none;">
                     <span class="navbar-toggler-icon"></span>
@@ -28,10 +59,10 @@
 
                 <div class="navbar-collapse collapse d-xl-inline-flex justify-content-between">
 
-                    <ul class="navbar-nav flex-grow-1">
+                    <ul class="navbar-nav flex-grow-1 nav-pills-custom">
 
                         <li class="nav-item">
-                            <a class="nav-link text-white" asp-area="" asp-controller="Home" asp-action="Index">
+                            <a class="nav-link @GetActiveClass("Home")" asp-area="" asp-controller="Home" asp-action="Index">
                                 <i class="bi bi-speedometer2 me-2"></i> Dashboard
                             </a>
                         </li>
@@ -39,7 +70,7 @@
                         @if (HttpContextAccessor.HttpContext!.Session.GetString("UserRole") == "Admin")
                         {
                             <li class="nav-item">
-                                <a class="nav-link text-white" asp-area="" asp-controller="Users" asp-action="Index">
+                                <a class="nav-link @GetActiveClass("Users")"  asp-area="" asp-controller="Users" asp-action="Index">
                                     <i class="bi bi-shield-lock-fill me-2"></i> Users
                                 </a>
                             </li>
@@ -50,7 +81,7 @@
                             <li class="nav-item border-start border-secondary mx-2 d-none d-xl-block"></li>
                             <li class="nav-item"><span class="nav-link text-white-50 small fw-bold d-xl-none mt-2">DIRECTORY</span></li>
                             <li class="nav-item">
-                                <a class="nav-link text-white" asp-area="" asp-controller="Suppliers" asp-action="Index">
+                                <a class="nav-link @GetActiveClass("Suppliers")"  asp-area="" asp-controller="Suppliers" asp-action="Index">
                                     <i class="bi bi-truck me-2"></i> Suppliers
                                 </a>
                             </li>
@@ -59,12 +90,12 @@
                             <li class="nav-item"><span class="nav-link text-white-50 small fw-bold d-xl-none mt-2">INVENTORY</span></li>
 
                             <li class="nav-item">
-                                <a class="nav-link text-white" asp-area="" asp-controller="RawMaterials" asp-action="Index">
+                                <a class="nav-link text-white @GetActiveClass("RawMaterials")" " asp-area="" asp-controller="RawMaterials" asp-action="Index">
                                     <i class="bi bi-basket-fill me-2"></i> Raw Materials
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link text-white" asp-area="" asp-controller="FinishedProducts" asp-action="Index">
+                                <a class="nav-link @GetActiveClass("FinishedProducts")" " asp-area="" asp-controller="FinishedProducts" asp-action="Index">
                                     <i class="bi bi-bag-heart-fill me-2"></i> Products
                                 </a>
                             </li>
@@ -73,14 +104,14 @@
                             <li class="nav-item"><span class="nav-link text-white-50 small fw-bold d-xl-none mt-2">FUTURE OPS</span></li>
 
                             <li class="nav-item">
-                                <a class="nav-link text-white" asp-area="" asp-controller="ProductionBatches" asp-action="Index">
+                                <a class="nav-link @GetActiveClass("ProductionBatches")"  asp-area="" asp-controller="ProductionBatches" asp-action="Index">
                                     <i class="bi bi-fire me-2"></i> Production
                                 </a>
                             </li>
                                                     
 
                             <li class="nav-item">
-                                <a class="nav-link text-white" asp-controller="Shipments" asp-action="Index"><i class="bi bi-airplane-engines-fill me-2"></i> Shipping</a>
+                                <a class="nav-link @GetActiveClass("Shipments")"  asp-controller="Shipments" asp-action="Index"><i class="bi bi-airplane-engines-fill me-2"></i> Shipping</a>
                             </li>
                         }
                     </ul>
