@@ -1,0 +1,71 @@
+﻿@model GreenBowlFoodsSystem.Models.XRayCheck
+
+@{
+    ViewData["Title"] = "Delete Inspection";
+
+    // 🧠 Visual Logic: Show the Result color even in the delete screen
+    var isPass = Model.Result == "Pass";
+    var resultColor = isPass ? "text-success" : "text-danger";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-6">
+
+        <div class="text-center mb-4 animate-fade-up">
+            <h1 class="display-6 fw-bold text-danger">Delete Record?</h1>
+            <p class="text-white-50">This action cannot be undone.</p>
+        </div>
+
+        <div class="card shadow-lg animate-fade-up" style="animation-delay: 0.1s; border: 1px solid rgba(220, 38, 38, 0.3);">
+
+            <div class="card-body p-5 text-center">
+
+                <div class="mb-4 text-danger opacity-75">
+                    <i class="bi bi-trash-fill" style="font-size: 3rem;"></i>
+                </div>
+
+                <h4 class="text-white mb-3">
+                    Are you sure you want to delete the <br />
+                    <strong class="@resultColor">@Model.Result.ToUpper()</strong> report for
+                    <strong class="text-info">@Model.ProductionBatch?.BatchNumber</strong>?
+                </h4>
+
+                <div class="alert alert-danger bg-transparent border-danger text-danger small mb-4">
+                    <i class="bi bi-exclamation-octagon me-2"></i>
+                    <strong>Warning:</strong> You are removing a permanent quality control record from the audit trail.
+                </div>
+
+                <div class="bg-dark rounded p-3 mb-4 mx-1 text-start border border-secondary">
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="text-white">Inspection Date:</span>
+                        <span class="text-white">@Model.CheckTime.ToString("g")</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="text-white">Inspector:</span>
+                        <span class="text-white">@Model.Operator?.Username</span>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <span class="text-white">Report ID:</span>
+                        <span class="font-monospace text-warning">#@Model.Id</span>
+                    </div>
+                </div>
+
+                <form asp-action="Delete">
+                    <input type="hidden" asp-for="Id" />
+                    <div class="d-grid gap-2 mt-2">
+
+                        <button type="submit" class="btn btn-lg text-white shadow" style="background-color: #dc3545; border-radius: 50px;">
+                            <i class="bi bi-trash-fill me-2"></i> Confirm Delete
+                        </button>
+
+                        <a asp-action="Index" class="btn btn-back-custom text-center justify-content-center mt-2 text-white-50 text-decoration-none">
+                            Cancel
+                        </a>
+
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>

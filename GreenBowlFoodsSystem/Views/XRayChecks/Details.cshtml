@@ -1,0 +1,104 @@
+﻿@model GreenBowlFoodsSystem.Models.XRayCheck
+
+@{
+    ViewData["Title"] = "Inspection Details";
+
+    // 🧠 Visual Logic: Determine Green vs Red styling
+    var isPass = Model.Result == "Pass";
+    var colorClass = isPass ? "text-success" : "text-danger";
+    var bgClass = isPass ? "bg-success" : "bg-danger";
+    var icon = isPass ? "bi-check-circle-fill" : "bi-exclamation-triangle-fill";
+    var borderStyle = isPass ? "border-success" : "border-danger";
+}
+
+<div class="row justify-content-center animate-fade-up">
+    <div class="col-lg-6">
+
+        <div class="text-center mb-3">
+            <h1 class="display-6 fw-bold text-white">Inspection Report Details</h1>
+            <p class="text-warning font-monospace" style="font-size: 1.5rem;">Ref: #@Model.Id</p>
+        </div>
+
+        <div class="card shadow-lg  text-white" style="border: 1px solid rgba(255,255,255,0.1); border-top: 2px solid @(isPass ? "#10b981" : "#dc3545"); border-radius: 15px;">
+
+            <div class="card-header bg-transparent border-0 text-center pt-0 pb-0">
+                <i class="bi @icon mb-0 d-block" style="font-size: 5rem; color: @(isPass ? "#10b981" : "#dc3545");"></i>
+                
+                <h2 class="fw-bold @colorClass text-uppercase mb-1">
+                    @Model.Result
+                </h2>
+                <p class="text-white-50">
+                    @(isPass ? "Batch approved for packaging." : "BATCH REJECTED - CONTAMINANTS FOUND")
+                </p>
+            </div>
+
+            <div class="card-body p-2">
+
+                <div class="row mb-3 border-bottom border-secondary pb-4">
+                    <div class="col-md-6 border-end border-secondary">
+                        <h6 class="text-info text-uppercase small fw-bold mb-3">Target Batch</h6>
+                        <div class="d-flex align-items-center">
+                            <div class="bg-dark rounded p-3 me-3 border border-secondary">
+                                <i class="bi bi-box-seam fs-4 text-info"></i>
+                            </div>
+                            <div>
+                                <h4 class="text-white mb-0">@Model.ProductionBatch?.BatchNumber</h4>
+                                <small class="text-info">Target: @Model.ProductionBatch?.TargetQuantity Units</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 ps-md-4 mt-3 mt-md-0">
+                        <h6 class="text-info text-uppercase small fw-bold mb-3">Inspector Info</h6>
+                        <ul class="list-unstyled text-white">
+                            <li class="mb-2">
+                                <i class="bi bi-person-badge text-info me-2"></i>
+                                <span class="fw-bold">Operator:</span> @Model.Operator?.Username
+                            </li>
+                            <li>
+                                <i class="bi bi-clock-history text-info me-2"></i>
+                                <span class="fw-bold">Time:</span> @Model.CheckTime.ToString("g")
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <h6 class="@colorClass text-uppercase small fw-bold mb-3">
+                    <i class="bi bi-chat-left-text me-1"></i> Inspector Notes
+                </h6>
+
+                <div class="p-4 rounded border @borderStyle" style="background-color: rgba(255, 255, 255, 0.05);">
+                    @if (!string.IsNullOrEmpty(Model.Comments))
+                    {
+                        <p class="mb-0 fst-italic text-white">"@Model.Comments"</p>
+                    }
+                    else
+                    {
+                        <span class="text-white-50 fst-italic">No additional notes provided.</span>
+                    }
+                </div>
+
+            </div>
+
+            <div class="card-footer bg-transparent border-0 pb-4 text-center">
+                <div class="d-grid gap-1 text-center">
+
+                    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary rounded-pill  shadow-sm   ms-5 me-5 mb-2" style="background-color: #10b981; border: none;">
+                        
+                        <i class="bi bi-pencil-fill me-2"></i> Edit Report
+                    </a>
+                   
+                   @*  <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger rounded-pill shadow-sm  text-center  ms-5 me-5" title="Delete Record">
+                        <i class="bi bi-trash-fill me-2"></i>  Confirm Delete
+                    </a> *@
+
+                    <a asp-action="Index" class="btn btn-back-custom text-center justify-content-center ms-5 mt-2 me-5 ">
+                        <i class="bi bi-arrow-left me-2"></i> Back to Log
+                    </a>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>

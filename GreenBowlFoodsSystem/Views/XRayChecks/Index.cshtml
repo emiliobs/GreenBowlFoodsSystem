@@ -1,0 +1,118 @@
+﻿@model IEnumerable<GreenBowlFoodsSystem.Models.XRayCheck>
+
+@{
+    ViewData["Title"] = "Quality Control Log";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4 animate-fade-up">
+    <div>
+        <h1 class="display-6 fw-bold text-white">X-Ray Inspection Log</h1>
+        <p class="text-white-50 small">Monitor production batch safety checks.</p>
+    </div>
+
+    @if (Model.Any())
+    {
+        <a asp-action="Create" class="btn btn-primary btn-sm shadow-lg rounded-pill px-4" style="background-color: #10b981; border: none;">
+            <i class="bi bi-shield-plus me-2"></i> New Inspection
+        </a>
+    }
+</div>
+
+@if (!Model.Any())
+{
+ 
+    // EMPTY STATE (When no data exists)
+  
+    <div class="text-center py-5 animate-fade-up" style="animation-delay: 0.1s;">
+        <div class="mb-4">
+            <div class="d-inline-block p-5 rounded-circle" style="background: rgba(16, 185, 129, 0.1);">
+                <i class="bi bi-clipboard-data" style="font-size: 5rem; color: #10b981;"></i>
+            </div>
+        </div>
+        <h3 class="text-white fw-bold mb-3">No Inspections Recorded Yet</h3>
+        <p class="text-white-50 mb-5 mx-auto" style="max-width: 500px; font-size: 1.1rem;">
+            The quality log is clean. Start by performing an X-Ray check on a production batch.
+        </p>
+        <a asp-action="Create" class="btn btn-primary btn-lg shadow-lg rounded-pill px-5 py-3" style="background-color: #10b981; border: none; font-weight: bold;">
+            <i class="bi bi-qr-code-scan me-2"></i> Start First Inspection
+        </a>
+    </div>
+}
+else
+{
+  
+    // DATA GRID (Your existing beautiful design)
+
+    <div class="row gx-3 gy-3">
+        @foreach (var item in Model)
+        {
+            var isPass = item.Result == "Pass";
+            var cardBorder = isPass ? "border-success" : "border-danger";
+            var badgeColor = isPass ? "bg-success" : "bg-danger";
+            var icon = isPass ? "bi-check-circle-fill" : "bi-exclamation-triangle-fill";
+            var glow = isPass ? "box-shadow: 0 0 10px rgba(16, 185, 129, 0.1);" : "box-shadow: 0 0 10px rgba(220, 38, 38, 0.1);";
+
+            // 🧠 Change: col-lg-3 allows 4 items per row on large screens
+            <div class="col-md-6 col-lg-3 animate-fade-up">
+                <div class="card h-100 bg-dark text-white shadow-sm @cardBorder" style="border-width: 1px; animation-delay: 0.1s; @glow border-radius: 12px;">
+
+                    <div class="card-header bg-transparent border-0 d-flex justify-content-between align-items-center mt-2 px-3 pt-3">
+                        <span class="badge bg-gradient text-warning rounded-pill" style="font-size:1rem;">
+                            <i class="bi bi-upc me-1"></i> #@item.Id
+                        </span>
+                        <small class="text-white">@item.CheckTime.ToShortDateString()</small>
+                    </div>
+
+                    <div class="card-body text-center p-3">
+
+                        <h6 class="card-title text-info mb-0 fw-bold text-truncate" title="@item.ProductionBatch?.BatchNumber">
+                            @item.ProductionBatch?.BatchNumber
+                        </h6>
+                        <p class="small text-white-50 mb-3" style="font-size: 0.75rem;">Batch Number</p>
+
+                        <div class="mb-2">
+                            <i class="bi @icon" style="font-size: 2.5rem; color: @(isPass ? "#10b981" : "#dc3545");"></i>
+                        </div>
+
+                        <span class="badge @badgeColor rounded-pill shadow px-3">
+                            @item.Result.ToUpper()
+                        </span>
+
+                        @if (!string.IsNullOrEmpty(item.Comments))
+                        {
+                            <div class="mt-4 p-2 rounded text-start" style="background-color: rgba(255,255,255,0.05);">
+                                <small class="text-white fst-italic d-block">
+                                    <i class="bi bi-chat-left-quote me-1 text-info"></i> "@item.Comments"
+                                </small>
+                            </div>
+                        }
+                    </div>
+
+                    <div class="card-footer bg-transparent border-0 pb-3 text-center">
+
+                        <div class="d-flex justify-content-center gap-2 mb-2">
+                            
+                            <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-outline-success btn-sm rounded-pill px-3" style="color: #38bdf8;" title="Edit">
+                               <i class="bi bi-pencil-fill"></i>
+                            </a>
+                             <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-outline-primary btn-sm rounded-pill px-3" style="color: #a3e635;" title="Details">
+                                <i class="bi bi-eye-fill"></i>
+                            </a>
+                            <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-outline-danger btn-sm rounded-pill px-3" title="Delete">
+                                <i class="bi bi-trash-fill"></i>
+                            </a>
+
+                        </div>
+
+                        <div>
+                            <small class="text-info" style="font-size: 0.7rem;">
+                                Inspector: <span class="text-white">@item.Operator?.Username</span>
+                            </small>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        }
+    </div>
+}

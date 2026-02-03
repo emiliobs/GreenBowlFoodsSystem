@@ -1,0 +1,98 @@
+﻿@model GreenBowlFoodsSystem.Models.XRayCheck
+
+@{
+    ViewData["Title"] = "New X-Ray Inspection";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+
+        <div class="text-center mb-2 animate-fade-up">
+            <h1 class="fw-bold text-white">New Inspection</h1>
+            <p class="text-white-50">Record X-Ray results for a production batch.</p>
+        </div>
+
+        <div class="card shadow-lg border-0 animate-fade-up" style="animation-delay: 0.1s;">
+            <div class="card-body p-5">
+
+                <form asp-action="Create">
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                    <h5 class="text-white mb-4 d-flex align-items-center fw-bold" style="font-size: 1.1rem;">
+                        <i class="bi bi-qr-code-scan text-info me-2"></i> Inspection Details
+                    </h5>
+
+                    <div class="mb-4">
+                        <label asp-for="ProductionBatchId" class="form-label text-white fw-bold small">Target Batch</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-box-seam text-info"></i></span>
+                            <select asp-for="ProductionBatchId" class="form-control" asp-items="ViewBag.ProductionBatchId">
+                                <option value="" disabled selected>-- Select Batch to Scan --</option>
+                            </select>
+                        </div>
+                        <span asp-validation-for="ProductionBatchId" class="text-danger small"></span>
+                    </div>
+
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <label asp-for="OperatorId" class="form-label text-white fw-bold small">Inspector</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-person-badge text-info"></i></span>
+                                <select asp-for="OperatorId" class="form-control" asp-items="ViewBag.OperatorId"></select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="CheckTime" class="form-label text-white fw-bold small">Time of Check</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-clock text-info"></i></span>
+                                <input asp-for="CheckTime" class="form-control text-white" type="date"/>
+                            </div>
+                            <span asp-validation-for="CheckTime" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <h5 class="text-white mb-4 d-flex align-items-center fw-bold" style="font-size: 1.1rem;">
+                        <i class="bi bi-clipboard-check text-warning me-2"></i> Scan Results
+                    </h5>
+
+                    <div class="mb-4">
+                        <label asp-for="Result" class="form-label text-white fw-bold small">Outcome</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-activity text-info"></i></span>
+                            <select asp-for="Result" class="form-control fw-bold" style="background-color: #0f172a !important;">
+                                <option value="Pass" class="text-success fw-bold">🟢 PASS - No Contaminants</option>
+                                <option value="Fail" class="text-danger fw-bold">🔴 FAIL - Contaminant Detected</option>
+                            </select>
+                        </div>
+                        <span asp-validation-for="Result" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-4">
+                        <label asp-for="Comments" class="form-label text-white fw-bold small">Notes / Contaminant Details</label>
+                        <textarea asp-for="Comments" class="form-control" rows="3" placeholder="If failed, describe the foreign object found..."></textarea>
+                        <span asp-validation-for="Comments" class="text-danger small"></span>
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-success  shadow-lg fw-bold py-3 rounded-pill" style="background-color: #10b981; border: none;">
+                            <i class="bi bi-save me-2"></i> Submit Report
+                        </button>
+
+                        <a asp-action="Index" class="btn btn-back-custom text-center justify-content-center mt-2">
+                            <i class="bi bi-arrow-left me-1"></i> Back to List
+                        </a>
+
+                       
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

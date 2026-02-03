@@ -269,6 +269,58 @@ namespace GreenBowlFoodsSystem.Data
                         context.SaveChanges();
                     }
                 }
+
+                // =============================================================
+                // 9. SEED X-RAY CHECKS (Quality Control) -- NEW! 🟢
+                // =============================================================
+                if (!context.XRayChecks.Any())
+                {
+                    // 1. Get an existing inspector (User)
+                    var inspector = context.Users.FirstOrDefault();
+
+                    // 2. Get existing batches
+                    var batches = context.ProductionBatches.ToList();
+
+                    // 3. Create Seed Data if we have dependencies
+                    if (inspector != null && batches.Count >= 3)
+                    {
+                        var xRayChecks = new XRayCheck[]
+                        {
+                            // ✅ Scenario 1: Passed Check
+                            new XRayCheck
+                            {
+                                ProductionBatchId = batches[0].Id, // Links to 1st Batch
+                                OperatorId = inspector.Id,         // Links to Admin/User
+                                CheckTime = DateTime.Now.AddDays(-1),
+                                Result = "Pass",
+                                Comments = "Routine scan completed. No contaminants found. Approved."
+                            },
+
+                            // ❌ Scenario 2: Failed Check
+                            new XRayCheck
+                            {
+                                ProductionBatchId = batches[1].Id, // Links to 2nd Batch
+                                OperatorId = inspector.Id,
+                                CheckTime = DateTime.Now,
+                                Result = "Fail",
+                                Comments = "CRITICAL: Small metal fragment detected. Batch quarantined."
+                            },
+
+                            // Scenario 3 : PAssed Cheek
+                           new XRayCheck
+                           {
+                               ProductionBatchId =batches[3].Id,
+                               OperatorId = inspector.Id,
+                               CheckTime = DateTime.Now,
+                               Result = "Pass",
+                               Comments = "Routine scan completed. No contaminants found. Approved.",
+                           }
+                        };
+
+                        context.XRayChecks.AddRange(xRayChecks);
+                        context.SaveChanges();
+                    }
+                }
             }
             catch (Exception ex)
             {

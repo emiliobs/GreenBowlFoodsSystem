@@ -113,6 +113,12 @@
                             <li class="nav-item">
                                 <a class="nav-link @GetActiveClass("Shipments")"  asp-controller="Shipments" asp-action="Index"><i class="bi bi-airplane-engines-fill me-2"></i> Shipping</a>
                             </li>
+
+                            <li class="nav-item">
+                                <a class="nav-link @GetActiveClass("XRayChecks")" asp-area="" asp-controller="XRayChecks" asp-action="Index">
+                                    <i class="bi bi-shield-check me-1"></i> Quality Control
+                                </a>
+                            </li>
                         }
                     </ul>
 
