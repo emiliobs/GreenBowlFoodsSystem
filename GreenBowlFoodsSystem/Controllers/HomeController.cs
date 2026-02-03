@@ -64,6 +64,11 @@ public class HomeController : Controller
         return View();
     }
 
+    public async Task<IActionResult> About()
+    {
+        return View();
+    }
+
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
     public IActionResult Error()
     {

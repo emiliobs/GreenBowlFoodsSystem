@@ -42,7 +42,7 @@ public class XRayChecksController : Controller
     {
         if (id is null)
         {
-            return NotFound();
+            return View("NotFound");
         }
 
         try
@@ -57,7 +57,7 @@ public class XRayChecksController : Controller
         catch (Exception ex)
         {
             TempData["ErroMessage"] = $"Error X-Ray Inspection doesn't found: {ex.Message}";
-            return NotFound();
+            return View("NotFound");
         }
     }
 
@@ -117,7 +117,7 @@ public class XRayChecksController : Controller
     {
         if (id is null)
         {
-            return NotFound();
+            return View("NotFound");
         }
 
         try
@@ -125,7 +125,7 @@ public class XRayChecksController : Controller
             var xRayCheck = await _context.XRayChecks.FindAsync(id);
             if (xRayCheck is null)
             {
-                return NotFound();
+                return View("NotFound");
             }
 
             ViewData["OperatorId"] = new SelectList(_context.Users, "Id", "Username");
@@ -137,7 +137,7 @@ public class XRayChecksController : Controller
         {
             ViewData["ErrorMessage"] = $"Error editing X-Ray Inspection: {ex.Message}";
 
-            return NotFound();
+            return View("NotFound");
         }
     }
 
@@ -178,7 +178,7 @@ public class XRayChecksController : Controller
     {
         if (id is null)
         {
-            return NotFound();
+            return View("NotFound");
         }
 
         try
@@ -190,7 +190,7 @@ public class XRayChecksController : Controller
 
             if (xRayCheck == null)
             {
-                return NotFound();
+                return View("NotFound");
             }
 
             return View(xRayCheck);
@@ -198,7 +198,7 @@ public class XRayChecksController : Controller
         catch (Exception ex)
         {
             TempData["ErrorMessage"] = $"Error deleting X-Ray Inspection: {ex.Message} ";
-            return NotFound();
+            return View("NotFound");
         }
     }
 
@@ -218,7 +218,6 @@ public class XRayChecksController : Controller
                 await _context.SaveChangesAsync();
 
                 TempData["SuccessMessage"] = $"Deleting X-Ray Inspection was successfully!";
-               
             }
 
             RedirectToAction(nameof(Index));
