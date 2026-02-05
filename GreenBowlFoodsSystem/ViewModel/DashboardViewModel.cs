@@ -5,16 +5,24 @@ namespace GreenBowlFoodsSystem.ViewModel;
 
 public class DashboardViewModel
 {
-    // Counters for the cards above
-    public int ActiveBatchesCount { get; set; }
+    //KPI CARDS (Top Row)
 
-    public int QAHoldCount { get; set; }
-    public int PlannedCount { get; set; }
+    public decimal TotalInventoryValue { get; set; } // $$$ Money in warehouse
+    public int ActiveShipmentsCount { get; set; }    // Trucks on the road
+    public int QualityIssuesToday { get; set; }      // X-Ray Fails (Last 24h)
+    public int ExpiringSoonCount { get; set; }       // Ingredients expiring in 7 days
 
-    // Ingentory alert
+    //  CRITICAL ALERTS (Right Panel)
+    // Products (Finished Goods) running low
+    public List<FinishedProduct> LowStockProducts { get; set; } = new List<FinishedProduct>();
 
-    public int LowStockProductCount { get; set; }
+    // Ingredients (Raw Materials) running low or expiring
+    public List<RawMaterial> CriticalLowStockMaterials { get; set; } = new List<RawMaterial>();
 
-    // List of recent batches to display mini-table
+    // LIVE FEEDS (Lerft Panel)
+    // Recent production activity
     public List<ProductionBatch> RecentBatches { get; set; } = new List<ProductionBatch>();
+
+    // Recent logistics activity
+    public List<Shipment> RecentShipments { get; set; } = new List<Shipment>();
 }

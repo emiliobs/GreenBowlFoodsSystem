@@ -1,195 +1,258 @@
-﻿@{
+﻿@model GreenBowlFoodsSystem.ViewModel.DashboardViewModel
+@{
     ViewData["Title"] = "Executive Dashboard";
     var username = Context.Session.GetString("UserSession");
-    var userRole = Context.Session.GetString("UserRole");
+    var ukCulture = System.Globalization.CultureInfo.GetCultureInfo("en-GB");
 }
 
-<div class="d-flex align-items-center justify-content-center" style="min-height: 70vh;">
+<style>
+    /* Custom CSS to override Bootstrap blue pills with Green Bowl Green */
+    .nav-pills-green .nav-link.active,
+    .nav-pills-green .show > .nav-link {
+        background-color: #10b981 !important; /* Nuestro verde principal */
+        color: white !important;
+    }
 
-    <div class="text-center animate-fade-up">
+    .nav-pills-green .nav-link {
+        color: #a3e635; /* Un verde más claro para los inactivos, para contraste */
+        transition: all 0.3s ease;
+    }
 
-       
+        .nav-pills-green .nav-link:hover:not(.active) {
+            background-color: rgba(16, 185, 129, 0.1); /* Fondo verde sutil al pasar el mouse */
+            color: #10b981;
+        }
+</style>
 
-        @if ( username != null)
+<div class="d-flex align-items-center justify-content-center" style="min-height: 80vh;">
+    <div class="container-fluid animate-fade-up">
+
+        @if (username != null)
         {
-            <h1 class="display-5 fw-bold text-white mb-2">Welcome back, <span class="text-success">@username</span>!</h1>
-            <p class="text-white mb-5">Here is today's production overview.</p>
+            <div class="d-flex justify-content-between align-items-end mb-5">
+                <div>
+                    <h1 class="display-5 fw-bold text-white mb-0">Welcome back, <span class="text-success">@username</span>!</h1>
+                    <p class="text-white-50">Operational Overview | London UK - HQ</p>
+                </div>
+                <div class="text-end d-none d-md-block">
+                    <h4 class="text-white mb-0">@DateTime.Now.ToString("dddd, dd MMMM")</h4>
+                    <span class="badge bg-dark border border-secondary text-white-50">System v1.0</span>
+                </div>
+            </div>
 
-            <div class="row g-4 mb-5 justify-content-center">
-
-                <div class="col-md-3 col-6">
+            <div class="row g-4 mb-5">
+                <div class="col-xl-3 col-md-6">
+                    <div class="card border-0 shadow-lg h-100" style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); border-bottom: 4px solid #10b981;">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <h6 class="text-white-50 text-uppercase small ls-1 mb-0">Inventory Value</h6>
+                                <i class="bi bi-currency-pound text-success fs-4"></i>
+                            </div>
+                            <h2 class="display-6 fw-bold text-white mb-0">@Model.TotalInventoryValue.ToString("C0", ukCulture)</h2>
+                            <small class="text-success"><i class="bi bi-graph-up-arrow me-1"></i>Total Assets</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-3 col-md-6">
                     <div class="card border-0 shadow-lg h-100" style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); border-bottom: 4px solid #38bdf8;">
                         <div class="card-body">
                             <div class="d-flex justify-content-between align-items-center mb-2">
-                                <h6 class="text-white-50 text-uppercase small ls-1 mb-0">In Progress</h6>
-                                <i class="bi bi-gear-wide-connected text-info fs-4"></i>
+                                <h6 class="text-white-50 text-uppercase small ls-1 mb-0">Logistics</h6>
+                                <i class="bi bi-truck text-info fs-4"></i>
                             </div>
-                            <h2 class="display-4 fw-bold text-white mb-0">@Model.ActiveBatchesCount</h2>
-                            <small class="text-info">Batches running</small>
+                            <h2 class="display-6 fw-bold text-white mb-0">@Model.ActiveShipmentsCount</h2>
+                            <small class="text-info">Shipments on route</small>
                         </div>
                     </div>
                 </div>
-
-                <div class="col-md-3 col-6">
+                <div class="col-xl-3 col-md-6">
                     <div class="card border-0 shadow-lg h-100" style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); border-bottom: 4px solid #f87171;">
                         <div class="card-body">
                             <div class="d-flex justify-content-between align-items-center mb-2">
-                                <h6 class="text-white-50 text-uppercase small ls-1 mb-0">QA Hold</h6>
-                                <i class="bi bi-exclamation-triangle-fill text-danger fs-4"></i>
+                                <h6 class="text-white-50 text-uppercase small ls-1 mb-0">Quality Fails (24h)</h6>
+                                <i class="bi bi-shield-exclamation text-danger fs-4"></i>
                             </div>
-                            <h2 class="display-4 fw-bold text-white mb-0">@Model.QAHoldCount</h2>
-                            <small class="text-danger">Issues detected</small>
+                            <h2 class="display-6 fw-bold text-white mb-0">@Model.QualityIssuesToday</h2>
+                            <small class="text-danger">Action required</small>
                         </div>
                     </div>
                 </div>
-
-                <div class="col-md-3 col-6">
-                    <div class="card border-0 shadow-lg h-100" style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); border-bottom: 4px solid #a3e635;">
-                        <div class="card-body">
-                            <div class="d-flex justify-content-between align-items-center mb-2">
-                                <h6 class="text-white-50 text-uppercase small ls-1 mb-0">Planned</h6>
-                                <i class="bi bi-calendar-check text-success fs-4"></i>
-                            </div>
-                            <h2 class="display-4 fw-bold text-white mb-0">@Model.PlannedCount</h2>
-                            <small class="text-success">Scheduled jobs</small>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-md-3 col-6">
+                <div class="col-xl-3 col-md-6">
                     <div class="card border-0 shadow-lg h-100" style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); border-bottom: 4px solid #fbbf24;">
                         <div class="card-body">
                             <div class="d-flex justify-content-between align-items-center mb-2">
-                                <h6 class="text-white-50 text-uppercase small ls-1 mb-0">Low Stock</h6>
-                                <i class="bi bi-basket text-warning fs-4"></i>
+                                <h6 class="text-white-50 text-uppercase small ls-1 mb-0">Expiry Risk</h6>
+                                <i class="bi bi-hourglass-split text-warning fs-4"></i>
                             </div>
-                            <h2 class="display-4 fw-bold text-white mb-0">@Model.LowStockProductCount</h2>
-                            <small class="text-warning">Products to refill</small>
+                            <h2 class="display-6 fw-bold text-white mb-0">@Model.ExpiringSoonCount</h2>
+                            <small class="text-warning">Items expiring (7 days)</small>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <h5 class="text-white text-start mb-3 border-bottom border-secondary pb-2"><i class="bi bi-lightning-charge-fill text-warning me-2"></i>Quick Actions</h5>
-            <div class="card shadow-lg border-0" style="background: rgba(30, 41, 59, 0.6); backdrop-filter: blur(10px); max-width: 600px; margin: 0 auto;">
-                <div class="card-body p-4">
-                   @*  <h5 class="text-white mb-4">Quick Actions</h5>
- *@
-                    <div class="row g-3 justify-content-center">
-                        @if (userRole == "Admin")
-                        {
-                            <div class="col-md-3 col-6">
-                                <a asp-controller="Users" asp-action="Index" class="btn btn-outline-light w-100 p-3 h-100 border-0" style="background: rgba(255,255,255,0.05);">
-                                    <i class="bi bi-people-fill fs-1 d-block mb-2 text-warning"></i>
-                                    <span class="small">Manage Users</span>
-                                </a>
+            <div class="row g-4">
+
+                <div class="col-lg-8">
+                    <div class="card shadow-lg border-0 h-100" style="background: #1e293b;">
+
+                        <div class="card-header bg-transparent border-0 pt-4 px-4">
+                            <ul class="nav nav-pills card-header-pills  nav-pills-green" id="dashboardTab" role="tablist">
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link active btn-sm" id="production-tab" data-bs-toggle="tab" data-bs-target="#production" type="button" role="tab">Production</button>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link  btn-sm " id="logistics-tab" data-bs-toggle="tab" data-bs-target="#logistics" type="button" role="tab">Logistics</button>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div class="card-body p-0">
+                            <div class="tab-content" id="dashboardTabContent">
+
+                                <div class="tab-pane fade show active" id="production" role="tabpanel">
+                                    <div class="table-responsive">
+                                        <table class="table table-dark table-hover mb-0 align-middle">
+                                            <thead class="text-white-50 small text-uppercase">
+                                                <tr>
+                                                    <th class="ps-4">Batch #</th>
+                                                    <th>Product</th>
+                                                    <th>Status</th>
+                                                    <th class="text-end pe-4">Date</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach (var batch in Model.RecentBatches)
+                                                {
+                                                    string badgeClass = batch.Status switch 
+                                                    { 
+                                                        "Completed" => "bg-success", 
+                                                        "In Progress" => "bg-primary", 
+                                                        "QA Hold" => "bg-danger", 
+                                                        _ => "bg-secondary" 
+                                                    };
+                                                    <tr>
+                                                        <td class="ps-4 text-info font-monospace">@batch.BatchNumber</td>
+                                                        <td class="fw-bold">@batch.FinishedProduct?.ProductName</td>
+                                                        <td><span class="badge @badgeClass rounded-pill">@batch.Status</span></td>
+                                                        <td class="text-end pe-4 text-info small">@batch.ProductionDate)</td>
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+
+                                <div class="tab-pane fade" id="logistics" role="tabpanel">
+                                    <div class="table-responsive">
+                                        <table class="table table-dark table-hover mb-0 align-middle">
+                                            <thead class="text-white-50 small text-uppercase">
+                                                <tr>
+                                                    <th class="ps-4">Tracking</th>
+                                                    <th>Customer</th>
+                                                    <th>Status</th>
+                                                    <th class="text-end pe-4">Date</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach (var ship in Model.RecentShipments)
+                                                {
+                                                    string badgeClass = ship.Status == "Delivered" ? "bg-success" : "bg-warning text-dark";
+                                                    <tr>
+                                                        <td class="ps-4 text-warning font-monospace">@ship.TrackingNumber</td>
+                                                        <td class="fw-bold">@ship.Customer?.CustomerName</td>
+                                                        <td><span class="badge @badgeClass rounded-pill">@ship.Status</span></td>
+                                                        <td class="text-end pe-4 text-info small">@ship.Date</td>
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+
                             </div>
-                        }
-
-                        <div class="col-md-3 col-6">
-                            <a asp-controller="Suppliers" asp-action="Index" class="btn btn-outline-light w-100 p-3 h-100 border-0" style="background: rgba(255,255,255,0.05);">
-                                <i class="bi bi-truck fs-1 d-block mb-2 text-info"></i>
-                                <span class="small">Suppliers</span>
-                            </a>
-                        </div>
-
-                        <div class="col-md-3 col-6">
-                            <a asp-controller="RawMaterials" asp-action="Index" class="btn btn-outline-light w-100 p-3 h-100 border-0" style="background: rgba(255,255,255,0.05);">
-                                <i class="bi bi-box-seam-fill fs-1 d-block mb-2 text-success"></i>
-                                <span class="small">Inventory</span>
-                            </a>
-                        </div>
-
-                        <div class="col-md-3 col-6">
-                            <a asp-controller="ProductionBatches" asp-action="Create" class="btn btn-outline-light w-100 p-3 h-100 border-0" style="background: rgba(255,255,255,0.05);">
-                                <i class="bi bi-fire fs-1 d-block mb-2 text-danger"></i>
-                                <span class="small">Start Batch</span>
-                            </a>
-                        </div>
-
-                        <div class="col-md-3 col-6">
-                            <a asp-controller="FinishedProducts" asp-action="Index" class="btn btn-outline-light w-100 p-3 h-100 border-0" style="background: rgba(255,255,255,0.05);">
-                                <i class="bi bi-bag-heart-fill fs-1 d-block mb-2 text-danger"></i>
-                                <span class="small">Products</span>
-                            </a>
                         </div>
                     </div>
                 </div>
-            </div>
-                        
-            <h5 class="text-white text-start mb-3 mt-4 border-bottom border-secondary pb-2"><i class="bi bi-activity text-info me-2"></i>Live Activity Feed Production</h5>
-            <div class="card shadow-lg border-0" style="background: rgba(30, 41, 59, 0.7);">
-                <div class="card-body p-0">
-                    <div class="table-responsive">
-                        <table class="table table-dark table-hover mb-0 align-middle">
-                            <thead class="text-white-50 small text-uppercase">
-                                <tr>
-                                    <th class="ps-4">Batch #</th>
-                                    <th>Product</th>
-                                    <th>Status</th>
-                                    <th>Supervisor</th>
-                                    <th class="text-end pe-4">Date</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach (var batch in Model.RecentBatches)
-                                {
-                                    string badgeClass = batch.Status switch
+
+                <div class="col-lg-4">
+
+                    <div class="card shadow-lg border-0 mb-3" style="background: #1e293b;">
+                        <div class="card-header bg-transparent border-0 pt-3 px-4">
+                            <h6 class="text-white mb-0 text-danger"><i class="bi bi-arrow-down-circle me-2"></i>Low Product Stock</h6>
+                        </div>
+                        <div class="card-body pt-0">
+                            @if (Model.LowStockProducts.Any())
+                            {
+                                <ul class="list-group list-group-flush">
+                                    @foreach (var item in Model.LowStockProducts)
                                     {
-                                                "Completed" => "bg-success",
-                                                "In Progress" => "bg-warning text-dark",
-                                                "QA Hold" => "bg-danger",
-                                        _ => "bg-primary"
-                                    };
+                                        <li class="list-group-item bg-transparent text-white border-secondary px-0 py-2">
+                                            <div class="d-flex justify-content-between mb-1">
+                                                <small>@item.ProductName</small>
+                                                <small class="text-danger fw-bold">@item.QuantityAvailable Units</small>
+                                            </div>
+                                            <div class="progress" style="height: 4px; background-color: #334155;"><div class="progress-bar bg-danger" style="width: 25%;"></div></div>
+                                        </li>
+                                    }
+                                </ul>
+                            }
+                            else
+                            {
 
-                                    <tr>
-                                        <td class="ps-4 font-monospace text-info">@batch.BatchNumber</td>
-                                        <td class="fw-bold">@batch.FinishedProduct?.ProductName</td>
-                                        <td><span class="badge @badgeClass rounded-pill">@batch.Status</span></td>
-                                        <td class="small text-white-50">@batch.Supervisor?.Username</td>
-                                        <td class="text-end pe-4 text-white-50 small">@batch.ProductionDate.ToShortDateString()</td>
-                                    </tr>
-                                }
-                            </tbody>
-                        </table>
+                                <p class="text-success small my-2">Healthy Levels</p>
+                            }
+                        </div>
                     </div>
-                </div>
-                <div class="card-footer border-0 bg-transparent text-end">
-                    <a asp-controller="ProductionBatches" asp-action="Index" class="text-decoration-none text-info small fw-bold">View Full Schedule <i class="bi bi-arrow-right"></i></a>
+
+                    <div class="card shadow-lg border-0 mb-4" style="background: #1e293b;">
+                        <div class="card-header bg-transparent border-0 pt-3 px-4">
+                            <h6 class="text-white mb-0 text-warning"><i class="bi bi-exclamation-triangle me-2"></i>Ingredient Alerts</h6>
+                        </div>
+                        <div class="card-body pt-0">
+                            @if (Model.CriticalLowStockMaterials.Any())
+                            {
+                                <ul class="list-group list-group-flush">
+                                    @foreach (var item in Model.CriticalLowStockMaterials)
+                                    {
+                                        <li class="list-group-item bg-transparent text-white border-secondary px-0 py-2">
+                                            <div class="d-flex justify-content-between mb-1">
+                                                <small>@item.MaterialName</small>
+                                                <small class="text-warning">Exp: @item.ExpiryDate.ToShortDateString()</small>
+                                            </div>
+                                        </li>
+                                    }
+                                </ul>
+                            }
+                            else
+                            {
+
+                                <p class="text-success small my-2">No critical issues</p>
+                            }
+                        </div>
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <a asp-controller="ProductionBatches" asp-action="Create" class="btn btn-outline-light p-2 border-0 text-start shadow-sm" style="background: rgba(255,255,255,0.05);"><i class="bi bi-fire text-danger me-2"></i> Start Production</a>
+                        <a asp-controller="XRayChecks" asp-action="Create" class="btn btn-outline-light p-2 border-0 text-start shadow-sm" style="background: rgba(255,255,255,0.05);"><i class="bi bi-shield-check text-success me-2"></i> New Inspection</a>
+                    </div>
                 </div>
             </div>
         }
         else
         {
-
-            <div class="mb-4">
-                <div class="d-inline-block p-4 rounded-circle shadow-lg"
-                     style="background: radial-gradient(circle, rgba(16,185,129,0.2) 0%, rgba(15,23,42,0) 70%);">
-                    <i class="bi bi-basket2-fill display-1 text-success"></i>
+            <div class="text-center mt-3 pt-3">
+                <div class="mb-4 animate-fade-up">
+                    <div class="d-inline-block p-4 rounded-circle shadow-lg" style="background: radial-gradient(circle, rgba(16,185,129,0.2) 0%, rgba(15,23,42,0) 70%);">
+                        <i class="bi bi-basket2-fill display-1 text-success"></i>
+                    </div>
                 </div>
-            </div>
-
-            <h1 class="display-3 fw-bold text-white mb-2">
-                Green Bowl <span style="color: var(--primary-green);">Foods</span>
-            </h1>
-            <p class="lead text-white mb-4">Inventory & Quality Management System</p>
-
-            <div class="mt-4">
-                <p class="text-white-50 mb-4" style="max-width: 500px; margin: 0 auto;">
-                    Welcome to the internal portal. Please identify yourself to access the inventory, production, and supplier management modules.
-                </p>
-
-                <a asp-controller="Account" asp-action="Login" class="btn btn-primary btn-lg px-5 py-3 shadow-lg rounded-pill">
-                    <i class="bi bi-box-arrow-in-right me-2"></i> Access System
+                <h1 class="display-3 fw-bold text-white mb-2 animate-fade-up">Green Bowl <span class="text-success">Foods</span></h1>
+                <p class="lead text-white-50 mb-5 animate-fade-up">Inventory & Quality Management System</p>
+                <a asp-controller="Account" asp-action="Login" class="btn btn-primary btn-lg px-5 py-3 shadow-lg rounded-pill animate-fade-up" style="background-color: #10b981; border: none;">
+                    <i class="bi bi-box-arrow-in-right me-2"></i> Employee Login
                 </a>
             </div>
-
-            <div class="mt-5 row justify-content-center opacity-50">
-                <div class="col-auto"><i class="bi bi-shield-check fs-2 text-white mx-3"></i></div>
-                <div class="col-auto"><i class="bi bi-globe-americas fs-2 text-white mx-3"></i></div>
-                <div class="col-auto"><i class="bi bi-recycle fs-2 text-white mx-3"></i></div>
-            </div>
         }
-
     </div>
 </div>

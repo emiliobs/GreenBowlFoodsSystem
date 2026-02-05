@@ -25,34 +25,71 @@ public class HomeController : Controller
         // For now, we will alwayss load data to make the Dashboard look nice.
         try
         {
-            var dashboardViewMdel = new DashboardViewModel
+            //  KPI: Total Inventory Value (Money)
+            decimal totalValue = await _context.FinishedProducts
+                .SumAsync(p => p.UnitPrice * p.QuantityAvailable);
+
+            // KPI: Active Shipments (Not Delivered)
+            int activeShipments = await _context.Shipments
+                .CountAsync(s => s.Status != "Delivered");
+
+            //  KPI: Quality Issues (Last 24h)
+            DateTime yesterday = DateTime.Now.AddHours(-24);
+            int failedChecks = await _context.XRayChecks
+                .CountAsync(x => x.Result == "Fail" && x.CheckTime >= yesterday);
+
+            //  KPI: Expiry Risk (Next 7 Days)
+            DateTime warningDate = DateTime.Now.AddDays(7);
+            int expiringCount = await _context.RawMaterials
+                .CountAsync(m => m.ExpiryDate <= warningDate);
+
+            // Build Viewmodel
+            var dashboardViewModel = new DashboardViewModel
             {
-                // Count batches by status (KPIs)
-                ActiveBatchesCount = await _context.ProductionBatches.CountAsync(pb => pb.Status == "In Progress"),
-                QAHoldCount = await _context.ProductionBatches.CountAsync(pb => pb.Status == "QA Hold"),
-                PlannedCount = await _context.ProductionBatches.CountAsync(pb => pb.Status == "Planned"),
+                TotalInventoryValue = totalValue,
+                ActiveShipmentsCount = activeShipments,
+                QualityIssuesToday = failedChecks,
+                ExpiringSoonCount = expiringCount,
 
-                // Count product with low stock (< 20 units)
-                LowStockProductCount = await _context.ProductionBatches.CountAsync(pb => pb.QuantityProduced < 20),
-
-                // Fech the last 5 batches (newest firt) for the activity feed
+                // Feed 1: Recent Batches
                 RecentBatches = await _context.ProductionBatches
-              .Include(pb => pb.FinishedProduct) // Include prodcut details (name, SKU)
-              .Include(pb => pb.Supervisor) // Include supervisor username
-              .OrderByDescending(pb => pb.ProductionDate)
-              .Take(5)
-              .ToListAsync()
+                    .Include(pb => pb.FinishedProduct)
+                    .OrderByDescending(pb => pb.ProductionDate)
+                    .Take(5)
+                    .ToListAsync(),
+
+                // Feed 2: Recent Shipments (NEW!)
+                RecentShipments = await _context.Shipments
+                    .Include(s => s.Customer)
+                    .OrderByDescending(s => s.Date)
+                    .Take(5)
+                    .ToListAsync(),
+
+                // Alert 1: Low Stock Products (< 20 units)
+                LowStockProducts = await _context.FinishedProducts
+                    .Where(p => p.QuantityAvailable < 20)
+                    .OrderBy(p => p.QuantityAvailable)
+                    .Take(5)
+                    .ToListAsync(),
+
+                // Alert 2: Low Stock Ingredients (< 50kg) OR Expiring Soon (NEW!)
+                CriticalLowStockMaterials = await _context.RawMaterials
+                    .Where(m => m.QuantityInStock < 50 || m.ExpiryDate <= warningDate)
+                    .OrderBy(m => m.ExpiryDate)
+                    .Take(5)
+                    .ToListAsync()
             };
 
-            return View(dashboardViewMdel); // Pass the data to the view
+            return View(dashboardViewModel);
         }
         catch (Exception ex)
         {
             // Ilogged: record the technical error silently (for the developer), this writes dtabases connection failed,to the server console
             _logger.LogError(ex, "Critical failure loading Dashworad stats.");
 
-            //
-            TempData[""] = $"System is busy. Some charts might not load.: {ex.Message}";
+            // Show a user-friendly message on the dashboard, but don't crash the app.
+            // This way, the user knows something went wrong, but we don't expose technical details.
+            TempData["ErrorMessage"] = $"System is busy. Some charts might not load.: {ex.Message}";
 
             // Return the view anyway (maybe empty) so the app doesn't crash completely
             return View(new DashboardViewModel());
