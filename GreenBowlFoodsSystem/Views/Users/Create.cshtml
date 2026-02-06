@@ -1,68 +1,92 @@
 ﻿@model GreenBowlFoodsSystem.Models.User
 
 @{
-    ViewData["Title"] = "Create User";
+    ViewData["Title"] = "Create New User";
 }
 
 <div class="row justify-content-center">
-    <div class="col-md-6">
+    <div class="col-md-8 col-lg-6">
 
         <div class="text-center mb-4 animate-fade-up">
-            <h1 class="display-6 fw-bold text-white">Create New User</h1>
-            <p class="text-white">Fill in the details to register a new system user.</p>
+            <h1 class="fw-bold text-white">Create New User</h1>
+            <p class="text-white-50">Fill in the details to register a new system user.</p>
         </div>
 
-        <div class="card shadow-lg border-0 animate-fade-up" style="animation-delay: 0.1s;">
+        <div class="card shadow-lg animate-fade-up" style="animation-delay: 0.1s; background-color: #1e293b; border: 1px solid rgba(255, 255, 255, 0.1);">
             <div class="card-body p-5">
                 <form asp-action="Create">
+
                     <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
 
-                    <div class="mb-4">
-                        <label asp-for="Username" class="form-label text-white small text-uppercase fw-bold ls-1">Username</label>
-                        <div class="input-group">
-                            <span class="input-group-text bg-transparent border-end-0 text-success">
-                                <i class="bi bi-person-fill"></i>
-                            </span>
-                            <input asp-for="Username" class="form-control border-start-0 ps-0" placeholder="e.g. jdoe" />
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label asp-for="FirstName" class="form-label text-white fw-bold small">First Name</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-dark border-secondary text-white-50"><i class="bi bi-person"></i></span>
+                                <input asp-for="FirstName" class="form-control bg-dark border-secondary text-white" placeholder="John" />
+                            </div>
+                            <span asp-validation-for="FirstName" class="text-danger small"></span>
                         </div>
-                        <span asp-validation-for="Username" class="text-danger small"></span>
+                        <div class="col-md-6">
+                            <label asp-for="LastName" class="form-label text-white fw-bold small">Last Name</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-dark border-secondary text-white-50"><i class="bi bi-person"></i></span>
+                                <input asp-for="LastName" class="form-control bg-dark border-secondary text-white" placeholder="Doe" />
+                            </div>
+                            <span asp-validation-for="LastName" class="text-danger small"></span>
+                        </div>
                     </div>
 
-                    <div class="mb-4">
-                        <label asp-for="Password" class="form-label text-white small text-uppercase fw-bold ls-1">Password</label>
+                    <div class="mb-3">
+                        <label asp-for="Email" class="form-label text-white fw-bold small">Email Address (Login ID)</label>
                         <div class="input-group">
-                            <span class="input-group-text bg-transparent border-end-0 text-success">
-                                <i class="bi bi-key-fill"></i>
-                            </span>
-                            <input asp-for="Password" type="password" class="form-control border-start-0 ps-0" placeholder="••••••••" />
+                            <span class="input-group-text bg-dark border-secondary text-white-50"><i class="bi bi-envelope-at"></i></span>
+                            <input asp-for="Email" class="form-control bg-dark border-secondary text-white" placeholder="name@greenbowl.com" />
+                        </div>
+                        <span asp-validation-for="Email" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="PhoneNumber" class="form-label text-white fw-bold small">Phone Number</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-dark border-secondary text-white-50"><i class="bi bi-telephone"></i></span>
+                            <input asp-for="PhoneNumber" class="form-control bg-dark border-secondary text-white" placeholder="+44 7000 000000" />
+                        </div>
+                        <span asp-validation-for="PhoneNumber" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Password" class="form-label text-white fw-bold small">Password</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-dark border-secondary text-white-50"><i class="bi bi-key"></i></span>
+                            <input asp-for="Password" type="password" class="form-control bg-dark border-secondary text-white" placeholder="••••••••" />
                         </div>
                         <span asp-validation-for="Password" class="text-danger small"></span>
+                        <small class="text-white-50" style="font-size: 0.75rem;">Must contain uppercase, lowercase, number & symbol.</small>
                     </div>
 
                     <div class="mb-5">
-                        <label asp-for="Role" class="form-label text-white small text-uppercase fw-bold ls-1">System Role</label>
+                        <label asp-for="Role" class="form-label text-white fw-bold small">System Role</label>
                         <div class="input-group">
-                            <span class="input-group-text bg-transparent border-end-0 text-success">
-                                <i class="bi bi-shield-lock-fill"></i>
-                            </span>
-                            <select asp-for="Role" class="form-control border-start-0 ps-0" style="background-color: rgba(15, 23, 42, 0.6); color: white;">
-                                <option value="" disabled selected>Select a role...</option>
+                            <span class="input-group-text bg-dark border-secondary text-white-50"><i class="bi bi-shield-lock"></i></span>
+                            <select asp-for="Role" class="form-control bg-dark border-secondary text-white">
+                                <option value="" disabled selected>-- Select Role --</option>
+                                <option value="Staff">Staff (Standard Access)</option>
                                 <option value="Admin">Admin (Full Access)</option>
-                                <option value="Staff">Staff (Inventory Only)</option>
                             </select>
                         </div>
                         <span asp-validation-for="Role" class="text-danger small"></span>
                     </div>
 
                     <div class="d-grid gap-2">
-                        <button type="submit" class="btn btn-primary btn-lg shadow-sm">
-                            <i class="bi bi-check-lg me-2"></i> Create Account
+                        <button type="submit" class="btn btn-lg text-white shadow-lg fw-bold" style="background-color: #10b981; border-radius: 50px;">
+                            <i class="bi bi-person-plus-fill me-2"></i> Create Account
                         </button>
-
                         <a asp-action="Index" class="btn btn-back-custom text-center justify-content-center mt-2">
-                            <i class="bi bi-arrow-left me-2"></i> Back to List
+                            Back to List
                         </a>
                     </div>
+
                 </form>
             </div>
         </div>

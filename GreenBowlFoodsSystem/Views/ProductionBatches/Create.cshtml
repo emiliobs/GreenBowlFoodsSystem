@@ -1,35 +1,42 @@
 ﻿@model GreenBowlFoodsSystem.Models.ProductionBatch
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<User> UserManager
 
 @{
     ViewData["Title"] = "Schedule Batch";
+    var currentUser = UserManager.GetUserName(User); // Obtenemos nombre para mostrarlo visualmente
 }
 
 <div class="row justify-content-center">
     <div class="col-md-8">
 
         <div class="text-center mb-4 animate-fade-up">
-            <h1 class="display-6 fw-bold text-white">Schedule Batch</h1>
-            <p class="text-white">Create a new production order.</p>
+            <h1 class="display-6 fw-bold text-white">Schedule Production Batch</h1>
+            <p class="text-white-50">Create a new production order.</p>
+
+            <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 px-3 py-2 rounded-pill">
+                <i class="bi bi-person-check-fill me-2"></i>Supervisor: <strong>@currentUser</strong>
+            </span>
         </div>
 
-        <div class="card shadow-lg border-0 animate-fade-up" style="animation-delay: 0.1s;">
+        <div class="card shadow-lg border-0 animate-fade-up" style="animation-delay: 0.1s; background: #1e293b;">
             <div class="card-body p-5">
                 <form asp-action="Create">
                     <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
 
                     <div class="row">
                         <div class="col-md-6 mb-4">
-                            <label asp-for="BatchNumber" class="form-label text-white small fw-bold">Batch #</label>
+                            <label asp-for="BatchNumber" class="form-label text-white small fw-bold">Batch Number</label>
                             <div class="input-group">
-                                <span class="input-group-text"><i class="bi bi-upc"></i></span>
+                                <span class="input-group-text"><i class="bi bi-upc text-info"></i></span>
                                 <input asp-for="BatchNumber" class="form-control" placeholder="BATCH-2026-X" />
                             </div>
                             <span asp-validation-for="BatchNumber" class="text-danger small"></span>
                         </div>
                         <div class="col-md-6 mb-4">
-                            <label asp-for="ProductionDate" class="form-label text-white small fw-bold">Date</label>
+                            <label asp-for="ProductionDate" class="form-label text-white small fw-bold">Production Date</label>
                             <div class="input-group">
-                                <span class="input-group-text"><i class="bi bi-calendar-event"></i></span>
+                                <span class="input-group-text"><i class="bi bi-calendar-event text-info"></i></span>
                                 <input asp-for="ProductionDate" class="form-control" />
                             </div>
                             <span asp-validation-for="ProductionDate" class="text-danger small"></span>
@@ -40,42 +47,35 @@
                         <div class="col-md-6 mb-4">
                             <label asp-for="FinishedProductId" class="form-label text-white small fw-bold">Product to Cook</label>
                             <div class="input-group">
-                                <span class="input-group-text"><i class="bi bi-bag-heart"></i></span>
-                                <select asp-for="FinishedProductId" class="form-control" asp-items="ViewBag.FinishedProductId" style="background-color: rgba(15, 23, 42, 0.6); color: white;">
+                                <span class="input-group-text"><i class="bi bi-bag-heart text-info"></i></span>
+                                <select asp-for="FinishedProductId" class="form-control" asp-items="ViewBag.FinishedProductId">
                                     <option value="" disabled selected>-- Select Product --</option>
                                 </select>
                             </div>
                             <span asp-validation-for="FinishedProductId" class="text-danger small"></span>
                         </div>
+
                         <div class="col-md-6 mb-4">
-                            <label asp-for="SupervisorId" class="form-label text-white small fw-bold">Supervisor</label>
+                            <label asp-for="TargetQuantity" class="form-label text-white small fw-bold">Target Qty (Planned)</label>
                             <div class="input-group">
-                                <span class="input-group-text"><i class="bi bi-person-badge"></i></span>
-                                <select asp-for="SupervisorId" class="form-control" asp-items="ViewBag.SupervisorId" style="background-color: rgba(15, 23, 42, 0.6); color: white;">
-                                    <option value="" disabled selected>-- Select Supervisor --</option>
-                                </select>
+                                <span class="input-group-text"><i class="bi bi-bullseye text-info"></i></span>
+                                <input asp-for="TargetQuantity" class="form-control" placeholder="e.g. 500" />
                             </div>
-                            <span asp-validation-for="SupervisorId" class="text-danger small"></span>
+                            <span asp-validation-for="TargetQuantity" class="text-danger small"></span>
                         </div>
                     </div>
 
                     <div class="row">
-                        <div class="col-md-6 mb-4">
-                            <label asp-for="TargetQuantity" class="form-label text-white small fw-bold">Target Qty (Planned)</label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="bi bi-bullseye"></i></span>
-                                <input asp-for="TargetQuantity" class="form-control" placeholder="0" />
-                            </div>
-                            <span asp-validation-for="TargetQuantity" class="text-danger small"></span>
-                        </div>
-                        <div class="col-md-6 mb-5">
+                        <div class="col-md-12 mb-5">
                             <label asp-for="Status" class="form-label text-white small fw-bold">Initial Status</label>
                             <div class="input-group">
-                                <span class="input-group-text"><i class="bi bi-flag"></i></span>
-                                <select asp-for="Status" class="form-control" style="background-color: rgba(15, 23, 42, 0.6); color: white;">
-                                    <option value="" disabled selected>Select Status</option>
+                                <span class="input-group-text"><i class="bi bi-flag text-info"></i></span>
+                                <select asp-for="Status" class="form-control">
                                     <option value="Planned">Planned</option>
                                     <option value="In Progress">In Progress</option>
+                                    <option value="Completed" class="text-success fw-bold">Completed</option>
+                                    <option value="QA Hold" class="text-danger fw-bold">QA Hold (Quality Issue)</option>
+                                    <option value="Cancelled" class="text-warning">Cancelled</option>
                                 </select>
                             </div>
                             <span asp-validation-for="Status" class="text-danger small"></span>
@@ -86,11 +86,11 @@
                     <input type="hidden" asp-for="DowntimeMinutes" value="0" />
 
                     <div class="d-grid gap-2">
-                        <button type="submit" class="btn btn-primary btn-lg shadow-sm">
+                        <button type="submit" class="btn btn-primary btn-lg shadow-lg hover-scale" style="background-color: #10b981; border: none;">
                             <i class="bi bi-check-lg me-2"></i> Create Schedule
                         </button>
                         <a asp-action="Index" class="btn btn-back-custom text-center justify-content-center mt-2">
-                            <i class="bi bi-arrow-left me-2"></i> Back to List
+                            <i class="bi bi-arrow-left me-2"></i> Cancel & Back
                         </a>
                     </div>
                 </form>

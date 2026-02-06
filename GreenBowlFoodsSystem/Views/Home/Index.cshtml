@@ -1,7 +1,17 @@
-﻿@model GreenBowlFoodsSystem.ViewModel.DashboardViewModel
+﻿@using Microsoft.AspNetCore.Identity
+@model GreenBowlFoodsSystem.ViewModel.DashboardViewModel
+@inject UserManager<User> UserManager
+
 @{
     ViewData["Title"] = "Executive Dashboard";
-    var username = Context.Session.GetString("UserSession");
+
+    // --- CAMBIO PARA IDENTITY ---
+    // Verificamos si el usuario está autenticado usando el sistema de seguridad de Identity
+    bool IsLoggedIn = User.Identity != null && User.Identity.IsAuthenticated;
+
+    // Obtenemos el nombre del usuario desde la Cookie de Identity
+    var UserName = await UserManager.GetUserAsync(User);
+
     var ukCulture = System.Globalization.CultureInfo.GetCultureInfo("en-GB");
 }
 
@@ -27,11 +37,11 @@
 <div class="d-flex align-items-center justify-content-center" style="min-height: 80vh;">
     <div class="container-fluid animate-fade-up">
 
-        @if (username != null)
+        @if (IsLoggedIn)
         {
             <div class="d-flex justify-content-between align-items-end mb-5">
                 <div>
-                    <h1 class="display-5 fw-bold text-white mb-0">Welcome back, <span class="text-success">@username</span>!</h1>
+                    <h1 class="display-5 fw-bold text-white mb-0">Welcome back, <span class="text-success">@UserName!.FullName</span>!</h1>
                     <p class="text-white-50">Operational Overview | London UK - HQ</p>
                 </div>
                 <div class="text-end d-none d-md-block">
@@ -124,18 +134,18 @@
                                             <tbody>
                                                 @foreach (var batch in Model.RecentBatches)
                                                 {
-                                                    string badgeClass = batch.Status switch 
-                                                    { 
-                                                        "Completed" => "bg-success", 
-                                                        "In Progress" => "bg-primary", 
-                                                        "QA Hold" => "bg-danger", 
-                                                        _ => "bg-secondary" 
-                                                    };
+                                                    string badgeClass = batch.Status switch
+                                                    {
+                                                        "Completed" => "bg-success",
+                                                        "In Progress" => "bg-primary",
+                                                        "QA Hold" => "bg-danger",
+                                                        _ => "bg-secondary"
+                                                            };
                                                     <tr>
                                                         <td class="ps-4 text-info font-monospace">@batch.BatchNumber</td>
                                                         <td class="fw-bold">@batch.FinishedProduct?.ProductName</td>
                                                         <td><span class="badge @badgeClass rounded-pill">@batch.Status</span></td>
-                                                        <td class="text-end pe-4 text-info small">@batch.ProductionDate)</td>
+                                                        <td class="text-end pe-4 text-info small">@batch.ProductionDate.ToString("dd MMM")</td>
                                                     </tr>
                                                 }
                                             </tbody>
@@ -162,7 +172,7 @@
                                                         <td class="ps-4 text-warning font-monospace">@ship.TrackingNumber</td>
                                                         <td class="fw-bold">@ship.Customer?.CustomerName</td>
                                                         <td><span class="badge @badgeClass rounded-pill">@ship.Status</span></td>
-                                                        <td class="text-end pe-4 text-info small">@ship.Date</td>
+                                                        <td class="text-end pe-4 text-info small">@ship.Date.ToString("dd MMM")</td>
                                                     </tr>
                                                 }
                                             </tbody>

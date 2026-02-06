@@ -1,18 +1,43 @@
 ﻿@using Microsoft.AspNetCore.Http
+@using Microsoft.AspNetCore.Identity
+@using GreenBowlFoodsSystem.Models
+
 @inject IHttpContextAccessor HttpContextAccessor
+@inject UserManager<User> UserManager
+@inject SignInManager<User> SignInManager
 
 @{
-    // Helper function to determine if a menu item is active
+    // --- LÓGICA DE NAVEGACIÓN ACTIVA ---
     string GetActiveClass(string controllerName)
     {
         var currentController = ViewContext.RouteData.Values["Controller"]?.ToString();
-
-        // If the current controller matches the link, return "active"
         if (string.Equals(currentController, controllerName, StringComparison.OrdinalIgnoreCase))
         {
             return "active";
         }
         return "";
+    }
+
+    // --- LÓGICA DE USUARIO Y ROL ---
+    var isloggedIn = User.Identity != null && User.Identity.IsAuthenticated;
+    var isAdmin = isloggedIn && User.IsInRole("Admin");
+
+    // Variables para mostrar Nombre y Rol bonitos
+    string displayName = "";
+    string userRole = "";
+
+    if (SignInManager.IsSignedIn(User))
+    {
+        var currentUser = await UserManager.GetUserAsync(User);
+        if (currentUser != null)
+        {
+            // Si tiene Nombre, lo usamos. Si no, usamos el Email pero cortado antes del @
+            displayName = !string.IsNullOrEmpty(currentUser.FirstName)
+                          ? currentUser.FirstName
+                          : User.Identity.Name.Split('@')[0];
+
+            userRole = currentUser.Role;
+        }
     }
 }
 
@@ -23,7 +48,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - GreenBowlFoodsSystem</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 </head>
@@ -32,26 +56,19 @@
         <nav class="navbar navbar-expand-xl navbar-toggleable-xl navbar-dark border-bottom box-shadow mb-3" style="background-color: #0f172a;">
             <div class="container-fluid px-4">
 
-               <a class="navbar-brand d-flex align-items-center" asp-area="" asp-controller="Home" asp-action="Index">
-    
-                <img src="~/images/logo.png" alt="GreenBowl Logo" class="navbar-brand-icon me-2">
-
-                <div class="d-flex flex-column" style="line-height: 1.2;">
-        
-                    <div style="font-size:1.5rem;">
-                       <span class="fw-bold fst-italic" style="color: #ffffff;">Green Bowl</span>
-                       <span class="fw-bold" style="color: #10b981;">Foods!</span>
+                <a class="navbar-brand d-flex align-items-center" asp-area="" asp-controller="Home" asp-action="Index">
+                    <img src="~/images/logo.png" alt="GreenBowl Logo" class="navbar-brand-icon me-2">
+                    <div class="d-flex flex-column" style="line-height: 1.2;">
+                        <div style="font-size:1.5rem;">
+                            <span class="fw-bold fst-italic" style="color: #ffffff;">Green Bowl</span>
+                            <span class="fw-bold" style="color: #10b981;">Foods!</span>
+                        </div>
+                        <span class="text-white" style="font-size: 0.8rem; font-weight: normal;">
+                            Inventory Management
+                        </span>
                     </div>
+                </a>
 
-                    <span class="text-white" style="font-size: 0.8rem; font-weight: normal;">
-                      Inventory Management
-                    </span>
-        
-                </div>
-              </a>
-                    
-                
-                
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation" style="border: none;">
                     <span class="navbar-toggler-icon"></span>
@@ -60,60 +77,56 @@
                 <div class="navbar-collapse collapse d-xl-inline-flex justify-content-between">
 
                     <ul class="navbar-nav flex-grow-1 nav-pills-custom">
-
                         <li class="nav-item">
                             <a class="nav-link @GetActiveClass("Home")" asp-area="" asp-controller="Home" asp-action="Index">
                                 <i class="bi bi-speedometer2 me-2"></i> Dashboard
                             </a>
                         </li>
 
-                        @if (HttpContextAccessor.HttpContext!.Session.GetString("UserRole") == "Admin")
+                        @if (isAdmin)
                         {
                             <li class="nav-item">
-                                <a class="nav-link @GetActiveClass("Users")"  asp-area="" asp-controller="Users" asp-action="Index">
+                                <a class="nav-link @GetActiveClass("Users")" asp-area="" asp-controller="Users" asp-action="Index">
                                     <i class="bi bi-shield-lock-fill me-2"></i> Users
                                 </a>
                             </li>
                         }
 
-                        @if (HttpContextAccessor.HttpContext!.Session.GetString("UserSession") != null)
+                        @if (isloggedIn)
                         {
                             <li class="nav-item border-start border-secondary mx-2 d-none d-xl-block"></li>
                             <li class="nav-item"><span class="nav-link text-white-50 small fw-bold d-xl-none mt-2">DIRECTORY</span></li>
                             <li class="nav-item">
-                                <a class="nav-link @GetActiveClass("Suppliers")"  asp-area="" asp-controller="Suppliers" asp-action="Index">
+                                <a class="nav-link @GetActiveClass("Suppliers")" asp-area="" asp-controller="Suppliers" asp-action="Index">
                                     <i class="bi bi-truck me-2"></i> Suppliers
                                 </a>
                             </li>
 
                             <li class="nav-item border-start border-secondary mx-2 d-none d-xl-block"></li>
                             <li class="nav-item"><span class="nav-link text-white-50 small fw-bold d-xl-none mt-2">INVENTORY</span></li>
-
                             <li class="nav-item">
-                                <a class="nav-link text-white @GetActiveClass("RawMaterials")"  asp-area="" asp-controller="RawMaterials" asp-action="Index">
+                                <a class="nav-link text-white @GetActiveClass("RawMaterials")" asp-area="" asp-controller="RawMaterials" asp-action="Index">
                                     <i class="bi bi-basket-fill me-2"></i> Raw Materials
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link @GetActiveClass("FinishedProducts")" " asp-area="" asp-controller="FinishedProducts" asp-action="Index">
+                                <a class="nav-link @GetActiveClass("FinishedProducts")" asp-area="" asp-controller="FinishedProducts" asp-action="Index">
                                     <i class="bi bi-bag-heart-fill me-2"></i> Products
                                 </a>
                             </li>
 
                             <li class="nav-item border-start border-secondary mx-2 d-none d-xl-block"></li>
                             <li class="nav-item"><span class="nav-link text-white-50 small fw-bold d-xl-none mt-2">FUTURE OPS</span></li>
-
                             <li class="nav-item">
-                                <a class="nav-link @GetActiveClass("ProductionBatches")"  asp-area="" asp-controller="ProductionBatches" asp-action="Index">
+                                <a class="nav-link @GetActiveClass("ProductionBatches")" asp-area="" asp-controller="ProductionBatches" asp-action="Index">
                                     <i class="bi bi-fire me-2"></i> Production
                                 </a>
                             </li>
-                                                    
-
                             <li class="nav-item">
-                                <a class="nav-link @GetActiveClass("Shipments")"  asp-controller="Shipments" asp-action="Index"><i class="bi bi-airplane-engines-fill me-2"></i> Shipping</a>
+                                <a class="nav-link @GetActiveClass("Shipments")" asp-controller="Shipments" asp-action="Index">
+                                    <i class="bi bi-airplane-engines-fill me-2"></i> Shipping
+                                </a>
                             </li>
-
                             <li class="nav-item">
                                 <a class="nav-link @GetActiveClass("XRayChecks")" asp-area="" asp-controller="XRayChecks" asp-action="Index">
                                     <i class="bi bi-shield-check me-1"></i> Quality Control
@@ -122,41 +135,44 @@
                         }
                     </ul>
 
-                    <ul class="navbar-nav ms-auto">
-                        @if (HttpContextAccessor.HttpContext.Session.GetString("UserSession") != null)
+                    <ul class="navbar-nav ms-auto align-items-center">
+                        @if (isloggedIn)
                         {
-
-                            <li class="nav-item">
-                                <span class="nav-link" style="color: white !important;">
-                                    Hi, <b>@HttpContextAccessor.HttpContext.Session.GetString("UserSession")</b>!
+                            <li class="nav-item text-end me-2 d-none d-md-block" style="line-height: 1.2;">
+                                <span class="d-block text-white fw-bold" style="font-size: .87rem;">
+                                    Hi,@User.Identity!.Name
                                 </span>
-                            </li>
-                            <li class="nav-item">
-                                <a class="btn btn-logout-custom btn-sm ms-2" asp-controller="Account" asp-action="Logout">Logout</a>
+
+                                @if (userRole == "Admin")
+                                {
+                                    <span class="badge bg-warning text-dark border border-warning rounded-pill" style="font-size: 0.65rem; padding: 0.25em 0.6em;">
+                                        <i class="bi bi-shield-fill me-1"></i>ADMIN
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-info bg-opacity-50 text-white border border-white border-opacity-25 rounded-pill" style="font-size: 0.65rem; padding: 0.25em 0.6em;">
+                                        <i class="bi bi-person-badge me-1"></i>STAFF
+                                    </span>
+                                }
                             </li>
 
-                            @* <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle text-white fw-bold" href="#" role="button" data-bs-toggle="dropdown">
-                                    <i class="bi bi-person-circle me-2"></i> Hi, @Context.Session.GetString("UserSession")!
-                                </a>
-                                <ul class="dropdown-menu dropdown-menu-end dropdown-menu-dark shadow-lg" style="background-color: #1e293b;">
-                                    <li><span class="dropdown-item-text text-white-50 small">Role: @Context.Session.GetString("UserRole")</span></li>
-                                    <li><hr class="dropdown-divider bg-light opacity-25"></li>
-                                    <li>
-                                        <a class="dropdown-item text-danger" asp-controller="Account" asp-action="Logout">
-                                            <i class="bi bi-box-arrow-right me-2"></i> Logout
-                                        </a>
-                                    </li>
-                                </ul>
-                            </li> *@
+                            <li class="nav-item">
+                                <form asp-controller="Account" asp-action="Logout" method="post" id="logoutForm">
+                                    <button type="submit" class="btn btn-logout-custom btn-sm rounded-pill px-3 d-flex align-items-center">
+                                        <i class="bi bi-power me-1"></i> Logout
+                                    </button>
+                                </form>
+                            </li>
                         }
                         else
                         {
                             <li class="nav-item">
-                                <a class="btn btn-primary btn-sm" asp-area="" asp-controller="Account" asp-action="Login">Login</a>
+                                <a class="btn btn-primary btn-sm rounded-pill px-4" asp-area="" asp-controller="Account" asp-action="Login" style="background-color: #10b981; border: none;">Login</a>
                             </li>
                         }
                     </ul>
+
                 </div>
             </div>
         </nav>
@@ -173,15 +189,11 @@
             <span class="small" style="color: var(--text-muted);">
                 &copy; 2026 London
                 <span class="mx-2 opacity-50">|</span>
-
                 <i class="bi bi-heart-fill me-0" style="color: #10b981;"></i>
                 <strong style="color: #10b981; font-style:italic;">Green Bowl Foods!</strong>
-
                 <span class="mx-2 opacity-50">|</span>
-
                 <i class="bi bi-code-slash text-white"></i> By
                 <span class="fw-bold text-white">Emilio Barrera</span>
-
                 <span class="ms-1">
                     Built with
                     <i class="bi bi-heart-fill text-danger" style="animation: heartbeat 1.5s infinite;"></i>
@@ -194,27 +206,21 @@
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    
 
     <script>
-        // Check if the server sent a Success Message via TempData
         var successMessage = '@TempData["SuccessMessage"]';
-
         if (successMessage) {
             Swal.fire({
                 title: 'Success!',
                 text: successMessage,
                 icon: 'success',
-                background: '#1e293b',  // Dark Mode Background
-                color: '#ffffff',       // White Text
-                confirmButtonColor: '#10b981', // Green Brand Color
+                background: '#1e293b',
+                color: '#ffffff',
+                confirmButtonColor: '#10b981',
                 confirmButtonText: 'Great!'
             });
         }
-
-        // Check if the server sent an Error Message via TempData
         var errorMessage = '@TempData["ErrorMessage"]';
-
         if (errorMessage) {
             Swal.fire({
                 title: 'Error!',
@@ -222,14 +228,11 @@
                 icon: 'error',
                 background: '#1e293b',
                 color: '#ffffff',
-                confirmButtonColor: '#ef4444', // Red Brand Color
+                confirmButtonColor: '#ef4444',
                 confirmButtonText: 'OK'
             });
         }
-
     </script>
-
     @await RenderSectionAsync("Scripts", required: false)
-
 </body>
 </html>

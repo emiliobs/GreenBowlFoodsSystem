@@ -1,15 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using GreenBowlFoodsSystem.Data;
+using GreenBowlFoodsSystem.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using GreenBowlFoodsSystem.Data;
-using GreenBowlFoodsSystem.Models;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace GreenBowlFoodsSystem.Controllers;
 
+[Authorize]
 public class RawMaterialsController : Controller
 {
     // Dependency Injection: Access the database context
@@ -158,6 +160,7 @@ public class RawMaterialsController : Controller
     }
 
     // GET: RawMaterials/Delete/5
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Delete(int? id)
     {
         if (id == null)

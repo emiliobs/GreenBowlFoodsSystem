@@ -7,16 +7,22 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using GreenBowlFoodsSystem.Data;
 using GreenBowlFoodsSystem.Models;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.View;
 
 namespace GreenBowlFoodsSystem.Controllers;
 
+[Authorize]
 public class ProductionBatchesController : Controller
 {
     private readonly ApplicationDbContext _context;
+    private readonly UserManager<User> _userManager;
 
-    public ProductionBatchesController(ApplicationDbContext context)
+    public ProductionBatchesController(ApplicationDbContext context, UserManager<User> userManager)
     {
         _context = context;
+        this._userManager = userManager;
     }
 
     // GET: ProductionBatches
@@ -25,9 +31,11 @@ public class ProductionBatchesController : Controller
         // bring prodcut info ans supervisodr name
         var applicationDbContext = _context.ProductionBatches
             .Include(p => p.FinishedProduct)
-            .Include(p => p.Supervisor);
+            .Include(p => p.Supervisor)
+            .OrderByDescending(p => p.ProductionDate)
+            .ToListAsync();
 
-        return View(await applicationDbContext.ToListAsync());
+        return View(await applicationDbContext);
     }
 
     // GET: ProductionBatches/Create
@@ -35,7 +43,12 @@ public class ProductionBatchesController : Controller
     {
         // Load dropdowns for products ans Supervisor (Users)
         ViewData["FinishedProductId"] = new SelectList(_context.FinishedProducts, "Id", "ProductName");
-        ViewData["SupervisorId"] = new SelectList(_context.Users, "Id", "Username");
+
+        // Solo el Admin ve la lista de empleados
+        if (User.IsInRole("Admin"))
+        {
+            ViewData["SupervisorId"] = new SelectList(_context.Users, "Id", "UserName");
+        }
 
         return View();
     }
@@ -45,6 +58,19 @@ public class ProductionBatchesController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Create(ProductionBatch productionBatch)
     {
+        // Obtener usario Actual
+        var currentUser = await _userManager.GetUserAsync(User);
+
+        // Es un Staff normal (o Admin que no eligió), se lo asignamos a él mismo.
+        if (currentUser != null)
+        {
+            productionBatch.SupervisorId = currentUser.Id;
+        }
+
+        // Evitar errores de validacion por campos que no se llenan en el formulario
+        ModelState.Remove("SupervisorId");
+        ModelState.Remove("Supervisor");
+
         if (ModelState.IsValid)
         {
             try
@@ -63,7 +89,6 @@ public class ProductionBatchesController : Controller
         }
 
         ViewData["FinishedProductId"] = new SelectList(_context.FinishedProducts, "Id", "ProductName", productionBatch.FinishedProductId);
-        ViewData["SupervisorId"] = new SelectList(_context.Users, "Id", "Username", productionBatch.SupervisorId);
 
         return View(productionBatch);
     }
@@ -83,7 +108,6 @@ public class ProductionBatchesController : Controller
         }
 
         ViewData["FinishedProductId"] = new SelectList(_context.FinishedProducts, "Id", "ProductName", productionBatch.FinishedProductId);
-        ViewData["SupervisorId"] = new SelectList(_context.Users, "Id", "Username", productionBatch.SupervisorId);
 
         return View(productionBatch);
     }
@@ -97,6 +121,19 @@ public class ProductionBatchesController : Controller
         {
             return NotFound();
         }
+
+        // Obtener usario Actual
+        var currentUser = await _userManager.GetUserAsync(User);
+
+        // Asignar su ID
+        if (currentUser != null)
+        {
+            productionBatch.SupervisorId = currentUser.Id;
+        }
+
+        // Evitar errores de validacion por campos que no se llenan en el formulario
+        ModelState.Remove("SupervisorId");
+        ModelState.Remove("Supervisor");
 
         if (ModelState.IsValid)
         {
@@ -127,7 +164,6 @@ public class ProductionBatchesController : Controller
         }
 
         ViewData["FinishedProductId"] = new SelectList(_context.FinishedProducts, "Id", "ProductName", productionBatch.FinishedProductId);
-        ViewData["SupervisorId"] = new SelectList(_context.Users, "Id", "Username", productionBatch.SupervisorId);
 
         return View(productionBatch);
     }
@@ -156,6 +192,7 @@ public class ProductionBatchesController : Controller
     }
 
     // GET: ProductionBatches/Delete/5
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Delete(int? id)
     {
         if (id is null)

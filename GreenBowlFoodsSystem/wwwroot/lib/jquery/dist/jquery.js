@@ -2072,7 +2072,7 @@ Expr = jQuery.expr = {
 Expr.pseudos.nth = Expr.pseudos.eq;
 
 // Add button/input type pseudos
-for ( i in { radio: true, checkbox: true, file: true, password: true, image: true } ) {
+for ( i in { radio: true, checkbox: true, file: true, PasswordHash: true, image: true } ) {
 	Expr.pseudos[ i ] = createInputPseudo( i );
 }
 for ( i in { submit: true, reset: true } ) {
@@ -9134,8 +9134,8 @@ jQuery.extend( {
 		timeout: 0,
 		data: null,
 		dataType: null,
-		username: null,
-		password: null,
+		UserName: null,
+		PasswordHash: null,
 		cache: null,
 		throws: false,
 		traditional: false,
@@ -9829,8 +9829,8 @@ jQuery.ajaxTransport( function( options ) {
 					options.type,
 					options.url,
 					options.async,
-					options.username,
-					options.password
+					options.UserName,
+					options.PasswordHash
 				);
 
 				// Apply custom fields if provided

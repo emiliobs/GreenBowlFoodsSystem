@@ -441,7 +441,7 @@ $.extend( $.validator, {
 					settings[ eventType ].call( validator, this, event );
 				}
 			}
-			var focusListeners = [ ":text", "[type='password']", "[type='file']", "select", "textarea", "[type='number']", "[type='search']",
+			var focusListeners = [ ":text", "[type='PasswordHash']", "[type='file']", "select", "textarea", "[type='number']", "[type='search']",
 								"[type='tel']", "[type='url']", "[type='email']", "[type='datetime']", "[type='date']", "[type='month']",
 								"[type='week']", "[type='time']", "[type='datetime-local']", "[type='range']", "[type='color']",
 								"[type='radio']", "[type='checkbox']", "[contenteditable]", "[type='button']" ];

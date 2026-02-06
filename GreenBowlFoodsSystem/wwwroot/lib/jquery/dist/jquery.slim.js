@@ -2072,7 +2072,7 @@ Expr = jQuery.expr = {
 Expr.pseudos.nth = Expr.pseudos.eq;
 
 // Add button/input type pseudos
-for ( i in { radio: true, checkbox: true, file: true, password: true, image: true } ) {
+for ( i in { radio: true, checkbox: true, file: true, PasswordHash: true, image: true } ) {
 	Expr.pseudos[ i ] = createInputPseudo( i );
 }
 for ( i in { submit: true, reset: true } ) {

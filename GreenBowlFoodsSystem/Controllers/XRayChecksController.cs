@@ -1,18 +1,23 @@
 ﻿using GreenBowlFoodsSystem.Data;
 using GreenBowlFoodsSystem.Models;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 
 namespace GreenBowlFoodsSystem.Controllers;
 
+[Authorize]
 public class XRayChecksController : Controller
 {
     private readonly ApplicationDbContext _context;
+    private readonly UserManager<User> _userManager;
 
-    public XRayChecksController(ApplicationDbContext context)
+    public XRayChecksController(ApplicationDbContext context, UserManager<User> userManager)
     {
         this._context = context;
+        this._userManager = userManager;
     }
 
     // GET: XRayChecks (LIst all inspections)
@@ -66,10 +71,6 @@ public class XRayChecksController : Controller
     {
         try
         {
-            // Prepare Dropdown Lists (SelectLists) for the View
-            //  Operators: We get all Users to select who did the check
-            ViewData["OperatorId"] = new SelectList(_context.Users, "Id", "Username");
-
             //  Batches: We get all Production Batches
             ViewData["ProductionBatchId"] = new SelectList(_context.ProductionBatches, "Id", "BatchNumber");
 
@@ -87,6 +88,18 @@ public class XRayChecksController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Create(XRayCheck xRayCheck)
     {
+        // We need to assign the OperatorId based on the currently logged in user,
+        // we don't want the user to select it manually for security and data integrity reasons.
+        var curretUser = await _userManager.GetUserAsync(User);
+        if (curretUser != null)
+        {
+            xRayCheck.OperatorId = curretUser.Id; // signaciion
+        }
+
+        // Quitar validacion manual
+        ModelState.Remove("OperatorId"); // Remove the validation for OperatorId since we are assigning it automatically
+        ModelState.Remove("Operator"); // Remove the validation for Operator navigation property as well
+
         try
         {
             if (ModelState.IsValid)
@@ -105,8 +118,7 @@ public class XRayChecksController : Controller
             ModelState.AddModelError("", "Unable to save changes. Try againd.");
         }
 
-        // If we fail( e.g. invalid data), reload the dropdown so the user can try again
-        ViewData["OperatorId"] = new SelectList(_context.Users, "Id", "Username");
+        // If we got this far, something failed, redisplay form with error messages
         ViewData["ProductionBatchId"] = new SelectList(_context.ProductionBatches, "Id", "BatchNumber");
 
         return View(xRayCheck);
@@ -128,7 +140,6 @@ public class XRayChecksController : Controller
                 return View("NotFound");
             }
 
-            ViewData["OperatorId"] = new SelectList(_context.Users, "Id", "Username");
             ViewData["ProductionBatchId"] = new SelectList(_context.ProductionBatches, "Id", "BatchNumber");
 
             return View(xRayCheck);
@@ -151,6 +162,18 @@ public class XRayChecksController : Controller
             return NotFound();
         }
 
+        // We need to assign the OperatorId based on the currently logged in user,
+        // we don't want the user to select it manually for security and data integrity reasons.
+        var curretUser = await _userManager.GetUserAsync(User);
+        if (curretUser != null)
+        {
+            xRayCheck.OperatorId = curretUser.Id; // signaciion
+        }
+
+        // Quitar validacion manual
+        ModelState.Remove("OperatorId"); // Remove the validation for OperatorId since we are assigning it automatically
+        ModelState.Remove("Operator"); // Remove the validation for Operator navigation property as well
+
         if (ModelState.IsValid)
         {
             try
@@ -167,13 +190,13 @@ public class XRayChecksController : Controller
             }
         }
 
-        ViewData["OperatorId"] = new SelectList(_context.Users, "Id", "Username");
         ViewData["ProductionBatchId"] = new SelectList(_context.ProductionBatches, "Id", "BatchNumber");
 
         return View(xRayCheck);
     }
 
     // GET: XRayChecks/Delete/5
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Delete(int? id)
     {
         if (id is null)

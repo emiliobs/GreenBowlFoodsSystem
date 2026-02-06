@@ -1,17 +1,22 @@
 ﻿using GreenBowlFoodsSystem.Data;
+using GreenBowlFoodsSystem.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
 
 namespace GreenBowlFoodsSystem.Controllers;
 
 public class AccountController : Controller
 {
-    private readonly ApplicationDbContext _context;
+    private readonly SignInManager<User> _signInManager;
+    private readonly UserManager<User> _userManager;
 
     // Constructor: We inject the database context to be able to search for users
-    public AccountController(ApplicationDbContext context)
+    public AccountController(SignInManager<User> signInManager, UserManager<User> userManager)
     {
-        this._context = context;
+        this._signInManager = signInManager;
+        this._userManager = userManager;
     }
 
     // GET: /Account/Login
@@ -19,6 +24,11 @@ public class AccountController : Controller
     [HttpGet]
     public IActionResult Login()
     {
+        if (_signInManager.IsSignedIn(User))
+        {
+            return RedirectToAction("Index", "Home");
+        }
+
         return View();
     }
 
@@ -26,34 +36,44 @@ public class AccountController : Controller
     // This method receives the data from the form and validates it
 
     [HttpPost]
-    public async Task<IActionResult> Login(string username, string password)
+    public async Task<IActionResult> Login(string email, string password)
     {
-        // Search for a user with the matching Username and Password
-        // Note: In a real production app, we should compare hashed passwords, not plain text.
-        var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == username && u.Password == password);
-
-        if (user is not null)
+        if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(password))
         {
-            // We store the username so we can check if the user is logged in later
-            HttpContext.Session.SetString("UserSession", user.Username);
-            HttpContext.Session.SetString("UserRole", user.Role);
-
-            // User found! Valid credentials.
-            // For now, we just redirect to the Home page or Dashboard.
-            // Later, we will add the logic to "remember" the user (Session/Cookies).
-            return RedirectToAction("Index", "Home");
+            ViewData["ErrorMessage"] = "Please fill all fields.";
+            return View();
         }
 
-        // User not found or wrong password.
-        // We add an error message to display in the View.
-        ViewBag.ErrorMessage = "Invalid username or password.";
+        // 2. BUSCAR POR EMAIL PRIMERO
+        // Como tu sistema usa Email = UserName, buscamos el usuario por su email
+        // para asegurarnos de pasar el UserName correcto al SignInManager.
+        var user = await _userManager.FindByEmailAsync(email);
+
+        if (user != null)
+        {
+            // Intentamos hacer login usando el UserName del usuario encontrado (que es igual al email)
+            var result = await _signInManager.PasswordSignInAsync(user.UserName, password, isPersistent: false, lockoutOnFailure: false);
+
+            if (result.Succeeded)
+            {
+                return RedirectToAction("Index", "Home");
+            }
+        }
+
+        // Si falla
+        ViewBag.ErrorMessage = "Invalid Email or Password.";
         return View();
     }
 
-    public IActionResult Logout()
+    public async Task<IActionResult> Logout()
     {
-        // Clear the session
+        // Delete the identity cookies
+        await _signInManager.SignOutAsync();
+
+        // Clear we custon session data
         HttpContext.Session.Clear();
+
+        // Go back to Login
         return RedirectToAction("Login");
     }
 }

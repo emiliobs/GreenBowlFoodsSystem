@@ -1,23 +1,30 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema; // <--- Necesario para [NotMapped]
 
-namespace GreenBowlFoodsSystem.Models;
-
-// 1. USER (Login y Auditoría)
-public class User
+namespace GreenBowlFoodsSystem.Models
 {
-    public int Id { get; set; }
+    // Heredamos de IdentityUser<int> para que el ID sea un número (1, 2, 3...)
+    public class User : IdentityUser<int>
+    {
+        // New Personal Info
+        [Required(ErrorMessage = "First Name is required.")]
+        [StringLength(50)]
+        public string FirstName { get; set; } = null!;
 
-    [Required(ErrorMessage = "Username is required")]
-    [StringLength(50, MinimumLength = 3, ErrorMessage = "Username must be between 3 and 50 characters")]
-    [Display(Name = "User Name")]
-    public string Username { get; set; } = string.Empty; // e.g., "j.smith"
+        [Required(ErrorMessage = "Last Name is required.")]
+        [StringLength(50)]
+        public string LastName { get; set; } = null!;
 
-    [Required(ErrorMessage = "Password is required")]
-    [DataType(DataType.Password)]
-    public string Password { get; set; } = string.Empty; // Stored plain for prototype
+        [Required(ErrorMessage = "Role selection is required")]
+        [RegularExpression("^(Admin|Staff)$", ErrorMessage = "Role must be 'Admin' or 'Staff'")]
+        public string Role { get; set; } = "Staff";
 
-    [Required(ErrorMessage = "Role selection is required")]
-    [RegularExpression("^(Admin|Staff)$", ErrorMessage = "Role must be 'Admin' or 'Staff'")]
-    public string Role { get; set; } = "Staff"; // Security Level
+        [NotMapped]
+        [Required(ErrorMessage = "Password is required")]
+        [DataType(DataType.Password)]
+        public string Password { get; set; } = string.Empty;
+
+        public string FullName => $"{FirstName} {LastName}";
+    }
 }

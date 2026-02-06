@@ -1,5 +1,6 @@
 ﻿using GreenBowlFoodsSystem.Data;
 using GreenBowlFoodsSystem.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -8,6 +9,7 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 
 namespace GreenBowlFoodsSystem.Controllers;
 
+[Authorize]
 public class ShipmentsController : Controller
 {
     private readonly ApplicationDbContext _context;
@@ -23,7 +25,9 @@ public class ShipmentsController : Controller
         // Include relationship to show Names (Customera and Finished Products) isntead Of IDs
         var namesOfCustomerAndProducts = await _context.Shipments
             .Include(s => s.Customer)
-            .Include(s => s.FinishedProduct).ToListAsync();
+            .Include(s => s.FinishedProduct)
+            .OrderByDescending(s => s.Date)
+            .ToListAsync();
 
         return View(namesOfCustomerAndProducts);
     }
@@ -220,6 +224,7 @@ public class ShipmentsController : Controller
 
     // Delete actions (Restory Inventory)
     // GET: Shipments/Delete/5
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Delete(int? id)
     {
         if (id == null) return NotFound();

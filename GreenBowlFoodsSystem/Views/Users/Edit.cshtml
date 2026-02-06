@@ -5,62 +5,73 @@
 }
 
 <div class="row justify-content-center">
-    <div class="col-md-6">
+    <div class="col-md-8 col-lg-6">
 
         <div class="text-center mb-4 animate-fade-up">
-            <h1 class="display-6 fw-bold text-white">Edit User</h1>
-            <p class="text-white">Update account details and permissions.</p>
+            <h1 class="fw-bold text-white">Edit Profile</h1>
+            <p class="text-white-50">Update employee information.</p>
         </div>
 
-        <div class="card shadow-lg border-0 animate-fade-up" style="animation-delay: 0.1s;">
+        <div class="card shadow-lg animate-fade-up" style="animation-delay: 0.1s; background-color: #1e293b; border: 1px solid rgba(255, 255, 255, 0.1);">
             <div class="card-body p-5">
                 <form asp-action="Edit">
                     <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
                     <input type="hidden" asp-for="Id" />
+                    <input type="hidden" asp-for="SecurityStamp" />
 
-                    <div class="mb-4">
-                        <label asp-for="Username" class="form-label text-white small text-uppercase fw-bold ls-1">Username</label>
-                        <div class="input-group">
-                            <span class="input-group-text">
-                                <i class="bi bi-person-fill"></i>
-                            </span>
-                            <input asp-for="Username" class="form-control" placeholder="e.g. jdoe" />
+                    <h5 class="text-white mb-4 d-flex align-items-center fw-bold" style="font-size: 1.1rem;">
+                        <i class="bi bi-person-vcard text-info me-2"></i> Personal Details
+                    </h5>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label asp-for="FirstName" class="form-label text-white fw-bold small">First Name</label>
+                            <input asp-for="FirstName" class="form-control bg-dark border-secondary text-white" />
+                            <span asp-validation-for="FirstName" class="text-danger small"></span>
                         </div>
-                        <span asp-validation-for="Username" class="text-danger small"></span>
+                        <div class="col-md-6">
+                            <label asp-for="LastName" class="form-label text-white fw-bold small">Last Name</label>
+                            <input asp-for="LastName" class="form-control bg-dark border-secondary text-white" />
+                            <span asp-validation-for="LastName" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Email" class="form-label text-white fw-bold small">Email (Login ID)</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-dark border-secondary text-white-50"><i class="bi bi-envelope"></i></span>
+                            <input asp-for="Email" class="form-control bg-dark border-secondary text-white" />
+                        </div>
+                        <span asp-validation-for="Email" class="text-danger small"></span>
                     </div>
 
                     <div class="mb-4">
-                        <label asp-for="Password" class="form-label text-white small text-uppercase fw-bold ls-1">Password</label>
+                        <label asp-for="PhoneNumber" class="form-label text-white fw-bold small">Phone Number</label>
                         <div class="input-group">
-                            <span class="input-group-text">
-                                <i class="bi bi-key-fill"></i>
-                            </span>
-                            <input asp-for="Password" type="text" class="form-control" placeholder="Enter new password" />
+                            <span class="input-group-text bg-dark border-secondary text-white-50"><i class="bi bi-telephone"></i></span>
+                            <input asp-for="PhoneNumber" class="form-control bg-dark border-secondary text-white" />
                         </div>
-                        <span asp-validation-for="Password" class="text-danger small"></span>
                     </div>
+
+                    <hr class="border-secondary opacity-25 my-4" />
 
                     <div class="mb-5">
-                        <label asp-for="Role" class="form-label text-white small text-uppercase fw-bold ls-1">System Role</label>
+                        <label asp-for="Role" class="form-label text-white fw-bold small">System Role</label>
                         <div class="input-group">
-                            <span class="input-group-text">
-                                <i class="bi bi-shield-lock-fill"></i>
-                            </span>
-                            <select asp-for="Role" class="form-control" style="background-color: rgba(15, 23, 42, 0.6); color: white;">
-                                <option value="Admin">Admin (Full Access)</option>
-                                <option value="Staff">Staff (Inventory Only)</option>
+                            <span class="input-group-text bg-dark border-secondary text-white-50"><i class="bi bi-shield-check"></i></span>
+                            <select asp-for="Role" class="form-control bg-dark border-secondary text-white">
+                                <option value="Staff">Staff</option>
+                                <option value="Admin">Admin</option>
                             </select>
                         </div>
-                        <span asp-validation-for="Role" class="text-danger small"></span>
                     </div>
 
                     <div class="d-grid gap-2">
-                        <button type="submit" class="btn btn-primary btn-lg shadow-sm">
-                            <i class="bi bi-save me-2"></i> Save Changes
+                        <button type="submit" class="btn btn-lg text-white shadow-lg fw-bold" style="background-color: #10b981; border-radius: 50px;">
+                            <i class="bi bi-check-circle-fill me-2"></i> Save Changes
                         </button>
-
                         <a asp-action="Index" class="btn btn-back-custom text-center justify-content-center mt-2">
-                            <i class="bi bi-arrow-left me-2"></i> Back to List
+                            Cancel
                         </a>
                     </div>
                 </form>

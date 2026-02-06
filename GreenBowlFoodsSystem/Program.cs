@@ -1,4 +1,6 @@
 using GreenBowlFoodsSystem.Data;
+using GreenBowlFoodsSystem.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -16,6 +18,18 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
 
+// IDentity Configuration (Especificar <int>)
+builder.Services.AddIdentity<User, IdentityRole<int>>(options =>
+{
+    // Reglas de PasswordHash relajadas para el desarrollo
+    options.Password.RequireDigit = false;
+    options.Password.RequireLowercase = false;
+    options.Password.RequireUppercase = false;
+    options.Password.RequireNonAlphanumeric = false;
+    options.Password.RequiredLength = 3;
+}).AddEntityFrameworkStores<ApplicationDbContext>()
+  .AddDefaultTokenProviders();
+
 var app = builder.Build();
 
 // Seed Database, this ensures the database is populates when the app starts
@@ -27,7 +41,7 @@ using (var scope = app.Services.CreateScope())
         var context = services.GetRequiredService<ApplicationDbContext>();
 
         // Call the initializ method new just created
-        DbInitializer.Initialize(context);
+        await DbInitializer.Initialize(services);
     }
     catch (Exception ex)
     {
@@ -44,13 +58,14 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
+//Use Session Middleware
 app.UseHttpsRedirection();
 app.UseRouting();
-
-//Use Session Middleware
 app.UseSession();
 
-app.UseAuthorization();
+// Security Active
+app.UseAuthentication(); // Identifica el usaurio
+app.UseAuthorization();  // Verifica permisos
 
 app.MapStaticAssets();
 

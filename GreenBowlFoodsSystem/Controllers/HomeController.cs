@@ -1,6 +1,7 @@
 using GreenBowlFoodsSystem.Data;
 using GreenBowlFoodsSystem.Models;
 using GreenBowlFoodsSystem.ViewModel;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;// Ensure this matches the previous namespace
@@ -21,8 +22,14 @@ public class HomeController : Controller
 
     public async Task<IActionResult> Index()
     {
-        // Check if the user is logged in (optiona but recomended), If using Session, we might want to show data only if logged in
-        // For now, we will alwayss load data to make the Dashboard look nice.
+        // Check if the user is logged in (optiona but recomended),
+        // If using Session, we might want to show data only if logged in
+        if (!User.Identity!.IsAuthenticated)
+        {
+            return View(new DashboardViewModel());
+        }
+
+        // IF LOGGED IN: Load the Dashboard Data
         try
         {
             //  KPI: Total Inventory Value (Money)

@@ -1,11 +1,13 @@
 ﻿using GreenBowlFoodsSystem.Data;
 using GreenBowlFoodsSystem.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore; // Added for FindAsync
 
 namespace GreenBowlFoodsSystem.Controllers
 {
+    [Authorize]
     public class ProductionMaterialsController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -34,7 +36,6 @@ namespace GreenBowlFoodsSystem.Controllers
             {
                 return NotFound();
             }
-
 
             // Pass the Batch ID to the view (so we know who the parent is)
             ViewData["ProductionBatchId"] = batchId;
@@ -112,7 +113,6 @@ namespace GreenBowlFoodsSystem.Controllers
                 TempData["ErrorMessage"] = "Please check the form for errors.";
             }
 
-           
             // If we get here (error), we need to RE-FETCH the batch info
             // otherwise, the Read-Only fields in the view will be empty/broken.
             var batchInfo = await _context.ProductionBatches
