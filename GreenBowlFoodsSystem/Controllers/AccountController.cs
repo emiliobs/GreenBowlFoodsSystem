@@ -52,7 +52,7 @@ public class AccountController : Controller
         if (user != null)
         {
             // Intentamos hacer login usando el UserName del usuario encontrado (que es igual al email)
-            var result = await _signInManager.PasswordSignInAsync(user.UserName, password, isPersistent: false, lockoutOnFailure: false);
+            var result = await _signInManager.PasswordSignInAsync(user.UserName!, password, isPersistent: false, lockoutOnFailure: false);
 
             if (result.Succeeded)
             {
@@ -75,5 +75,11 @@ public class AccountController : Controller
 
         // Go back to Login
         return RedirectToAction("Login");
+    }
+
+    [HttpGet]
+    public IActionResult AccessDenied()
+    {
+        return View();
     }
 }

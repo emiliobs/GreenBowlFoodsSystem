@@ -78,7 +78,7 @@ public class RawMaterialsController : Controller
     {
         if (id == null)
         {
-            return NotFound();
+            return View("NotFound");
         }
 
         var rawMaterial = await _context.RawMaterials.FindAsync(id);
@@ -101,7 +101,7 @@ public class RawMaterialsController : Controller
     {
         if (id != rawMaterial.Id)
         {
-            return NotFound();
+            return View("NotFound");
         }
 
         if (ModelState.IsValid)
@@ -118,7 +118,7 @@ public class RawMaterialsController : Controller
             {
                 if (!RawMaterialExists(rawMaterial.Id))
                 {
-                    return NotFound();
+                    return View("NotFound");
                 }
                 else
                 {
@@ -153,7 +153,7 @@ public class RawMaterialsController : Controller
 
         if (rawMaterial == null)
         {
-            return NotFound();
+            return View("NotFound");
         }
 
         return View(rawMaterial);
@@ -165,7 +165,7 @@ public class RawMaterialsController : Controller
     {
         if (id == null)
         {
-            return NotFound();
+            return View("NotFound");
         }
 
         var rawMaterial = await _context.RawMaterials
@@ -174,7 +174,7 @@ public class RawMaterialsController : Controller
 
         if (rawMaterial == null)
         {
-            return NotFound();
+            return View("NotFound");
         }
 
         return View(rawMaterial);

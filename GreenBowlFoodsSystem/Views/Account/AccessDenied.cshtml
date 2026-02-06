@@ -1,0 +1,23 @@
+﻿@{
+    ViewData["Title"] = "Access Denied";
+}
+
+<div class="d-flex align-items-center justify-content-center" style="height: 70vh;">
+    <div class="text-center animate-fade-up">
+
+        <div class="mb-4">
+            <i class="bi bi-shield-lock-fill text-danger" style="font-size: 5rem;"></i>
+        </div>
+
+        <h1 class="display-4 fw-bold text-white mb-3">Access Denied</h1>
+
+        <p class="lead text-white-50 mb-5">
+            You do not have permission to view this resource.<br>
+            Please contact your system administrator if you believe this is an error.
+        </p>
+
+        <a asp-controller="Home" asp-action="Index" class="btn btn-outline-light rounded-pill px-4 py-2">
+            <i class="bi bi-arrow-left me-2"></i> Return to Dashboard
+        </a>
+    </div>
+</div>
