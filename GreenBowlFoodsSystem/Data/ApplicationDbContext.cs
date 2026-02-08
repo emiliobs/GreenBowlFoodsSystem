@@ -39,6 +39,21 @@ public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<int>, i
         }
 
         // PREVENT CASCADE DELETE LOOPS
+
+        // Prevent deleting a ReceivingForm when a RawMaterial is deleted
+        modelBuilder.Entity<ReceivingForm>()
+            .HasOne(r => r.RawMaterial)
+            .WithMany()
+            .HasForeignKey(r => r.RawMaterialId)
+            .OnDelete(DeleteBehavior.Restrict); // Important!
+
+        //Prevent deleting a ReceivingForm when a Supplier is deleted (Optional safety)
+        modelBuilder.Entity<ReceivingForm>()
+            .HasOne(r => r.Supplier)
+            .WithMany()
+            .HasForeignKey(r => r.SupplierId)
+            .OnDelete(DeleteBehavior.Restrict);
+
         modelBuilder.Entity<XRayCheck>()
             .HasOne(x => x.Operator)
             .WithMany()

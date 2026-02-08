@@ -1,0 +1,97 @@
+﻿@model IEnumerable<GreenBowlFoodsSystem.Models.ReceivingForm>
+
+@{
+    ViewData["Title"] = "Receiving Log";
+}
+
+<div class="container-fluid animate-fade-up">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="display-6 fw-bold text-white">Receiving Form Log</h1>
+            <p class="text-white-50">Track incoming raw material shipments.</p>
+        </div>
+        <a asp-action="Create" class="btn btn-primary shadow-lg rounded-pill px-4" style="background-color: #10b981; border: none;">
+            <i class="bi bi-plus-lg me-2"></i> New Receipt
+        </a>
+    </div>
+
+    <div class="card shadow-lg border-0" style="background: #1e293b;">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-dark table-hover mb-0 align-middle">
+                    <thead class="text-white-50 small text-uppercase" style="background-color: rgba(0,0,0,0.2);">
+                        <tr>
+                            <th class="ps-4 py-3">ID</th>
+                            <th>Date</th>
+                            <th>Trailer #</th>
+                            <th>Item</th>
+                            <th>Qty</th>
+                            <th>Supplier</th>
+                            <th>Status</th>
+                            <th>Cost</th>
+                            <th>Received By</th>
+                            <th class="text-end pe-4">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td class="ps-4 font-monospace text-info">#@item.Id</td>
+                                <td class="text-white">@item.Date.ToString("MMM dd, yyyy")</td>
+
+                                <td class="text-warning font-monospace">
+                                    <i class="bi bi-truck me-1"></i> @(item.TrailerNumber ?? "N/A")
+                                </td>
+
+                                <td class="fw-bold text-white">
+                                    <i class="bi bi-box-seam text-info me-1"></i>
+                                    @item.RawMaterial?.MaterialName
+                                </td>
+
+                                <td class="fw-bold text-info">
+                                    @item.QuantityReceived.ToString("N2") <small class="text-info">@item.RawMaterial?.Unit</small>
+                                </td>
+
+                                <td class="fw-bold text-white">@item.Supplier?.SupplierName</td>
+
+                                <td>
+                                    @if (item.IsAccepted)
+                                    {
+                                        <span class="badge bg-success  border border-success border-opacity-25 rounded-pill px-2">
+                                            <i class="bi bi-check-circle-fill me-1"></i> Accepted
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-danger  border border-danger border-opacity-25 rounded-pill px-2">
+                                            <i class="bi bi-x-circle-fill me-1"></i> Rejected
+                                        </span>
+                                    }
+                                </td>
+
+                                <td class="text-warning fw-bold font-monospace">
+                                     @Html.DisplayFor(modelItem => item.TotalAmount)
+                                    @* £@item.TotalAmount.ToString("0") *@
+                                </td>
+
+                                <td>
+                                    <span class="text-white small">
+                                        <i class="bi bi-person me-1 text-info"></i> @(item.ReceivedBy?.FirstName ?? "Unknown")
+                                    </span>
+                                </td>
+
+                                <td class="text-end pe-4">
+                                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm" style="color: #a3e635;" title="Details">
+                                    <i class="bi bi-eye-fill"></i>
+                                </a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

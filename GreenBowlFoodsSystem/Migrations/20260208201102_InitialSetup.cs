@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace GreenBowlFoodsSystem.Migrations
 {
     /// <inheritdoc />
-    public partial class InitalSetup : Migration
+    public partial class InitialSetup : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -336,36 +336,6 @@ namespace GreenBowlFoodsSystem.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "ReceivingForms",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Date = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    SupplierId = table.Column<int>(type: "int", nullable: false),
-                    TrailerNumber = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    IsAccepted = table.Column<bool>(type: "bit", nullable: false),
-                    InspectionNotes = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
-                    ReceivedById = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ReceivingForms", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_ReceivingForms_AspNetUsers_ReceivedById",
-                        column: x => x.ReceivedById,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_ReceivingForms_Suppliers_SupplierId",
-                        column: x => x.SupplierId,
-                        principalTable: "Suppliers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Shipments",
                 columns: table => new
                 {
@@ -511,6 +481,45 @@ namespace GreenBowlFoodsSystem.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "ReceivingForms",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Date = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    SupplierId = table.Column<int>(type: "int", nullable: false),
+                    TrailerNumber = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    IsAccepted = table.Column<bool>(type: "bit", nullable: false),
+                    InspectionNotes = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
+                    TotalAmount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    ReceivedById = table.Column<int>(type: "int", nullable: false),
+                    RawMaterialId = table.Column<int>(type: "int", nullable: false),
+                    QuantityReceived = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ReceivingForms", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ReceivingForms_AspNetUsers_ReceivedById",
+                        column: x => x.ReceivedById,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_ReceivingForms_RawMaterials_RawMaterialId",
+                        column: x => x.RawMaterialId,
+                        principalTable: "RawMaterials",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_ReceivingForms_Suppliers_SupplierId",
+                        column: x => x.SupplierId,
+                        principalTable: "Suppliers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
                 table: "AspNetRoleClaims",
@@ -604,6 +613,11 @@ namespace GreenBowlFoodsSystem.Migrations
                 name: "IX_RawMaterials_SupplierId",
                 table: "RawMaterials",
                 column: "SupplierId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ReceivingForms_RawMaterialId",
+                table: "ReceivingForms",
+                column: "RawMaterialId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ReceivingForms_ReceivedById",

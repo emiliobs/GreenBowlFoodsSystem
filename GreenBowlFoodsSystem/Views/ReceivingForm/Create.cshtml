@@ -1,0 +1,136 @@
+﻿@model GreenBowlFoodsSystem.Models.ReceivingForm
+
+@{
+    ViewData["Title"] = "New Receipt";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-8">
+
+        <div class="text-center mb-4 animate-fade-up">
+            <h1 class="fw-bold text-white">Receive Inventory</h1>
+            <p class="text-white-50">Log trailer arrival, inspection, and costs.</p>
+        </div>
+
+        <div class="card shadow-lg animate-fade-up" style="background-color: #1e293b; border: 1px solid rgba(255, 255, 255, 0.1);">
+            <div class="card-body p-5">
+                <form asp-action="Create">
+
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label asp-for="SupplierId" class="form-label text-white small fw-bold">Supplier</label>
+                            <div class="input-group">
+                                <span class="input-group-text">
+                                    <i class="bi bi-shop text-info"></i>
+                                </span>
+                                <select asp-for="SupplierId" class="form-control" asp-items="ViewBag.SupplierId">
+                                    <option disabled selected>-- Select Supplier --</option>
+                                </select>
+                            </div>
+                            <span asp-validation-for="SupplierId" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="Date" class="form-label text-white small fw-bold">Date Received</label>
+                            <div class="input-group">
+                                <span class="input-group-text">
+                                    <i class="bi bi-calendar-event text-info"></i>
+                                </span>
+                                <input asp-for="Date" type="date" class="form-control" value="@DateTime.Now.ToString("yyyy-MM-dd")" />
+                            </div>
+                            <span asp-validation-for="Date" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <label asp-for="TrailerNumber" class="form-label text-white small fw-bold">Trailer Number</label>
+                            <div class="input-group">
+                                <span class="input-group-text">
+                                    <i class="bi bi-truck-front-fill text-info"></i>
+                                </span>
+                                <input asp-for="TrailerNumber" class="form-control" placeholder="TR-5542" />
+                            </div>
+                            <span asp-validation-for="TrailerNumber" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-md-6 d-flex align-items-end">
+                            <div class="form-control form-switch mb-0 p-2.5 rounded border-0 w-100 d-flex align-items-center">
+                                <input class="form-check-input" type="checkbox" asp-for="IsAccepted" checked style="margin-left:2px; width: 2.5em; height: 1.25em;">
+                                <label class="form-check-label text-white ms-3 fw-bold" asp-for="IsAccepted">
+                                    Quality Accepted?
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr class="border-secondary my-4" />
+
+                    <h5 class="text-info mb-3 fw-bold"><i class="bi bi-box-seam me-2"></i>Stock & Finance</h5>
+
+                    <div class="p-3 rounded-3 mb-4" style="background-color: rgba(0,0,0,0.2); border-left: 4px solid #0ea5e9;">
+                        <div class="row">
+
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="RawMaterialId" class="form-label text-white small fw-bold">Raw Material</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">
+                                        <i class="bi bi-basket2-fill text-info"></i>
+                                    </span>
+                                    <select asp-for="RawMaterialId" class="form-control" asp-items="ViewBag.RawMaterialId">
+                                        <option disabled selected>-- Select Material --</option>
+                                    </select>
+                                </div>
+                                <span asp-validation-for="RawMaterialId" class="text-danger small"></span>
+                            </div>
+
+                            <div class="col-md-3 mb-3">
+                                <label asp-for="QuantityReceived" class="form-label text-white small fw-bold">Qty Received</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">
+                                        <i class="bi bi-layers-fill text-info"></i>
+                                    </span>
+                                    <input asp-for="QuantityReceived" type="number" step="0.01" class="form-control text-warning fw-bold" placeholder="0.00" />
+                                </div>
+                                <span asp-validation-for="QuantityReceived" class="text-danger small"></span>
+                            </div>
+
+                            <div class="col-md-3 mb-3">
+                                <label asp-for="TotalAmount" class="form-label text-white small fw-bold">Total Cost ($)</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">
+                                        <i class="bi bi-currency-dollar text-info"></i>
+                                    </span>
+                                    <input asp-for="TotalAmount" type="number" step="0.01" class="form-control text-warning fw-bold" placeholder="0.00" />
+                                </div>
+                                <span asp-validation-for="TotalAmount" class="text-danger small"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label asp-for="InspectionNotes" class="form-label text-white small fw-bold">Inspection Notes</label>
+                        <div class="input-group">
+                            <span class="input-group-text">
+                                <i class="bi bi-journal-text text-info"></i>
+                            </span>
+                            <textarea asp-for="InspectionNotes" class="form-control" rows="2" placeholder="Example: Temperature OK, Seal intact..."></textarea>
+                        </div>
+                        <span asp-validation-for="InspectionNotes" class="text-danger small"></span>
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-lg text-white shadow-lg fw-bold" style="background-color: #10b981; border-radius: 50px;">
+                            <i class="bi bi-save me-2"></i> Submit Receipt
+                        </button>
+                        <a asp-action="Index" class="btn btn-back-custom text-center justify-content-center mt-2">
+                            <i class="bi bi-arrow-left me-2"></i> Back to List
+                        </a>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

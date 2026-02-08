@@ -1,7 +1,7 @@
 ﻿using GreenBowlFoodsSystem.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection; // Necesario para createScope
+using Microsoft.Extensions.DependencyInjection; // Necessary for createScope
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -12,17 +12,17 @@ namespace GreenBowlFoodsSystem.Data
     {
         public static async Task Initialize(IServiceProvider serviceProvider)
         {
-            // Creamos un Scope para obtener los servicios necesarios
+            // Create a Scope to get necessary services
             using (var scope = serviceProvider.CreateScope())
             {
                 var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
                 var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
                 var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole<int>>>();
 
-                // 1. Asegurar que la BD exista
+                // 1. Ensure DB exists
                 context.Database.EnsureCreated();
 
-                // 2. Si ya hay usuarios, asumimos que la BD ya tiene datos
+                // 2. If users exist, assume DB is already seeded
                 if (context.Users.Any())
                 {
                     return;
@@ -43,7 +43,7 @@ namespace GreenBowlFoodsSystem.Data
                         }
                     }
 
-                    // --- CREAR ADMIN USER ---
+                    // --- CREATE ADMIN USER ---
                     var AdminUsers = new User
                     {
                         UserName = "admin@yopmail.com", // Login ID
@@ -55,14 +55,13 @@ namespace GreenBowlFoodsSystem.Data
                         PhoneNumber = "1234567890"
                     };
 
-                    var resultAdmin = await userManager.CreateAsync(AdminUsers, "Admin123!");
+                    var resultAdmin = await userManager.CreateAsync(AdminUsers, "123");
                     if (resultAdmin.Succeeded)
                     {
                         await userManager.AddToRoleAsync(AdminUsers, "Admin");
                     }
 
-                    // --- CREAR STAFF USER ---
-
+                    // --- CREATE STAFF USER ---
                     var staffUser = new User
                     {
                         UserName = "staff@yopmail.com",
@@ -74,7 +73,7 @@ namespace GreenBowlFoodsSystem.Data
                         PhoneNumber = "0987654321"
                     };
 
-                    var resultStaff = await userManager.CreateAsync(staffUser, "Staff123!");
+                    var resultStaff = await userManager.CreateAsync(staffUser, "123");
                     if (resultStaff.Succeeded)
                     {
                         await userManager.AddToRoleAsync(staffUser, "Staff");
@@ -135,7 +134,7 @@ namespace GreenBowlFoodsSystem.Data
                     }
 
                     // =============================================================
-                    // 4. SEED FINISHED PRODUCTS (ALL 20 ITEMS)
+                    // 4. SEED FINISHED PRODUCTS
                     // =============================================================
                     if (!context.FinishedProducts.Any())
                     {
@@ -355,6 +354,75 @@ namespace GreenBowlFoodsSystem.Data
                                 }
                             };
                             context.XRayChecks.AddRange(xRayChecks);
+                            await context.SaveChangesAsync();
+                        }
+                    }
+
+                    // =============================================================
+                    // 10. SEED RECEIVING FORMS (UPDATED WITH MATERIAL & QTY)
+                    // =============================================================
+                    if (!context.ReceivingForms.Any())
+                    {
+                        // 1. Get User & Suppliers
+                        var adminUser = await userManager.FindByEmailAsync("admin@yopmail.com");
+                        var freshFarms = context.Suppliers.FirstOrDefault(s => s.SupplierName == "Fresh Farms Ltd");
+                        var organicGlobal = context.Suppliers.FirstOrDefault(s => s.SupplierName == "Organic Global Imports");
+
+                        // 2. Get Raw Materials (We need their IDs now!)
+                        var spinach = context.RawMaterials.FirstOrDefault(m => m.MaterialName.Contains("Spinach"));
+                        var quinoa = context.RawMaterials.FirstOrDefault(m => m.MaterialName.Contains("Quinoa"));
+                        var carrots = context.RawMaterials.FirstOrDefault(m => m.MaterialName.Contains("Carrots"));
+
+                        // Check if everything exists before seeding
+                        if (adminUser != null && freshFarms != null && organicGlobal != null &&
+                            spinach != null && quinoa != null && carrots != null)
+                        {
+                            var receipts = new ReceivingForm[]
+                            {
+            // Receipt 1: Accepted Spinach Load
+            new ReceivingForm
+            {
+                Date = DateTime.Now.AddDays(-10),
+                SupplierId = freshFarms.Id,
+                TrailerNumber = "TR-8854",
+                IsAccepted = true,
+                InspectionNotes = "Fresh shipment of Spinach. Temp OK. Seals intact.",
+                TotalAmount = 450.00m,
+                ReceivedById = adminUser.Id,
+                // --- NEW REQUIRED FIELDS ---
+                RawMaterialId = spinach.Id,
+                QuantityReceived = 100.00m
+            },
+            // Receipt 2: Rejected Quinoa Load (Damaged)
+            new ReceivingForm
+            {
+                Date = DateTime.Now.AddDays(-5),
+                SupplierId = organicGlobal.Id,
+                TrailerNumber = "OG-9921",
+                IsAccepted = false,
+                InspectionNotes = "REJECTED: Pallets arrived water damaged. Mold visible.",
+                TotalAmount = 1200.00m,
+                ReceivedById = adminUser.Id,
+                // --- NEW REQUIRED FIELDS ---
+                RawMaterialId = quinoa.Id,
+                QuantityReceived = 500.00m
+            },
+            // Receipt 3: Accepted Carrots
+            new ReceivingForm
+            {
+                Date = DateTime.Now.AddDays(-2),
+                SupplierId = freshFarms.Id,
+                TrailerNumber = "TR-9901",
+                IsAccepted = true,
+                InspectionNotes = "Standard weekly delivery. All good.",
+                TotalAmount = 800.50m,
+                ReceivedById = adminUser.Id,
+                // --- NEW REQUIRED FIELDS ---
+                RawMaterialId = carrots.Id,
+                QuantityReceived = 200.00m
+            }
+                            };
+                            context.ReceivingForms.AddRange(receipts);
                             await context.SaveChangesAsync();
                         }
                     }

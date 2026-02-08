@@ -38,6 +38,10 @@
 
             userRole = currentUser.Role;
         }
+        else
+        {
+            <span class="text-warning">Session Expired</span>
+        }
     }
 }
 
@@ -96,19 +100,33 @@
                         {
                             <li class="nav-item border-start border-secondary mx-2 d-none d-xl-block"></li>
                             <li class="nav-item"><span class="nav-link text-white-50 small fw-bold d-xl-none mt-2">DIRECTORY</span></li>
-                            <li class="nav-item">
-                                <a class="nav-link @GetActiveClass("Suppliers")" asp-area="" asp-controller="Suppliers" asp-action="Index">
-                                    <i class="bi bi-truck me-2"></i> Suppliers
+                           
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle text-white" href="#" role="button" data-bs-toggle="dropdown">
+                                    <i class="bi bi-box-seam me-2"></i> Inventory
                                 </a>
-                            </li>
+                                <ul class="dropdown-menu dropdown-menu-dark" style="background-color:#065540;">
+                                    <li class="nav-item">
+                                        <a class="nav-link @GetActiveClass("ReceivingForm")" asp-area="" asp-controller="ReceivingForm" asp-action="Index">
+                                            <i class="bi bi-truck-flatbed"></i> Receiving Form
+                                        </a>
+                                    </li>
 
-                            <li class="nav-item border-start border-secondary mx-2 d-none d-xl-block"></li>
-                            <li class="nav-item"><span class="nav-link text-white-50 small fw-bold d-xl-none mt-2">INVENTORY</span></li>
-                            <li class="nav-item">
-                                <a class="nav-link text-white @GetActiveClass("RawMaterials")" asp-area="" asp-controller="RawMaterials" asp-action="Index">
-                                    <i class="bi bi-basket-fill me-2"></i> Raw Materials
-                                </a>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li class="nav-item">
+                                        <a class="nav-link @GetActiveClass("RawMaterials")" asp-area="" asp-controller="RawMaterials" asp-action="Index">
+                                            <i class="bi bi-basket2-fill me-2"></i> Raw Materials
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link @GetActiveClass("Suppliers")" asp-area="" asp-controller="Suppliers" asp-action="Index">
+                                            <i class="bi bi-truck me-2"></i> Suppliers
+                                        </a>
+                                    </li>
+                                </ul>
                             </li>
+                            @* <li class="nav-item"><span class="nav-link text-white-50 small fw-bold d-xl-none mt-2">INVENTORY</span></li> *@
+                           
                             <li class="nav-item">
                                 <a class="nav-link @GetActiveClass("FinishedProducts")" asp-area="" asp-controller="FinishedProducts" asp-action="Index">
                                     <i class="bi bi-bag-heart-fill me-2"></i> Products
@@ -116,7 +134,6 @@
                             </li>
 
                             <li class="nav-item border-start border-secondary mx-2 d-none d-xl-block"></li>
-                            <li class="nav-item"><span class="nav-link text-white-50 small fw-bold d-xl-none mt-2">FUTURE OPS</span></li>
                             <li class="nav-item">
                                 <a class="nav-link @GetActiveClass("ProductionBatches")" asp-area="" asp-controller="ProductionBatches" asp-action="Index">
                                     <i class="bi bi-fire me-2"></i> Production

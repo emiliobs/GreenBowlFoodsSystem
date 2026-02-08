@@ -331,3 +331,15 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     border-radius: 30px;
     color: #e2e8f0 !important;
 }*/
+
+/* Corrección para que el Menú siempre esté encima de las Tarjetas */
+.navbar, .dropdown-menu {
+    z-index: 1050 !important; /* Un número muy alto para ganar */
+    position: relative;
+}
+
+/* Opcional: Asegura que el contenido principal esté debajo */
+main {
+    z-index: 1;
+    position: relative;
+}

@@ -375,11 +375,20 @@ namespace GreenBowlFoodsSystem.Migrations
                     b.Property<bool>("IsAccepted")
                         .HasColumnType("bit");
 
+                    b.Property<decimal>("QuantityReceived")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("RawMaterialId")
+                        .HasColumnType("int");
+
                     b.Property<int>("ReceivedById")
                         .HasColumnType("int");
 
                     b.Property<int>("SupplierId")
                         .HasColumnType("int");
+
+                    b.Property<decimal>("TotalAmount")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("TrailerNumber")
                         .IsRequired()
@@ -387,6 +396,8 @@ namespace GreenBowlFoodsSystem.Migrations
                         .HasColumnType("nvarchar(50)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("RawMaterialId");
 
                     b.HasIndex("ReceivedById");
 
@@ -838,6 +849,12 @@ namespace GreenBowlFoodsSystem.Migrations
 
             modelBuilder.Entity("GreenBowlFoodsSystem.Models.ReceivingForm", b =>
                 {
+                    b.HasOne("GreenBowlFoodsSystem.Models.RawMaterial", "RawMaterial")
+                        .WithMany()
+                        .HasForeignKey("RawMaterialId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("GreenBowlFoodsSystem.Models.User", "ReceivedBy")
                         .WithMany()
                         .HasForeignKey("ReceivedById")
@@ -847,8 +864,10 @@ namespace GreenBowlFoodsSystem.Migrations
                     b.HasOne("GreenBowlFoodsSystem.Models.Supplier", "Supplier")
                         .WithMany()
                         .HasForeignKey("SupplierId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.Navigation("RawMaterial");
 
                     b.Navigation("ReceivedBy");
 

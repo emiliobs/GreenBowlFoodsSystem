@@ -1,0 +1,134 @@
+﻿@model GreenBowlFoodsSystem.Models.ReceivingForm
+
+@{
+    ViewData["Title"] = "Receipt Details";
+}
+
+<div class="row justify-content-center">
+    <div class="col-12 col-md-8 col-lg-6 col-xl-5">
+        <div class="text-center mb-4 animate-fade-up">
+            <h6 class="text-uppercase text-white-50 fw-bold letter-spacing-1">Transaction Record Details</h6>
+        </div>
+
+        <div class="card shadow-lg animate-fade-up border-0" style="background-color: #1e293b; border-radius: 20px;">
+            <div class="card-body p-4">
+
+                <div class="text-center mb-4">
+                    <div class="d-inline-flex align-items-center justify-content-center rounded-circle mb-3"
+                         style="width: 80px; height: 80px; background-color: rgba(16, 185, 129, 0.1);">
+                        <i class="bi bi-receipt text-success" style="font-size: 2.5rem;"></i>
+                    </div>
+
+                    <h2 class="fw-bold text-white mb-1">Receipt #@Model.Id</h2>
+
+                    <div class="mt-2">
+                        @if (Model.IsAccepted)
+                        {
+                            <span class="badge bg-success text-white border border-success border-opacity-25 px-3 py-1 rounded-pill">
+                                <i class="bi bi-check-circle-fill me-1"></i> QC APPROVED
+                            </span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-danger text-white border border-danger px-3 py-1 rounded-pill">
+                                <i class="bi bi-x-circle-fill me-1"></i> REJECTED
+                            </span>
+                        }
+                    </div>
+                </div>
+
+                <div class="row g-3 mb-4">
+
+                    <div class="col-12">
+                        <div class="p-3 rounded-3" style="background-color: #0f172a;">
+                            <label class="small text-uppercase fw-bold d-block mb-1">Supplier</label>
+                            <div class="d-flex align-items-center">
+                                <i class="bi bi-shop text-info me-2"></i>
+                                <span class="text-white fw-bold fs-5">@Model.Supplier?.SupplierName</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-6">
+                        <div class="p-3 rounded-3 h-100" style="background-color: #0f172a;">
+                            <label class="small text-uppercase fw-bold d-block mb-1">Date</label>
+                            <span class="text-info fw-bold">@Model.Date.ToString("MMM dd, yyyy")</span>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="p-3 rounded-3 h-100" style="background-color: #0f172a;">
+                            <label class="small text-uppercase fw-bold d-block mb-1">Trailer Number</label>
+                            <span class="text-info fw-bold font-monospace">@Model.TrailerNumber</span>
+                        </div>
+                    </div>
+
+                    <div class="col-12">
+                        <div class="p-3 rounded-3" style="background-color: #0f172a; border-left: 4px solid #0ea5e9;">
+                            <label class="small text-uppercase text-info fw-bold d-block  mb-2">Item Received</label>
+
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <i class="bi bi-box-seam text-info me-2"></i>
+                                    <span class="text-white fw-bold fs-5">
+                                        @(Model.RawMaterial?.MaterialName ?? "Unknown Item")
+                                    </span>
+                                </div>
+
+                                <div class="text-end">
+                                    <span class="d-block text-white fw-bold fs-5">
+                                        @Model.QuantityReceived.ToString("N2")
+                                    </span>
+                                    <small class="text-white-50">@Model.RawMaterial?.Unit</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-12">
+                        <div class="p-3 rounded-3 d-flex justify-content-between align-items-center"
+                             style="background-color: rgba(16, 185, 129, 0.05); border: 1px solid rgba(16, 185, 129, 0.2);">
+                            <div>
+                                <label class="small text-uppercase text-warning fw-bold d-block">Total Cost</label>
+                                <small class="text-white-50">Recorded value</small>
+                            </div>
+                            <div class="text-warning fw-bold fs-3">
+                                £@Model.TotalAmount
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-12">
+                        <div class="p-3 rounded-3" style="background-color: #0f172a;">
+                            <label class="small text-uppercase  fw-bold d-block mb-1">Received By</label>
+                            <div class="d-flex align-items-center">
+                                <i class="bi bi-person-circle text-info me-2"></i>
+                                <span class="text-white">@(Model.ReceivedBy?.FirstName + " " + Model.ReceivedBy?.LastName)</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-12">
+                        <div class="p-3 rounded-3" style="background-color: #0f172a;">
+                            <label class="small text-uppercase fw-bold d-block mb-2">Inspection Notes</label>
+                            <p class="text-white-50 mb-0 fst-italic small border-start border-secondary ps-3">
+                                "@(string.IsNullOrEmpty(Model.InspectionNotes) ? "No notes recorded." : Model.InspectionNotes)"
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-grid gap-3">
+                    <button onclick="window.print()" class="btn btn-lg text-white fw-bold rounded-pill shadow-lg"
+                            style="background-color: #10b981; transition: all 0.3s;">
+                        <i class="bi bi-printer me-2"></i> Print Record
+                    </button>
+
+                    <a asp-action="Index" class="btn btn-back-custom text-center justify-content-center mt-2">
+                        <i class="bi bi-arrow-left me-2"></i> Back to List
+                    </a>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
