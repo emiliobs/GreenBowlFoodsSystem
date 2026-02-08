@@ -57,13 +57,13 @@ public class FinishedProductsController : Controller
     {
         if (id is null)
         {
-            return NotFound();
+            return View("NotFound");
         }
 
         var finnishedProduct = await _context.FinishedProducts.FindAsync(id);
         if (finnishedProduct is null)
         {
-            return NotFound();
+            return View("NotFound");
         }
 
         return View(finnishedProduct);
@@ -76,7 +76,7 @@ public class FinishedProductsController : Controller
     {
         if (id != finishedProduct.Id)
         {
-            return NotFound();
+            return View("NotFound");
         }
 
         if (ModelState.IsValid)
@@ -105,7 +105,7 @@ public class FinishedProductsController : Controller
     {
         if (id is null)
         {
-            return NotFound();
+            return View("NotFound");
         }
 
         var finishedProduct = await _context.FinishedProducts.FirstOrDefaultAsync(fp => fp.Id == id);
@@ -124,13 +124,13 @@ public class FinishedProductsController : Controller
     {
         if (id is null)
         {
-            return NotFound();
+            return View("NotFound");
         }
 
         var finishedProduct = await _context.FinishedProducts.FirstOrDefaultAsync(fp => fp.Id == id);
         if (finishedProduct is null)
         {
-            return NotFound();
+            return View("NotFound");
         }
 
         return View(finishedProduct);

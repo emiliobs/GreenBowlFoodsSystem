@@ -70,8 +70,7 @@ public class ShipmentsController : Controller
                     }
                     else
                     {
-                        // Execute Shipment Logic
-                        // Deduct Inventory
+                        // Execute Shipment Logic, Deduct Inventory
                         productInDb.QuantityAvailable -= shipment.QuantityShipped;
 
                         // Calculate financial value (Quantity * Unit Price)
@@ -84,6 +83,7 @@ public class ShipmentsController : Controller
                         await _context.SaveChangesAsync();
 
                         TempData["SuccessMessage"] = "Shipment created successfully! Inventory updated.";
+
                         return RedirectToAction(nameof(Index));
                     }
                 }
@@ -113,14 +113,14 @@ public class ShipmentsController : Controller
     {
         if (id is null)
         {
-            return NotFound();
+            return View("NotFound");
         }
 
         var shipment = await _context.Shipments.FindAsync(id);
 
         if (shipment is null)
         {
-            return NotFound();
+            return View("NotFound");
         }
 
         ViewData["CustomerId"] = new SelectList(_context.Customers, "Id", "CustomerName", shipment.CustomerId);
@@ -134,7 +134,7 @@ public class ShipmentsController : Controller
     {
         if (id is null)
         {
-            return NotFound();
+            return View("NotFound");
         }
 
         var shipment = await _context.Shipments
@@ -144,7 +144,7 @@ public class ShipmentsController : Controller
 
         if (shipment is null)
         {
-            return NotFound();
+            return View("NotFound");
         }
 
         return View(shipment);
@@ -181,12 +181,13 @@ public class ShipmentsController : Controller
                     // New Qty (20) - Old Qty (50) = -30 (We need to return 30 to stock)
                     int difference = shipment.QuantityShipped - originalShipment.QuantityShipped;
 
-                    // 4. Validate Stock Availability (Only if we are taking MORE)
+                    // Validate Stock Availability (Only if we are taking MORE)
                     if (difference > 0 && productInDb.QuantityAvailable < difference)
                     {
                         ModelState.AddModelError("QuantityShipped", $"Not enough stock for this increase. Only {productInDb.QuantityAvailable} available.");
                         ViewData["CustomerId"] = new SelectList(_context.Customers, "Id", "CustomerName", shipment.CustomerId);
                         ViewData["FinishedProductId"] = new SelectList(_context.FinishedProducts, "Id", "ProductName", shipment.FinishedProductId);
+
                         return View(shipment);
                     }
 
@@ -206,11 +207,6 @@ public class ShipmentsController : Controller
                     return RedirectToAction(nameof(Index));
                 }
             }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!_context.Shipments.Any(e => e.Id == id)) return NotFound();
-                else throw;
-            }
             catch (Exception ex)
             {
                 TempData["ErrorMessage"] = $"Error to editing shipment: {ex.Message}";
@@ -219,6 +215,7 @@ public class ShipmentsController : Controller
 
         ViewData["CustomerId"] = new SelectList(_context.Customers, "Id", "CustomerName", shipment.CustomerId);
         ViewData["FinishedProductId"] = new SelectList(_context.FinishedProducts, "Id", "ProductName", shipment.FinishedProductId);
+
         return View(shipment);
     }
 
@@ -227,14 +224,20 @@ public class ShipmentsController : Controller
     [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Delete(int? id)
     {
-        if (id == null) return NotFound();
+        if (id == null)
+        {
+            return View("NotFound");
+        }
 
         var shipment = await _context.Shipments
             .Include(s => s.Customer)
             .Include(s => s.FinishedProduct)
             .FirstOrDefaultAsync(m => m.Id == id);
 
-        if (shipment == null) return NotFound();
+        if (shipment == null)
+        {
+            return View("NotFound");
+        }
 
         return View(shipment);
     }
@@ -250,8 +253,7 @@ public class ShipmentsController : Controller
 
             if (shipment != null)
             {
-                // 1. RESTORE INVENTORY 🔄
-                // We are canceling the shipment, so the items go back to the warehouse.
+                //RESTORE INVENTORY, We are canceling the shipment, so the items go back to the warehouse.
                 var product = await _context.FinishedProducts.FindAsync(shipment.FinishedProductId);
 
                 if (product != null)
@@ -260,7 +262,7 @@ public class ShipmentsController : Controller
                     _context.Update(product);
                 }
 
-                // 2. Delete the Record
+                // Delete the Record
                 _context.Shipments.Remove(shipment);
                 await _context.SaveChangesAsync();
 

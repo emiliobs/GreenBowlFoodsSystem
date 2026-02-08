@@ -5,7 +5,7 @@
 @{
     ViewData["Title"] = "New X-Ray Inspection";
     // Obtenemos el nombre del usuario actual para mostrarlo visualmente
-    var currentUser = UserManager.GetUserName(User);
+    var currentUser = await UserManager.GetUserAsync(User);
 }
 
 <div class="row justify-content-center">
@@ -15,8 +15,8 @@
             <h1 class="fw-bold text-white">New Inspection</h1>
             <p class="text-white-50">Record X-Ray results for a production batch.</p>
 
-            <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 px-3 py-2 rounded-pill">
-                <i class="bi bi-person-badge me-2"></i>Inspector: <strong>@currentUser</strong>
+            <span class="badge bg-success text-white border border-success border-opacity-25 px-3 py-2 rounded-pill">
+                <i class="bi bi-person-badge me-2"></i>Inspector: <strong>@currentUser!.FullName</strong>
             </span>
         </div>
 
@@ -46,7 +46,7 @@
                             <label asp-for="CheckTime" class="form-label text-white fw-bold small">Time of Check</label>
                             <div class="input-group">
                                 <span class="input-group-text"><i class="bi bi-clock text-info"></i></span>
-                                <input asp-for="CheckTime" class="form-control" type="datetime-local" />
+                                <input asp-for="CheckTime" class="form-control" type="date" />
                             </div>
                             <span asp-validation-for="CheckTime" class="text-danger small"></span>
                         </div>

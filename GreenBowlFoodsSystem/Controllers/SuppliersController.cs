@@ -32,14 +32,14 @@ public class SuppliersController : Controller
     {
         if (id == null)
         {
-            return NotFound();
+            return View("NotFound");
         }
 
-        var supplier = await _context.Suppliers
-            .FirstOrDefaultAsync(m => m.Id == id);
+        var supplier = await _context.Suppliers.FirstOrDefaultAsync(m => m.Id == id);
+
         if (supplier == null)
         {
-            return NotFound();
+            return View("NotFound");
         }
 
         return View(supplier);
@@ -52,11 +52,9 @@ public class SuppliersController : Controller
     }
 
     // POST: Suppliers/Create
-    // To protect from overposting attacks, enable the specific properties you want to bind to.
-    // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Create([Bind("Id,SupplierName,ContactPerson,Phone,Email")] Supplier supplier)
+    public async Task<IActionResult> Create(Supplier supplier)
     {
         if (ModelState.IsValid)
         {
@@ -83,23 +81,22 @@ public class SuppliersController : Controller
     {
         if (id == null)
         {
-            return NotFound();
+            return View("NotFound");
         }
 
         var supplier = await _context.Suppliers.FindAsync(id);
         if (supplier == null)
         {
-            return NotFound();
+            return View("NotFound");
         }
+
         return View(supplier);
     }
 
     // POST: Suppliers/Edit/5
-    // To protect from overposting attacks, enable the specific properties you want to bind to.
-    // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Edit(int id, [Bind("Id,SupplierName,ContactPerson,Phone,Email")] Supplier supplier)
+    public async Task<IActionResult> Edit(int id, Supplier supplier)
     {
         if (id != supplier.Id)
         {

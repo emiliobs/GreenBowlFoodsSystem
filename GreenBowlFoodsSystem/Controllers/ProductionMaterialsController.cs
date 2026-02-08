@@ -24,7 +24,7 @@ namespace GreenBowlFoodsSystem.Controllers
             // validation: If no Batch ID is provided, we can't link the ingredient
             if (batchId is null)
             {
-                return NotFound();
+                return View("NotFound");
             }
 
             // Use Include to get the Product Name
@@ -34,7 +34,7 @@ namespace GreenBowlFoodsSystem.Controllers
 
             if (batch == null)
             {
-                return NotFound();
+                return View("NotFound");
             }
 
             // Pass the Batch ID to the view (so we know who the parent is)

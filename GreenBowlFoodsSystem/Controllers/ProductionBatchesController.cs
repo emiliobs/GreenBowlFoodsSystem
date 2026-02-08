@@ -98,13 +98,13 @@ public class ProductionBatchesController : Controller
     {
         if (id is null)
         {
-            return NotFound();
+            return View("NotFound");
         }
 
         var productionBatch = await _context.ProductionBatches.FindAsync(id);
         if (productionBatch is null)
         {
-            return NotFound();
+            return View("NotFound");
         }
 
         ViewData["FinishedProductId"] = new SelectList(_context.FinishedProducts, "Id", "ProductName", productionBatch.FinishedProductId);
@@ -119,7 +119,7 @@ public class ProductionBatchesController : Controller
     {
         if (id != productionBatch.Id)
         {
-            return NotFound();
+            return View("NotFound");
         }
 
         // Obtener usario Actual
@@ -148,7 +148,7 @@ public class ProductionBatchesController : Controller
             {
                 if (!ProductionBatchExists(productionBatch.Id))
                 {
-                    return NotFound();
+                    return View("NotFound");
                 }
                 else
                 {
@@ -173,7 +173,7 @@ public class ProductionBatchesController : Controller
     {
         if (id is null)
         {
-            return NotFound();
+            return View("NotFound");
         }
 
         var productionBatch = await _context.ProductionBatches
@@ -185,7 +185,7 @@ public class ProductionBatchesController : Controller
 
         if (productionBatch is null)
         {
-            return NotFound();
+            return View("NotFound");
         }
 
         return View(productionBatch);
@@ -197,7 +197,7 @@ public class ProductionBatchesController : Controller
     {
         if (id is null)
         {
-            return NotFound();
+            return View("NotFound");
         }
 
         var productionBatch = await _context.ProductionBatches
@@ -207,7 +207,7 @@ public class ProductionBatchesController : Controller
 
         if (productionBatch is null)
         {
-            return NotFound();
+            return View("NotFound");
         }
 
         return View(productionBatch);
@@ -250,7 +250,7 @@ public class ProductionBatchesController : Controller
 
         if (batch == null)
         {
-            return NotFound();
+            return View("NotFound");
         }
 
         // Validation: Prevent closing an already closed batch

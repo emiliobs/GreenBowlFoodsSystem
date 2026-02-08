@@ -35,13 +35,13 @@ public class UsersController : Controller
     {
         if (id == null)
         {
-            return NotFound();
+            return View("NotFound");
         }
 
         var user = await _context.Users.FirstOrDefaultAsync(m => m.Id == id);
         if (user == null)
         {
-            return NotFound();
+            return View("NotFound");
         }
 
         return View(user);
@@ -54,23 +54,30 @@ public class UsersController : Controller
     }
 
     // POST: Users/Create
-    // To protect from overposting attacks, enable the specific properties you want to bind to.
-    // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Create(User user)
     {
         try
         {
-            // 1. AUTO-ASSIGN USERNAME
-            // We force the UserName to be the same as the Email.
-            // This ensures login is always done via Email.
+            // AUTO-ASSIGN USERNAME
+            // We force the UserName to be the same as the Email, This ensures login is always done via Email.
             user.UserName = user.Email;
+
+            // find the email already exist with someone
+            var existingUser = await _userManager.FindByEmailAsync(user.Email!);
+            if (existingUser != null)
+            {
+                // If it exsits, we add a pecific error to the eamil foeld.
+                ModelState.AddModelError("Email", "This email address is already in use by another user.");
+                TempData["ErrorMessage"] = "This email address is already in use by another user.";
+            }
 
             // Validate Password manually if needed
             if (string.IsNullOrEmpty(user.Password))
             {
                 ModelState.AddModelError("Password", "Password is required.");
+                TempData["ErrorMessage"] = "Password is required.";
             }
 
             if (ModelState.IsValid)
@@ -82,7 +89,7 @@ public class UsersController : Controller
 
                 if (result.Succeeded)
                 {
-                    // 3. Assign Role (Admin or Staff)
+                    // Assign Role (Admin or Staff)
                     if (!string.IsNullOrEmpty(user.Role))
                     {
                         await _userManager.AddToRoleAsync(user, user.Role);
@@ -114,14 +121,14 @@ public class UsersController : Controller
     {
         if (id == null)
         {
-            return NotFound();
+            return View("NotFound");
         }
 
         // Use UserManager to find the user by ID (Safe way)
         var user = await _userManager.FindByIdAsync(id.ToString()!);
         if (user == null)
         {
-            return NotFound();
+            return View("NotFound");
         }
         return View(user);
     }
@@ -133,7 +140,7 @@ public class UsersController : Controller
     {
         if (id != user.Id)
         {
-            return NotFound();
+            return View("NotFound");
         }
 
         // Note: We don't validate Password here because we don't update it in this form.
@@ -143,6 +150,18 @@ public class UsersController : Controller
         // We validate the form data before processing
         if (ModelState.IsValid)
         {
+            // Uniqueness validation for editing
+            var userWithSameEamil = await _userManager.FindByEmailAsync(user.Email!);
+
+            // If we fiand somene with the email, and that someone is NOT me different IDs
+            if (userWithSameEamil != null && userWithSameEamil.Id != user.Id)
+            {
+                ModelState.AddModelError("Error", "This email is already taken bu another user.");
+                TempData["ErrorMessage"] = "This email address is already in use by another user.";
+
+                return View(user); //we return the error
+            }
+
             try
             {
                 // Find the REAL user in the database first
@@ -150,7 +169,7 @@ public class UsersController : Controller
 
                 if (userInDb == null)
                 {
-                    return NotFound();
+                    return View("NotFound");
                 }
 
                 // Update Personal Info
@@ -203,14 +222,14 @@ public class UsersController : Controller
     {
         if (id == null)
         {
-            return NotFound();
+            return View("NotFound");
         }
 
         // Find user to display details before deleting
         var user = await _context.Users.FirstOrDefaultAsync(m => m.Id == id);
         if (user == null)
         {
-            return NotFound();
+            return View("NotFound");
         }
 
         return View(user);

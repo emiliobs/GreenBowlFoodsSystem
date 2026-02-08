@@ -1,7 +1,11 @@
-﻿@model GreenBowlFoodsSystem.Models.XRayCheck
+﻿@using Microsoft.AspNetCore.Identity
+@model GreenBowlFoodsSystem.Models.XRayCheck
+@inject UserManager<User> userManager
 
 @{
     ViewData["Title"] = "Edit Inspection";
+
+    var currentUser = await userManager.GetUserAsync(User);
 }
 
 <div class="row justify-content-center">
@@ -10,6 +14,11 @@
         <div class="text-center mb-4 animate-fade-up">
             <h1 class="fw-bold text-white">Edit Inspection</h1>
             <p class="text-white-50">Modify results or correct inspection details.</p>
+
+            <span class="badge bg-success text-white border border-success border-opacity-25 px-3 py-2 rounded-pill">
+                <i class="bi bi-person-badge me-2"></i>Inspector: <strong>@currentUser!.FullName</strong>
+            </span>
+
         </div>
 
         <div class="card shadow-lg border-0 animate-fade-up" style="animation-delay: 0.1s; background: #1e293b;">
