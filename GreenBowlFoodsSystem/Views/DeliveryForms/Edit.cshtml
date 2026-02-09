@@ -1,0 +1,87 @@
+﻿@model GreenBowlFoodsSystem.Models.DeliveryForm
+
+@{
+    ViewData["Title"] = "Edit Dispatch";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-6">
+
+        <div class="text-center mb-4 animate-fade-up">
+            <h1 class="fw-bold text-white">Edit Delivery Form Record</h1>
+            <p class="text-white-50">Correction of vehicle or driver details.</p>
+        </div>
+
+        <div class="card shadow-lg animate-fade-up border-0" style="background-color: #1e293b; border-radius: 20px;">
+            <div class="card-body p-5">
+                <form asp-action="Edit">
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+                    <input type="hidden" asp-for="Id" />
+                    <input type="hidden" asp-for="ApprovedById" />
+
+                    <div class="mb-4">
+                        <label asp-for="CheckDate" class="form-label text-white fw-bold small">Dispatch Date</label>
+                        <input asp-for="CheckDate" class="form-control bg-dark text-white border-secondary" />
+                        <span asp-validation-for="CheckDate" class="text-danger small"></span>
+                    </div>
+
+                    <h5 class="text-white mb-3 border-bottom border-secondary pb-2">
+                        <i class="bi bi-truck me-2 text-warning"></i>Vehicle Info
+                    </h5>
+
+                    <div class="mb-3">
+                        <label asp-for="TrailerNumber" class="form-label text-white fw-bold small">Trailer Number</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-secondary border-secondary text-white"><i class="bi bi-123"></i></span>
+                            <input asp-for="TrailerNumber" class="form-control bg-dark text-white border-secondary" />
+                        </div>
+                        <span asp-validation-for="TrailerNumber" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-4">
+                        <label asp-for="DriverName" class="form-label text-white fw-bold small">Driver Name</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-secondary border-secondary text-white"><i class="bi bi-person"></i></span>
+                            <input asp-for="DriverName" class="form-control bg-dark text-white border-secondary" />
+                        </div>
+                        <span asp-validation-for="DriverName" class="text-danger small"></span>
+                    </div>
+
+                    <h5 class="text-white mb-3 border-bottom border-secondary pb-2 mt-4">
+                        <i class="bi bi-shield-check me-2 text-success"></i>Safety Checks
+                    </h5>
+
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <div class="form-check form-switch p-3 rounded" style="background-color: rgba(255,255,255,0.05);">
+                                <input class="form-check-input ms-1" type="checkbox" asp-for="IsTempOk">
+                                <label class="form-check-label text-white ms-1" asp-for="IsTempOk"> Temperature OK</label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-check form-switch p-3 rounded" style="background-color: rgba(255,255,255,0.05);">
+                                <input class="form-check-input ms-1" type="checkbox" asp-for="IsClean">
+                                <label class="form-check-label text-white ms-1" asp-for="IsClean"> Trailer Clean</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-grid gap-2 mt-5">
+                        <button type="submit" class="btn btn-primary btn-lg rounded-pill shadow-lg fw-bold">
+                            <i class="bi bi-save me-2"></i> Save Changes
+                        </button>
+                        <a asp-action="Index" class="btn btn-back-custom text-center justify-content-center mt-2">
+                            <i class="bi bi-arrow-left me-1"></i> Cancel
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

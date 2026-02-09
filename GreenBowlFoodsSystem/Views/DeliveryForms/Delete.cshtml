@@ -1,0 +1,62 @@
+﻿@model GreenBowlFoodsSystem.Models.DeliveryForm
+
+@{
+    ViewData["Title"] = "Delete Dispatch";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-5">
+
+        <div class="card shadow-lg animate-fade-up border-0" style="background-color: #1e293b; border-radius: 20px;">
+            <div class="card-body p-5 text-center">
+
+                <div class="mb-4">
+                    <div class="d-inline-flex align-items-center justify-content-center rounded-circle bg-danger bg-opacity-10" style="width: 80px; height: 80px;">
+                        <i class="bi bi-x-octagon-fill text-danger display-4"></i>
+                    </div>
+                </div>
+
+                <h2 class="fw-bold text-white mb-3">Cancel Dispatch?</h2>
+                <p class="text-white-50 mb-4">
+                    Are you sure you want to delete the record for Trailer
+                    <span class="text-white fw-bold">"@Model.TrailerNumber"</span>?
+                </p>
+
+                <div class="alert alert-warning text-start border-0 bg-opacity-10 bg-warning text-warning mb-4">
+                    <div class="d-flex">
+                        <i class="bi bi-exclamation-triangle-fill me-3 fs-4"></i>
+                        <div>
+                            <strong>Operational Impact:</strong><br />
+                            Any shipments on this truck will be <u>unloaded</u> and reset to "Pending". They will not be deleted from the database.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="p-3 rounded-3 mb-4 text-start" style="background-color: #0f172a;">
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="text-white fw-bold small">Dispatch Date:</span>
+                        <span class="text-info fw-bold">@Model.CheckDate.ToString("yyyy-MM-dd")</span>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <span class="text-white fw-bold small">Driver:</span>
+                        <span class="text-info fw-bold">@Model.DriverName</span>
+                    </div>
+                </div>
+
+                <form asp-action="Delete">
+                    <input type="hidden" asp-for="Id" />
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-danger btn-lg rounded-pill shadow-lg fw-bold">
+                            <i class="bi bi-trash-fill me-2"></i> Yes, Delete Record
+                        </button>
+                        <a asp-action="Index" class="btn btn-back-custom text-center justify-content-center mt-2 text-white-50 text-decoration-none">
+                            Cancel
+                        </a>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>

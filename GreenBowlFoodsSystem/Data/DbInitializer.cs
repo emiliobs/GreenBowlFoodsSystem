@@ -553,6 +553,56 @@ namespace GreenBowlFoodsSystem.Data
                             await context.SaveChangesAsync();
                         }
                     }
+
+                    // =============================================================
+                    // 13. SEED LOGISTICS (DELIVERY & SHIPMENTS)
+                    // =============================================================
+                    if (!context.DeliveryForms.Any())
+                    {
+                        var adminUser = await userManager.FindByEmailAsync("admin@yopmail.com");
+                        // Get the first Customer (e.g., Costco)
+                        var customer = context.Customers.FirstOrDefault();
+                        // Get the Finished Product (e.g., Salad)
+                        var product = context.FinishedProducts.FirstOrDefault();
+
+                        if (adminUser != null && customer != null && product != null)
+                        {
+                            // 1. Create the Vehicle Check Record (DeliveryForm)
+                            var deliveryForm = new DeliveryForm
+                            {
+                                CheckDate = DateTime.Now.AddDays(-1), // Yesterday
+                                TrailerNumber = "TR-8855-X",
+                                DriverName = "Michael Schum",
+                                IsTempOk = true,
+                                IsClean = true,
+                                ApprovedById = adminUser.Id
+                            };
+
+                            context.DeliveryForms.Add(deliveryForm);
+                            await context.SaveChangesAsync(); // Save to generate the ID
+
+                            // 2. Create the Shipment that was loaded onto that truck
+                            var shipment = new Shipment
+                            {
+                                Date = DateTime.Now.AddDays(-1),
+                                Carrier = "DHL Cold Chain",
+                                TrackingNumber = "DHL-99887766",
+                                CustomerId = customer.Id,
+                                FinishedProductId = product.Id,
+                                QuantityShipped = 50,
+                                TotalValue = 50 * product.UnitPrice,
+                                Status = "Shipped", // Status: Departed
+                                DeliveryFormId = deliveryForm.Id // <--- CRITICAL LINK: Order linked to Truck
+                            };
+
+                            // Deduct form Inventory (Simulation)
+                            product.QuantityAvailable -= 50;
+
+                            context.Shipments.Add(shipment);
+                            context.Update(product);
+                            await context.SaveChangesAsync();
+                        }
+                    }
                 }
                 catch (Exception ex)
                 {

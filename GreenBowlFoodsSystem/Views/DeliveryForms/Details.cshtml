@@ -1,0 +1,133 @@
+﻿@model GreenBowlFoodsSystem.Models.DeliveryForm
+@using GreenBowlFoodsSystem.Models
+
+@{
+    ViewData["Title"] = "Dispatch Manifest";
+    // We cast the ViewBag data to a list of Shipments so we can loop through them
+    var shipments = ViewBag.RelatedShipments as IEnumerable<Shipment>;
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-8">
+
+        <div class="text-center mb-4 animate-fade-up">
+            <h6 class="text-uppercase text-info fw-bold letter-spacing-1">Delivery Form Details</h6>
+            <h1 class="display-6 fw-bold text-white">@Model.TrailerNumber</h1>
+            <p class="text-white-50">Log ID: #@Model.Id</p>
+        </div>
+
+        <div class="card shadow-lg border-0 animate-fade-up mb-4" style="background-color: #1e293b; border-radius: 20px;">
+            <div class="card-body p-5">
+
+                <div class="row text-center mb-4">
+                    <div class="col-md-4 border-end border-secondary">
+                        <small class="text-white-50 text-uppercase d-block mb-1">Departure Date</small>
+                        <h5 class="text-white fw-bold">@Model.CheckDate.ToString("yyyy-MM-dd")</h5>
+                    </div>
+                    <div class="col-md-4 border-end border-secondary">
+                        <small class="text-white-50 text-uppercase d-block mb-1">Driver</small>
+                        <h5 class="text-white fw-bold">@Model.DriverName</h5>
+                    </div>
+                    <div class="col-md-4">
+                        <small class="text-white-50 text-uppercase d-block mb-1">Approved By</small>
+                        <span class="badge bg-info bg-opacity-10 text-info border border-info border-opacity-25 rounded-pill px-3">
+                            <i class="bi bi-person-check-fill me-1"></i> @Model.ApprovedBy?.UserName
+                        </span>
+                    </div>
+                </div>
+
+                <hr class="border-secondary my-4" />
+
+                <h6 class="text-white-50 text-uppercase small fw-bold mb-3">Safety & Hygiene Checks</h6>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <div class="p-3 rounded-3 d-flex align-items-center justify-content-between" style="background-color: #0f172a;">
+                            <span class="text-white">Temperature Check (< 4°C)</span>
+                            @if (Model.IsTempOk)
+                            {
+                                <span class="text-success fw-bold"><i class="bi bi-check-circle-fill me-2"></i>PASSED</span>
+                            }
+                            else
+                            {
+                                <span class="text-danger fw-bold"><i class="bi bi-x-circle-fill me-2"></i>FAILED</span>
+                            }
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="p-3 rounded-3 d-flex align-items-center justify-content-between" style="background-color: #0f172a;">
+                            <span class="text-white">Trailer Cleanliness</span>
+                            @if (Model.IsClean)
+                            {
+                                <span class="text-success fw-bold"><i class="bi bi-check-circle-fill me-2"></i>PASSED</span>
+                            }
+                            else
+                            {
+                                <span class="text-danger fw-bold"><i class="bi bi-x-circle-fill me-2"></i>FAILED</span>
+                            }
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="card shadow-lg border-0 animate-fade-up" style="background: linear-gradient(145deg, #0f172a 0%, #1e293b 100%); border-radius: 20px;">
+            <div class="card-header bg-transparent border-secondary py-3">
+                <h5 class="text-white mb-0"><i class="bi bi-boxes me-2 text-warning"></i>Shipments Details</h5>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-dark table-hover mb-0 align-middle">
+                        <thead class="text-white-50 text-uppercase small" style="background-color: rgba(0,0,0,0.2);">
+                            <tr>
+                                <th class="ps-4">Tracking #</th>
+                                <th>Customer</th>
+                                <th>Product</th>
+                                <th class="text-end pe-4">Qty</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (shipments != null && shipments.Any())
+                            {
+                                @foreach (var ship in shipments)
+                                {
+                                    <tr>
+                                        <td class="ps-4 font-monospace text-warning">@ship.TrackingNumber</td>
+                                        <td class="text-white fw-bold">@ship.Customer?.CustomerName</td>
+                                        <td class="text-white fw-bold">@ship.FinishedProduct?.ProductName</td>
+                                        <td class="text-end pe-4 text-warning fw-bold">@ship.QuantityShipped</td>
+                                    </tr>
+                                }
+                                <tr class="bg-warning bg-opacity-10 border-top border-warning">
+                                    <td colspan="3" class="text-end text-warning fw-bold py-3">Total Load:</td>
+                                    <td class="text-end text-warning fw-bold pe-4 py-3">
+                                        @shipments.Sum(s => s.QuantityShipped) Units
+                                    </td>
+                                </tr>
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="4" class="text-center py-5 text-white-50">
+                                        <i class="bi bi-box-seam display-6 d-block mb-3 opacity-25"></i>
+                                        No shipments assigned to this vehicle.
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-4 text-center">
+            <a href="javascript:window.print()" class="btn btn-outline-info rounded-pill px-4 me-2">
+                <i class="bi bi-printer me-2"></i> Print Manifest
+            </a>
+            <a asp-action="Index" class="btn btn-outline-light rounded-pill px-4 border-secondary">
+                <i class="bi bi-arrow-left me-2"></i> Back to Log
+            </a>
+        </div>
+
+    </div>
+</div>
