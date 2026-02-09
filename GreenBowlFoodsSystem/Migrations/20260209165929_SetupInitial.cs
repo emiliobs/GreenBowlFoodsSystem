@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace GreenBowlFoodsSystem.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialSetup : Migration
+    public partial class SetupInitial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -408,10 +408,10 @@ namespace GreenBowlFoodsSystem.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     ProductionBatchId = table.Column<int>(type: "int", nullable: false),
-                    StageName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    StageName = table.Column<int>(type: "int", nullable: false),
                     StartTime = table.Column<DateTime>(type: "datetime2", nullable: false),
                     EndTime = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    TemperatureCheck = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
+                    TemperatureCelsius = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     Notes = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true)
                 },
                 constraints: table =>

@@ -352,3 +352,18 @@ main {
 .dropdown-item {
     white-space: nowrap; /* Obliga al texto a mantenerse en una sola línea */
 }
+
+/* =========================================
+   FIX: Calendar Icon in Dark Mode
+   ========================================= */
+input[type="date"]::-webkit-calendar-picker-indicator,
+input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+    filter: invert(1); /* Invierte el color: Negro -> Blanco */
+    cursor: pointer; /* Manito al pasar el mouse */
+    opacity: 0.8; /* Un poco de transparencia para que se vea elegante */
+}
+
+    input[type="date"]::-webkit-calendar-picker-indicator:hover,
+    input[type="datetime-local"]::-webkit-calendar-picker-indicator:hover {
+        opacity: 1; /* Brilla más al pasar el mouse */
+    }

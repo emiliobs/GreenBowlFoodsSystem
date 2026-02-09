@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GreenBowlFoodsSystem.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260208201102_InitialSetup")]
-    partial class InitialSetup
+    [Migration("20260209165929_SetupInitial")]
+    partial class SetupInitial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -303,16 +303,14 @@ namespace GreenBowlFoodsSystem.Migrations
                     b.Property<int>("ProductionBatchId")
                         .HasColumnType("int");
 
-                    b.Property<string>("StageName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("StageName")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("StartTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("TemperatureCheck")
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                    b.Property<decimal>("TemperatureCelsius")
+                        .HasColumnType("decimal(18,2)");
 
                     b.HasKey("Id");
 
@@ -831,7 +829,7 @@ namespace GreenBowlFoodsSystem.Migrations
             modelBuilder.Entity("GreenBowlFoodsSystem.Models.ProductionStage", b =>
                 {
                     b.HasOne("GreenBowlFoodsSystem.Models.ProductionBatch", "ProductionBatch")
-                        .WithMany()
+                        .WithMany("ProductionStages")
                         .HasForeignKey("ProductionBatchId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -980,6 +978,8 @@ namespace GreenBowlFoodsSystem.Migrations
             modelBuilder.Entity("GreenBowlFoodsSystem.Models.ProductionBatch", b =>
                 {
                     b.Navigation("ProductionMaterials");
+
+                    b.Navigation("ProductionStages");
                 });
 #pragma warning restore 612, 618
         }

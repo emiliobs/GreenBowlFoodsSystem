@@ -61,6 +61,23 @@ namespace GreenBowlFoodsSystem.Data
                         await userManager.AddToRoleAsync(AdminUsers, "Admin");
                     }
 
+                    var emilioAdmin = new User
+                    {
+                        UserName = "emilio@yopmail.com",
+                        Email = "emilio@yopmail.com",
+                        FirstName = "Emilio",
+                        LastName = "Barrera",
+                        Role = "Admin",
+                        EmailConfirmed = true,
+                        PhoneNumber = "07907951284"
+                    };
+
+                    var resulEmilioAdmin = await userManager.CreateAsync(emilioAdmin, "123");
+                    if (resulEmilioAdmin.Succeeded)
+                    {
+                        await userManager.AddToRoleAsync(emilioAdmin, "Admin");
+                    }
+
                     // --- CREATE STAFF USER ---
                     var staffUser = new User
                     {
@@ -476,6 +493,63 @@ namespace GreenBowlFoodsSystem.Data
                             };
 
                             context.PackagingMaterials.AddRange(packagingItems);
+                            await context.SaveChangesAsync();
+                        }
+                    }
+
+                    // =============================================================
+                    // 12. SEED PRODUCTION STAGES (PROCESS LOG)
+                    // =============================================================
+                    if (!context.ProductionStages.Any())
+                    {
+                        var batch1 = context.ProductionBatches.FirstOrDefault(b => b.BatchNumber == "BATCH-2026-001");
+
+                        if (batch1 != null)
+                        {
+                            var stages = new ProductionStage[]
+                            {
+                                // Step 1: Weighing Ingredients
+                                new ProductionStage
+                                {
+                                    ProductionBatchId = batch1.Id,
+                                    StageName = StageType.Weighing,
+                                    StartTime = batch1.ProductionDate,
+                                    EndTime = batch1.ProductionDate.AddMinutes(30),
+                                    TemperatureCelsius = 18.5m, // Room temp
+                                    Notes = "All ingredients weighed and verified against BOM."
+                                },
+                                // Step 2: Mixing
+                                new ProductionStage
+                                {
+                                    ProductionBatchId = batch1.Id,
+                                    StageName = StageType.Mixing,
+                                    StartTime = batch1.ProductionDate.AddMinutes(35),
+                                    EndTime = batch1.ProductionDate.AddMinutes(55),
+                                    TemperatureCelsius = 20.0m,
+                                    Notes = "Standard mixing speed. Consistency looks good."
+                                },
+                                // Step 3: Cooking (Critical Control Point)
+                                new ProductionStage
+                                {
+                                    ProductionBatchId = batch1.Id,
+                                    StageName = StageType.Cooking,
+                                    StartTime = batch1.ProductionDate.AddMinutes(60),
+                                    EndTime = batch1.ProductionDate.AddMinutes(120),
+                                    TemperatureCelsius = 85.5m, // Hot!
+                                    Notes = "Reached target temperature of 85C for 30 mins. Safe."
+                                },
+                                // Step 4: Quality Check
+                                new ProductionStage
+                                {
+                                    ProductionBatchId = batch1.Id,
+                                    StageName = StageType.QualityCheck,
+                                    StartTime = batch1.ProductionDate.AddMinutes(125),
+                                    EndTime = batch1.ProductionDate.AddMinutes(140),
+                                    TemperatureCelsius = 45.0m, // Cooling down
+                                    Notes = "Taste test passed. Color is vibrant. Approved for packaging."
+                                }
+                            };
+                            context.ProductionStages.AddRange(stages);
                             await context.SaveChangesAsync();
                         }
                     }

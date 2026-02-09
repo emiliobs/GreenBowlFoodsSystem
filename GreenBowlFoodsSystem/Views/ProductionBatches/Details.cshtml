@@ -1,25 +1,24 @@
 ﻿@model GreenBowlFoodsSystem.Models.ProductionBatch
+@using GreenBowlFoodsSystem.Models
 
 @{
     ViewData["Title"] = "Batch Details";
 }
 
 <div class="row justify-content-center">
-    <div class="col-md-8">
-
+    <div class="col-md-10">
         <div class="text-center mb-4 animate-fade-up">
             <h1 class="display-6 fw-bold text-white">Batch Report</h1>
             <p class="text-white font-monospace">@Model.BatchNumber</p>
         </div>
 
-        <div class="card shadow-lg border-0 animate-fade-up" style="animation-delay: 0.1s;">
+        <div class="card shadow-lg border-0 animate-fade-up" style="animation-delay: 0.1s; background-color: #1e293b; border-radius: 20px;">
             <div class="card-body p-4">
 
                 <div class="text-center mb-4">
                     <h2 class="text-info fw-bold">@Model.FinishedProduct!.ProductName</h2>
 
                     <div class="d-flex justify-content-center align-items-end gap-3 mt-3">
-
                         <div class="d-flex flex-column align-items-center">
                             <small class="text-white text-uppercase fw-bold mb-1" style="font-size: 0.7rem; letter-spacing: 1px;">Started</small>
                             <span class="badge bg-secondary shadow-sm">
@@ -33,7 +32,6 @@
 
                         <div class="d-flex flex-column align-items-center">
                             <small class="text-white text-uppercase fw-bold mb-1" style="font-size: 0.7rem; letter-spacing: 1px;">Finished</small>
-
                             @if (Model.EndDate.HasValue)
                             {
                                 <span class="badge bg-success shadow-sm">
@@ -73,18 +71,16 @@
 
                 <div class="mb-4 text-start">
                     <div class="text-white">
-                    <small class="text-white text-uppercase fw-bold">Supervisor: </small>
-                        <i class="bi bi-person-badge-fill text-info me-0"></i> @Model.Supervisor!.UserName
+                        <small class="text-white text-uppercase fw-bold">Supervisor: </small>
+                        <i class="bi bi-person-badge-fill text-info me-0"></i> @(Model.Supervisor?.UserName ?? "Unknown")
                     </div>
                 </div>
 
-                <div class="card shadow-lg border-0 mt-2 mb-5 animate-fade-up" style="background: linear-gradient(145deg, #1e293b 0%, #0f172a 100%);">
-
+                <div class="card shadow-lg border-0 mt-2 mb-4 animate-fade-up" style="background: linear-gradient(145deg, #0f172a 0%, #1e293b 100%); border-radius: 15px;">
                     <div class="card-header bg-transparent border-secondary d-flex justify-content-between align-items-center py-3">
                         <h5 class="mb-0 text-white">
-                            <i class="bi bi-basket3-fill me-2 text-info"></i>Ingredients Consumed
+                            <i class="bi bi-basket3-fill me-2 text-warning"></i>Ingredients
                         </h5>
-
                         @if (Model.Status != "Completed" && Model.Status != "Cancelled")
                         {
                             <a asp-controller="ProductionMaterials" asp-action="Create" asp-route-batchId="@Model.Id" class="btn btn-sm btn-outline-warning fw-bold">
@@ -92,7 +88,6 @@
                             </a>
                         }
                     </div>
-
                     <div class="card-body p-0">
                         <div class="table-responsive">
                             <table class="table table-dark table-hover align-middle mb-0" style="background-color: transparent;">
@@ -110,8 +105,7 @@
                                         {
                                             <tr>
                                                 <td class="fw-bold text-white ps-4">
-                                                    <i class="bi bi-box-seam text-info me-2"></i>
-                                                    @item.RawMaterial?.MaterialName
+                                                    <i class="bi bi-box-seam text-white-50 me-2"></i> @item.RawMaterial?.MaterialName
                                                 </td>
                                                 <td class="text-end font-monospace text-warning">
                                                     -@item.QuantityUsed.ToString("N2")
@@ -121,22 +115,105 @@
                                                 </td>
                                             </tr>
                                         }
-
-                                        <tr class="bg-transparent border-top border-secondary">
-                                            <td colspan="3" class="text-end text-info  fst-italic py-3 pe-4">
-                                                Total items deducted: <span class="text-warning">@Model.ProductionMaterials.Count</span>
-                                            </td>
-                                        </tr>
                                     }
                                     else
                                     {
                                         <tr>
-                                            <td colspan="3" class="text-center py-5 text-white-50">
-                                                <div class="opacity-50 mb-2">
-                                                    <i class="bi bi-inbox fs-1"></i>
-                                                </div>
-                                                <p class="mb-0">No ingredients added yet.</p>
-                                                <small>Click "Add Ingredient" to deduct stock.</small>
+                                            <td colspan="3" class="text-center py-4 text-white-50">
+                                                <small>No ingredients added yet.</small>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card shadow-lg border-0 mb-5 animate-fade-up" style="background: linear-gradient(145deg, #0f172a 0%, #1e293b 100%); border-radius: 15px;">
+                    <div class="card-header bg-transparent border-secondary d-flex justify-content-between align-items-center py-3">
+                        <h5 class="mb-0 text-white">
+                            <i class="bi bi-list-check me-2 text-info"></i>Production Stage Log
+                        </h5>
+
+                        @if (Model.Status != "Completed" && Model.Status != "Cancelled")
+                        {
+                            <a asp-controller="ProductionStage" asp-action="Create" asp-route-batchId="@Model.Id"
+                               class="btn btn-sm btn-outline-info fw-bold">
+                                <i class="bi bi-plus-lg me-1"></i> New Log Stage
+                            </a>
+                        }
+                    </div>
+
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-dark table-hover align-middle mb-0" style="background-color: transparent;">
+                                <thead class="text-white-50 text-uppercase small" style="background-color: rgba(0,0,0,0.2);">
+                                    <tr>
+                                        <th class="ps-4">Stage</th>
+                                        <th>Time</th>
+                                        <th>Temp (°C)</th>
+                                        <th style="width: 30%;">Notes</th>
+                                        <th class="text-end pe-4">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @if (Model.ProductionStages != null && Model.ProductionStages.Any())
+                                    {
+                                        @foreach (var stage in Model.ProductionStages)
+                                        {
+                                            <tr>
+                                                <td class="ps-4">
+                                                    <span class="badge bg-info  rounded-pill">
+                                                        @stage.StageName
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    <div class="d-flex flex-column">
+                                                        <span class="fw-bold text-white small">@stage.StartTime.ToString("HH:mm")</span>
+                                                        @if (stage.EndTime.HasValue)
+                                                        {
+                                                            <span class="text-white-50 small">to @stage.EndTime.Value.ToString("HH:mm")</span>
+                                                        }
+                                                        else
+                                                        {
+                                                            <span class="text-warning small fst-italic">In Progress...</span>
+                                                        }
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    @if (stage.TemperatureCelsius.HasValue)
+                                                    {
+                                                        <span class="@(stage.TemperatureCelsius > 100 ? "text-danger" : "text-warning") fw-bold small">
+                                                            <i class="bi bi-thermometer-half"></i> @stage.TemperatureCelsius
+                                                        </span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="text-white-50 small">-</span>
+                                                    }
+                                                </td>
+                                                <td class=" small text-white fw-bold" style="max-width: 200px;">
+                                                    @(stage.Notes ?? "No notes")
+                                                </td>
+                                                <td class="text-end pe-4">
+                                                    @if (Model.Status != "Completed")
+                                                    {
+                                                        <a asp-controller="ProductionStage" asp-action="Edit" asp-route-id="@stage.Id"
+                                                           class="btn btn-sm text-info" title="Edit Stage">
+                                                            <i class="bi bi-pencil-fill"></i> Edit
+                                                        </a>
+                                                    }
+                                                </td>
+                                            </tr>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <tr>
+                                            <td colspan="5" class="text-center py-4 text-white-50">
+                                                <div class="opacity-50 mb-2"><i class="bi bi-clipboard-data fs-3"></i></div>
+                                                <small>No process stages recorded.</small>
                                             </td>
                                         </tr>
                                     }
@@ -147,7 +224,6 @@
                 </div>
 
                 <div class="d-flex justify-content-center align-items-center gap-3 animate-fade-up mt-5" style="animation-delay: 0.2s;">
-
                     @if (Model.Status != "Completed" && Model.Status != "Cancelled")
                     {
                         <form asp-action="FinishBatch" asp-route-id="@Model.Id" id="finishForm" class="d-inline">

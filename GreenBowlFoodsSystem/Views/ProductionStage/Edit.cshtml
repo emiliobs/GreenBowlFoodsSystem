@@ -1,0 +1,87 @@
+﻿@model GreenBowlFoodsSystem.Models.ProductionStage
+@using GreenBowlFoodsSystem.Models
+
+@{
+    ViewData["Title"] = "Edit Stage";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-6">
+
+        <div class="text-center mb-4 animate-fade-up">
+            <h6 class="text-uppercase text-warning fw-bold letter-spacing-1">Correction / Update</h6>
+            <h2 class="text-white fw-bold">Edit Process Stage</h2>
+            <p class="text-white-50">Updating log for Batch #@Model.ProductionBatchId</p>
+        </div>
+
+        <div class="card shadow-lg animate-fade-up border-0" style="background-color: #1e293b; border-radius: 20px;">
+            <div class="card-body p-5">
+                <form asp-action="Edit">
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                    <input type="hidden" asp-for="Id" />
+                    <input type="hidden" asp-for="ProductionBatchId" />
+
+                    <div class="mb-4">
+                        <label asp-for="StageName" class="form-label text-white small fw-bold">Process Stage</label>
+                        <div class="input-group">
+                            <span class="input-group-text text-warning ">
+                                <i class="bi bi-gear-wide-connected"></i>
+                            </span>
+                            <select asp-for="StageName" class="form-control"
+                                    asp-items="Html.GetEnumSelectList<StageType>()">
+                            </select>
+                        </div>
+                        <span asp-validation-for="StageName" class="text-danger small"></span>
+                    </div>
+
+                    <div class="row mb-4">
+                        <div class="col-6">
+                            <label asp-for="StartTime" class="form-label text-white small ">Start Time</label>
+                            <input asp-for="StartTime"  class="form-control" />
+                            <span asp-validation-for="StartTime" class="text-danger small"></span>
+                        </div>
+                        <div class="col-6">
+                            <label asp-for="EndTime" class="form-label text-white small fw-bold">End Time (Completion)</label>
+                            <input asp-for="EndTime" class="form-control" />
+                            <span asp-validation-for="EndTime" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <div class="p-3 rounded-3 mb-4" style="background-color: rgba(0,0,0,0.2); border-left: 4px solid #f59e0b;">
+                        <label class="text-warning small fw-bold mb-2"><i class="bi bi-thermometer-half me-1"></i> Quality Control Update</label>
+
+                        <div class="mb-3">
+                            <label asp-for="TemperatureCelsius" class="form-label text-white small">Temperature (°C)</label>
+                            <input asp-for="TemperatureCelsius" type="number" step="0.1" class="form-control bg-dark text-white border-warning" />
+                            <span asp-validation-for="TemperatureCelsius" class="text-danger small"></span>
+                        </div>
+
+                        <div>
+                            <label asp-for="Notes" class="form-label text-white small">Operator Notes</label>
+                            <textarea asp-for="Notes" class="form-control bg-dark text-white border-secondary" rows="3"></textarea>
+                            <span asp-validation-for="Notes" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-warning btn-lg rounded-pill shadow-lg fw-bold text-dark">
+                            <i class="bi bi-check-circle-fill me-2"></i> Update Log
+                        </button>
+
+                        <a asp-controller="ProductionBatches" asp-action="Details" asp-route-id="@Model.ProductionBatchId" class="btn btn-back-custom text-center justify-content-center mt-2">
+                            <i class="bi bi-arrow-left me-2"></i> Cancel & Back
+                        </a>
+
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

@@ -14,25 +14,25 @@ public class ProductionStage
     public ProductionBatch? ProductionBatch { get; set; }
 
     [Required(ErrorMessage = "Stage Name is required")]
-    [RegularExpression("^(Weighing|Mixing|Cooking|Cooling|Packaging)$", ErrorMessage = "Stage must be: Weighing, Mixing, Cooking, Cooling, or Packaging")]
     [Display(Name = "Stage Name")]
-    public string StageName { get; set; } = string.Empty; // e.g., "Cooking", "Mixing", "Retorting"
+    public StageType StageName { get; set; } // e.g., "Cooking", "Mixing", "Retorting"
 
     [Required]
     [Display(Name = "Start Time")]
     [DataType(DataType.DateTime)]
-    [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd HH:mm}", ApplyFormatInEditMode = true)]
-    public DateTime StartTime { get; set; } = DateTime.Now;
+    public DateTime StartTime { get; set; } = DateTime.UtcNow;
 
     [Display(Name = "End Time")]
     [DataType(DataType.DateTime)]
-    [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd HH:mm}", ApplyFormatInEditMode = true)]
     public DateTime? EndTime { get; set; }
 
-    [StringLength(50, ErrorMessage = "Temperature note too long")]
-    [Display(Name = "Temp Check (e.g. 85C)")]
-    public string? TemperatureCheck { get; set; } // e.g., "85°C" (Critical for food safety)
+    [Required]
+    [Display(Name = "Temp (°C)")]
+    [Range(-20, 200, ErrorMessage = "Enter a valid temperature (-20 to 200)")]
+    public decimal? TemperatureCelsius { get; set; } // e.g., "85°C" (Critical for food safety)
 
     [StringLength(500)]
+    [DataType(DataType.MultilineText)]
+    [Display(Name = "Observations / Notes")]
     public string? Notes { get; set; } // e.g., "Added extra water due to viscosity"
 }

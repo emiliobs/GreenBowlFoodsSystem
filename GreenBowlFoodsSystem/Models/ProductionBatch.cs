@@ -52,6 +52,9 @@ public class ProductionBatch
     [RegularExpression("^(Planned|In Progress|Completed|QA Hold|Cancelled)$", ErrorMessage = "Invalid Status")]
     public string Status { get; set; } = "Planned"; // "Planned", "In Progress", "Completed", "QA Hold"
 
+    // This tells Entity Framework: "A Production Batch can have MANY stages"
+    public List<ProductionStage> ProductionStages { get; set; } = new List<ProductionStage>(); // E.g., "Mixing", "Cooking", "Packaging"
+
     // Thi talls Entity Framework: "A Production Batch can have MANY ingredients used"
-    public List<ProductionMaterial>? ProductionMaterials { get; set; }
+    public List<ProductionMaterial>? ProductionMaterials { get; set; } = new List<ProductionMaterial>(); // E.g., "100kg Quinoa", "50L Vegetable Broth"
 }

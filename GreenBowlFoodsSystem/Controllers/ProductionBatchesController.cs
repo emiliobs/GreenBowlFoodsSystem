@@ -180,7 +180,8 @@ public class ProductionBatchesController : Controller
       .Include(p => p.FinishedProduct) // Get Product Name
       .Include(p => p.Supervisor)      // Get Supervisor Name
       .Include(p => p.ProductionMaterials) //  Get the list of used ingredients
-      .ThenInclude(pm => pm.RawMaterial) //  Get the name of each ingredient
+      .ThenInclude(pm => pm.RawMaterial) // Get the name of each ingredient
+      .Include(p => p.ProductionStages.OrderBy(ps => ps.StartTime)) // Get the list of production stages//  Get the name of each ingredient
       .FirstOrDefaultAsync(m => m.Id == id);
 
         if (productionBatch is null)

@@ -91,7 +91,7 @@
                         {
                             <li class="nav-item">
                                 <a class="nav-link @GetActiveClass("Users")" asp-area="" asp-controller="Users" asp-action="Index">
-                                    <i class="bi bi-shield-lock-fill me-2"></i> Users
+                                    <i class="bi bi-people-fill"></i> Users
                                 </a>
                             </li>
                         }
@@ -162,7 +162,7 @@
                         {
                             <li class="nav-item text-end me-2 d-none d-md-block" style="line-height: 1.2;">
                                 <span class="d-block text-white fw-bold" style="font-size: .87rem;">
-                                    Hi,@User.Identity!.Name
+                                    Hi, @User.Identity!.Name
                                 </span>
 
                                 @if (userRole == "Admin")
