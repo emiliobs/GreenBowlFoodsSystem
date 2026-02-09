@@ -343,3 +343,12 @@ main {
     z-index: 1;
     position: relative;
 }
+
+/* Hacer los menús desplegables más anchos y evitar salto de línea */
+.dropdown-menu {
+    min-width: 168px !important; /* Más ancho (ajusta el número si quieres más) */
+}
+
+.dropdown-item {
+    white-space: nowrap; /* Obliga al texto a mantenerse en una sola línea */
+}

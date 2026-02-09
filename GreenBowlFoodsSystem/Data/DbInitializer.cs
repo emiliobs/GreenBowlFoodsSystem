@@ -426,6 +426,59 @@ namespace GreenBowlFoodsSystem.Data
                             await context.SaveChangesAsync();
                         }
                     }
+
+                    // =============================================================
+                    // 11. SEED PACKAGING MATERIALS (NEW!)
+                    // =============================================================
+                    if (!context.PackagingMaterials.Any())
+                    {
+                        // Get Suppliers
+                        var greenPack = context.Suppliers.FirstOrDefault(s => s.SupplierName == "Green Packaging Solutions");
+                        var freshFarms = context.Suppliers.FirstOrDefault(s => s.SupplierName == "Fresh Farms Ltd");
+
+                        if (greenPack != null && freshFarms != null)
+                        {
+                            var packagingItems = new PackagingMaterial[]
+                            {
+                                // From Green Packaging Solutions
+                                new PackagingMaterial
+                                {
+                                    MaterialName = "Cardboard Box 10x10x10",
+                                    QuantityInStock = 5000,
+                                    SupplierId = greenPack.Id
+                                },
+                                new PackagingMaterial
+                                {
+                                    MaterialName = "Biodegradable Salad Bowl (Large)",
+                                    QuantityInStock = 2500,
+                                    SupplierId = greenPack.Id
+                                },
+                                new PackagingMaterial
+                                {
+                                    MaterialName = "Plastic Seal Wrap (Roll)",
+                                    QuantityInStock = 50,
+                                    SupplierId = greenPack.Id
+                                },
+                                new PackagingMaterial
+                                {
+                                    MaterialName = "Label Sticker - 'Organic'",
+                                    QuantityInStock = 10000,
+                                    SupplierId = greenPack.Id
+                                },
+
+                                // From Fresh Farms (Maybe crates?)
+                                new PackagingMaterial
+                                {
+                                    MaterialName = "Reusable Plastic Crate (Blue)",
+                                    QuantityInStock = 200,
+                                    SupplierId = freshFarms.Id
+                                }
+                            };
+
+                            context.PackagingMaterials.AddRange(packagingItems);
+                            await context.SaveChangesAsync();
+                        }
+                    }
                 }
                 catch (Exception ex)
                 {

@@ -1,0 +1,66 @@
+﻿@model GreenBowlFoodsSystem.Models.PackagingMaterial
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<div class="row justify-content-center">
+    <div class="col-12 col-md-8 col-lg-6 col-xl-5">
+
+        <div class="card shadow-lg animate-fade-up border-0" style="background-color: #1e293b; border-radius: 20px;">
+            <div class="card-body p-4">
+
+                <div class="text-center mb-4">
+                    <div class="d-inline-flex align-items-center justify-content-center rounded-circle mb-3"
+                         style="width: 80px; height: 80px; background-color: rgba(56, 189, 248, 0.1);">
+                        <i class="bi bi-box-seam text-info" style="font-size: 2.5rem;"></i>
+                    </div>
+                    <h2 class="fw-bold text-white mb-1">Packaging Details Item</h2>
+                    <p class="text-white-50">Inventory Record #@Model.Id</p>
+                </div>
+
+                <div class="row g-3 mb-4">
+                    <div class="col-12">
+                        <div class="p-3 rounded-3" style="background-color: #0f172a;">
+                            <label class="small text-uppercase text-info fw-bold d-block mb-1">Item Name</label>
+                            <span class="text-white fw-bold fs-5">@Model.MaterialName</span>
+                        </div>
+                    </div>
+
+                    <div class="col-12">
+                        <div class="p-3 rounded-3 d-flex justify-content-between align-items-center"
+                             style="background-color: rgba(16, 185, 129, 0.05); border: 1px solid rgba(16, 185, 129, 0.2);">
+                            <div>
+                                <label class="small text-uppercase text-info fw-bold d-block">Current Stock</label>
+                                <small class="text-white-50">Available units</small>
+                            </div>
+                            <div class="text-warning fw-bold fs-2">
+                                @Model.QuantityInStock
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-12">
+                        <div class="p-3 rounded-3" style="background-color: #0f172a;">
+                            <label class="small text-uppercase text-info fw-bold d-block mb-1">Supplier</label>
+                            <div class="d-flex align-items-center">
+                                <i class="bi bi-shop text-warning me-2"></i>
+                                <span class="text-white">@Model.Supplier?.SupplierName</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-grid gap-3">
+                    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning fw-bold rounded-pill">
+                        <i class="bi bi-pencil-square me-2"></i> Edit Record
+                    </a>
+                    <a asp-action="Index" class="btn btn-back-custom text-center justify-content-center mt-2">
+                        <i class="bi bi-arrow-left me-1"></i> Back to List
+                    </a>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
