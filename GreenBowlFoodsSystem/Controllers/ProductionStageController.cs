@@ -1,9 +1,11 @@
 ﻿using GreenBowlFoodsSystem.Data;
 using GreenBowlFoodsSystem.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GreenBowlFoodsSystem.Controllers;
 
+[Authorize]
 public class ProductionStageController : Controller
 {
     private readonly ApplicationDbContext _context;
@@ -54,10 +56,9 @@ public class ProductionStageController : Controller
                 await _context.SaveChangesAsync();
 
                 TempData["SuccessMessage"] = "Production stage created successfully.";
-               
+
                 // Redirect to the details page of the associated production batch to show the new stage in context
                 return RedirectToAction("Details", "ProductionBatches", new { id = productionStage.ProductionBatchId });
-
             }
         }
         catch (Exception ex)

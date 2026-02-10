@@ -1,0 +1,143 @@
+﻿@model GreenBowlFoodsSystem.Models.Invoice
+
+@{
+    ViewData["Title"] = "Invoice Details";
+
+    // AUTOMATIC CALCULATIONS (Because the model only has a Total Amount)
+    // We assume the Total includes 20% VAT
+    decimal subTotal = Model.TotalAmount / 1.20m;
+    decimal taxAmount = Model.TotalAmount - subTotal;
+}
+
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+
+        <div class="d-flex justify-content-between align-items-center mb-4 animate-fade-up">
+            <div>
+                <a asp-action="Index" class="btn btn-back-custom text-center justify-content-center ms-5 mt-2 me-5 mb-4">
+                    <i class="bi bi-arrow-left me-1"></i> Back To List
+                </a>
+                
+            </div>
+            <div>
+                <button onclick="window.print()" class="btn btn-outline-info rounded-pill px-4 me-2">
+                    <i class="bi bi-printer-fill me-2"></i> Print Invoice
+                </button>
+                @if (Model.Status != "Paid")
+                {
+                    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary rounded-pill px-4 shadow">
+                        <i class="bi bi-pencil-square me-2"></i> Edit
+                    </a>
+                }
+            </div>
+        </div>
+
+        <div class="card shadow-lg border-0 animate-fade-up" style="background-color: #e2e8f0; color: #1e293b; border-radius: 0;">
+            <div class="card-body p-5">
+
+                <div class="d-flex justify-content-between border-bottom border-dark pb-4 mb-4">
+                    <div>
+                        <h1 class="fw-bold text-uppercase display-6" style="letter-spacing: 2px;">Invoice</h1>
+                        <p class="mb-0 text-muted small">Green Bowl Foods Ltd.</p>
+                        <p class="mb-0 text-muted small">123 Industrial Park, London</p>
+                    </div>
+                    <div class="text-end">
+                        <h4 class="fw-bold text-dark">@Model.InvoiceNumber</h4>
+
+                        @if (Model.Status == "Paid")
+                        {
+                            <span class="badge bg-success text-white px-3 py-2 text-uppercase border border-success">PAID</span>
+                        }
+                        else if (Model.Status == "Overdue")
+                        {
+                            <span class="badge bg-danger text-white px-3 py-2 text-uppercase border border-danger">OVERDUE</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-warning text-dark px-3 py-2 text-uppercase border border-dark">UNPAID</span>
+                        }
+                    </div>
+                </div>
+
+                <div class="row mb-5">
+                    <div class="col-6">
+                        <h6 class="text-uppercase text-muted small fw-bold mb-2">Billed To:</h6>
+                        <h5 class="fw-bold mb-0">@Model.Customer?.CustomerName</h5>
+                        <p class="text-muted small">Client ID: #@Model.Customer?.Id</p>
+                    </div>
+                    <div class="col-6 text-end">
+                        <div class="mb-2">
+                            <span class="text-uppercase text-muted small fw-bold me-2">Issue Date:</span>
+                            <span class="fw-bold">@Model.Date.ToString("dd MMM yyyy")</span>
+                        </div>
+                        <div>
+                            <span class="text-uppercase text-muted small fw-bold me-2">Due Date:</span>
+                            <span class="fw-bold text-danger">@Model.Date.AddDays(30).ToString("dd MMM yyyy")</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="table-responsive mb-4">
+                    <table class="table table-borderless rounded bg-dark table-striped align-middle">
+                        <thead class="bg-dark text-white text-uppercase small">
+                            <tr>
+                                <th class="py-3 ps-3">Description</th>
+                                <th class="py-3 text-end">Quantity</th>
+                                <th class="py-3 text-end">Unit Price</th>
+                                <th class="py-3 text-end pe-3">Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model.Items != null && Model.Items.Any())
+                            {
+                                @foreach (var item in Model.Items)
+                                {
+                                    <tr>
+                                        <td class="ps-3 text-info fw-bold">@item.FinishedProduct?.ProductName</td>
+                                        <td class="text-end text-info">@item.Quantity</td>
+                                        <td class="text-end text-info">£@item.UnitPrice.ToString("N2")</td>
+                                        <td class="text-end pe-3 text-info fw-bold">£@((item.Quantity * item.UnitPrice).ToString("N2"))</td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td class="ps-3 fw-bold text-muted fst-italic">Consolidated Invoice Amount</td>
+                                    <td class="text-end">-</td>
+                                    <td class="text-end">-</td>
+                                    <td class="text-end pe-3 fw-bold text-dark">£@Model.TotalAmount.ToString("N2")</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="row justify-content-end">
+                    <div class="col-md-5">
+                        <div class="border-top border-dark pt-3">
+                            <div class="d-flex justify-content-between mb-2">
+                                <span class="text-muted small fw-bold">Subtotal (Excl. VAT)</span>
+                                <span class="fw-bold">£@subTotal.ToString("N2")</span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-3">
+                                <span class="text-muted small fw-bold">VAT (20%)</span>
+                                <span class="fw-bold">£@taxAmount.ToString("N2")</span>
+                            </div>
+                            <div class="d-flex justify-content-between border-top border-secondary pt-2">
+                                <span class="h5 fw-bold text-uppercase">Total Due</span>
+                                <span class="h4 fw-bold text-primary">£@Model.TotalAmount.ToString("N2")</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-5 pt-4 text-center border-top border-secondary text-muted small">
+                    <p class="mb-1 fw-bold">Thank you for your business!</p>
+                    <p class="mb-0">Please remit payment within 30 days. Questions? Contact finance@greenbowl.com</p>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>

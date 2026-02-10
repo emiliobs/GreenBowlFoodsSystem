@@ -1,0 +1,68 @@
+﻿@model GreenBowlFoodsSystem.Models.Invoice
+
+@{
+    ViewData["Title"] = "New Invoice";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow-lg animate-fade-up border-0" style="background-color: #1e293b; border-radius: 20px;">
+            <div class="card-body p-5">
+
+                <h3 class="fw-bold text-white mb-4"><i class="bi bi-receipt me-2 text-info"></i>New Invoice</h3>
+
+                <form asp-action="Create">
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label asp-for="InvoiceNumber" class="form-label text-white fw-bold small">Invoice #</label>
+                            <input asp-for="InvoiceNumber" class="form-control bg-dark text-white border-secondary fw-bold" readonly />
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="Date" class="form-label text-white fw-bold small">Issue Date</label>
+                            <input asp-for="Date" class="form-control bg-dark text-white border-secondary" type="date" />
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="CustomerId" class="form-label text-white fw-bold small">Customer</label>
+                        <select asp-for="CustomerId" class="form-select bg-dark text-white border-secondary" asp-items="ViewBag.CustomerId"></select>
+                    </div>
+
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <label asp-for="TotalAmount" class="form-label text-white fw-bold small">Total Amount (£)</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-secondary border-secondary text-white">£</span>
+                                <input asp-for="TotalAmount" class="form-control bg-dark text-white border-secondary" placeholder="0.00" />
+                            </div>
+                            <span asp-validation-for="TotalAmount" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="Status" class="form-label text-white fw-bold small">Payment Status</label>
+                            <select asp-for="Status" class="form-select bg-dark text-white border-secondary">
+                                <option value="Unpaid">Unpaid</option>
+                                <option value="Paid">Paid</option>
+                                <option value="Overdue">Overdue</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-success btn-lg rounded-pill shadow fw-bold">Generate Invoice</button>
+                        <a asp-action="Index" class="btn btn-back-custom text-center justify-content-center mt-2">
+                            <i class="bi bi-arrow-left me-2"></i> Back to List
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

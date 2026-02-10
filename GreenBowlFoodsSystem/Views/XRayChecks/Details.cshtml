@@ -3,7 +3,7 @@
 @{
     ViewData["Title"] = "Inspection Details";
 
-    // 🧠 Visual Logic: Determine Green vs Red styling
+    //  Determine Green vs Red styling
     var isPass = Model.Result == "Pass";
     var colorClass = isPass ? "text-success" : "text-danger";
     var bgClass = isPass ? "bg-success" : "bg-danger";

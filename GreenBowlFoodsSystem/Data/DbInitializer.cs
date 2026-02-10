@@ -603,6 +603,136 @@ namespace GreenBowlFoodsSystem.Data
                             await context.SaveChangesAsync();
                         }
                     }
+
+                    // =============================================================
+                    // 14. SEED FINANCE (4 INVOICES & DETAILS)
+                    // =============================================================
+                    if (!context.Invoices.Any())
+                    {
+                        // Obtener referencias (Clientes y Productos)
+                        var customer1 = context.Customers.OrderBy(c => c.Id).FirstOrDefault(); // Ej: Costco
+                        var customer2 = context.Customers.OrderBy(c => c.Id).Skip(1).FirstOrDefault() ?? customer1; // Ej: Tesco (o Costco si no hay más)
+
+                        var product1 = context.FinishedProducts.OrderBy(p => p.Id).FirstOrDefault(); // Ej: Quinopea
+                        var product2 = context.FinishedProducts.OrderBy(p => p.Id).Skip(1).FirstOrDefault() ?? product1; // Ej: Otro producto
+
+                        if (customer1 != null && product1 != null)
+                        {
+                            // --- ESCENARIO 1: FACTURA VENCIDA (OVERDUE) ---
+                            // Fecha: hace 45 días (venció hace 15)
+                            var inv1 = new Invoice
+                            {
+                                InvoiceNumber = "INV-2025-901",
+                                CustomerId = customer1.Id,
+                                Date = DateTime.Now.AddDays(-45),
+                                Status = "Overdue",
+                                TotalAmount = 0
+                            };
+                            context.Invoices.Add(inv1);
+                            await context.SaveChangesAsync();
+
+                            var item1 = new InvoiceItem
+                            {
+                                InvoiceId = inv1.Id,
+                                FinishedProductId = product1.Id,
+                                Quantity = 500,
+                                UnitPrice = 10.00m
+                            };
+                            context.InvoiceItems.Add(item1);
+                            inv1.TotalAmount = item1.Quantity * item1.UnitPrice; // Total: 5000
+                            context.Update(inv1);
+
+
+                            // --- ESCENARIO 2: FACTURA PAGADA (PAID) ---
+                            // Fecha: hace 10 días
+                            var inv2 = new Invoice
+                            {
+                                InvoiceNumber = "INV-2026-005",
+                                CustomerId = customer1.Id,
+                                Date = DateTime.Now.AddDays(-10),
+                                Status = "Paid",
+                                TotalAmount = 0
+                            };
+                            context.Invoices.Add(inv2);
+                            await context.SaveChangesAsync();
+
+                            var item2 = new InvoiceItem
+                            {
+                                InvoiceId = inv2.Id,
+                                FinishedProductId = product2.Id,
+                                Quantity = 150,
+                                UnitPrice = 15.50m
+                            };
+                            context.InvoiceItems.Add(item2);
+                            inv2.TotalAmount = item2.Quantity * item2.UnitPrice; // Total: 2325
+                            context.Update(inv2);
+
+
+                            // --- ESCENARIO 3: FACTURA RECIENTE (UNPAID) ---
+                            // Fecha: Ayer
+                            var inv3 = new Invoice
+                            {
+                                InvoiceNumber = "INV-2026-012",
+                                CustomerId = customer2.Id,
+                                Date = DateTime.Now.AddDays(-1),
+                                Status = "Unpaid",
+                                TotalAmount = 0
+                            };
+                            context.Invoices.Add(inv3);
+                            await context.SaveChangesAsync();
+
+                            var item3 = new InvoiceItem
+                            {
+                                InvoiceId = inv3.Id,
+                                FinishedProductId = product1.Id,
+                                Quantity = 1000,
+                                UnitPrice = 12.00m
+                            };
+                            context.InvoiceItems.Add(item3);
+                            inv3.TotalAmount = item3.Quantity * item3.UnitPrice; // Total: 12000
+                            context.Update(inv3);
+
+
+                            // --- ESCENARIO 4: FACTURA COMPLEJA (MÚLTIPLES ÍTEMS) ---
+                            // Demuestra la relación One-to-Many real
+                            var inv4 = new Invoice
+                            {
+                                InvoiceNumber = "INV-2026-015",
+                                CustomerId = customer2.Id,
+                                Date = DateTime.Now,
+                                Status = "Unpaid",
+                                TotalAmount = 0
+                            };
+                            context.Invoices.Add(inv4);
+                            await context.SaveChangesAsync();
+
+                            // Ítem A: Ensaladas
+                            var item4a = new InvoiceItem
+                            {
+                                InvoiceId = inv4.Id,
+                                FinishedProductId = product1.Id,
+                                Quantity = 200,
+                                UnitPrice = 12.00m
+                            };
+                            // Ítem B: Sopas (u otro producto)
+                            var item4b = new InvoiceItem
+                            {
+                                InvoiceId = inv4.Id,
+                                FinishedProductId = product2.Id,
+                                Quantity = 300,
+                                UnitPrice = 18.00m
+                            };
+
+                            context.InvoiceItems.AddRange(item4a, item4b);
+
+                            // Sumar ambos ítems para el total
+                            inv4.TotalAmount = (item4a.Quantity * item4a.UnitPrice) + (item4b.Quantity * item4b.UnitPrice);
+                            context.Update(inv4);
+
+                            // GUARDAR TODO FINALMENTE
+                            await context.SaveChangesAsync();
+                        }
+                    }
                 }
                 catch (Exception ex)
                 {
