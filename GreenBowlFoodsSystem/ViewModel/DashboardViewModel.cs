@@ -9,6 +9,7 @@ public class DashboardViewModel
     //KPI CARDS (Top Row)
 
     public decimal TotalInventoryValue { get; set; } // $$$ Money in warehouse
+    public decimal TotalRevenue { get; set; } // $$$ From Invoices
     public int ActiveShipmentsCount { get; set; }    // Trucks on the road
     public int QualityIssuesToday { get; set; }      // X-Ray Fails (Last 24h)
     public int ExpiringSoonCount { get; set; }       // Ingredients expiring in 7 days

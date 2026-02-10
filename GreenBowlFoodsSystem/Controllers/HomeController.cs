@@ -32,28 +32,32 @@ public class HomeController : Controller
         // IF LOGGED IN: Load the Dashboard Data
         try
         {
+            // KPI: Total Revenue (From Invoices module)
+            var revenue = await _context.Invoices.SumAsync(i => i.TotalAmount);
+
             //  KPI: Total Inventory Value (Money)
-            decimal totalValue = await _context.FinishedProducts
+            var totalValue = await _context.FinishedProducts
                 .SumAsync(p => p.UnitPrice * p.QuantityAvailable);
 
             // KPI: Active Shipments (Not Delivered)
-            int activeShipments = await _context.Shipments
+            var activeShipments = await _context.Shipments
                 .CountAsync(s => s.Status != "Delivered");
 
             //  KPI: Quality Issues (Last 24h)
-            DateTime yesterday = DateTime.Now.AddHours(-24);
-            int failedChecks = await _context.XRayChecks
+            var yesterday = DateTime.Now.AddHours(-24);
+            var failedChecks = await _context.XRayChecks
                 .CountAsync(x => x.Result == "Fail" && x.CheckTime >= yesterday);
 
             //  KPI: Expiry Risk (Next 7 Days)
-            DateTime warningDate = DateTime.Now.AddDays(7);
-            int expiringCount = await _context.RawMaterials
+            var warningDate = DateTime.Now.AddDays(7);
+            var expiringCount = await _context.RawMaterials
                 .CountAsync(m => m.ExpiryDate <= warningDate);
 
             // Build Viewmodel
             var dashboardViewModel = new DashboardViewModel
             {
                 TotalInventoryValue = totalValue,
+                TotalRevenue = revenue,
                 ActiveShipmentsCount = activeShipments,
                 QualityIssuesToday = failedChecks,
                 ExpiringSoonCount = expiringCount,

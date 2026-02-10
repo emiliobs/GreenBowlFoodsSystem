@@ -1,8 +1,8 @@
 /* Green Bowl Foods - Final Stable Version */
 :root {
-    /* Tu HTML necesita esto para pintar "Foods" de verde */
+    /* Your HTML needs this to paint "Foods" green */
     --primary-green: #10b981;
-    /* Variables del tema */
+    /* Theme Variables */
     --brand-primary: #10b981;
     --brand-hover: #059669;
     --brand-glow: rgba(16, 185, 129, 0.4);
@@ -13,9 +13,9 @@
     --border-subtle: rgba(255, 255, 255, 0.08);
 }
 
-/* --- FIX DE ESTABILIDAD (La Magia) --- */
+/* --- STABILITY FIX (The Magic) --- */
 html {
-    scrollbar-gutter: stable; /* Reserva el espacio del scroll para que no brinque */
+    scrollbar-gutter: stable; /* Reserves scroll space so layout doesn't jump */
 }
 
 body {
@@ -23,27 +23,27 @@ body {
     background-image: radial-gradient(circle at 50% 0%, #1e293b 0%, var(--bg-main) 100%);
     color: var(--text-main);
     font-family: 'Outfit', 'Segoe UI', system-ui, sans-serif;
-    /* CAMBIO CLAVE: Usamos 'dvh' para máxima estabilidad en Edge y Móviles */
+    /* KEY CHANGE: We use 'dvh' for maximum stability on Edge and Mobiles */
     min-height: 100dvh;
     display: flex;
     flex-direction: column;
 }
 
-    /* --- Layout Principal (Empuja el footer) --- */
+    /* --- Main Layout (Pushes the footer) --- */
     body > .container {
-        flex: 1; /* Ocupa todo el espacio disponible */
+        flex: 1; /* Occupies all available space */
         width: 100%;
         display: flex;
         flex-direction: column;
-        padding-bottom: 2rem; /* Espacio para respirar antes del footer */
+        padding-bottom: 2rem; /* Breathing room before the footer */
     }
 
 footer {
-    margin-top: auto; /* Se pega al fondo suavemente */
+    margin-top: auto; /* Sticks gently to the bottom */
     width: 100%;
 }
 
-/* --- Navbar (Identidad Verde) --- */
+/* --- Navbar (Green Identity) --- */
 .navbar {
     background: linear-gradient(90deg, #064e3b 0%, #065f46 100%) !important;
     backdrop-filter: blur(10px);
@@ -53,7 +53,7 @@ footer {
 
 .navbar-brand {
     font-weight: 800;
-    color: #ffffff; /* Sin !important para que el span verde funcione */
+    color: #ffffff; /* No !important so the green span works */
     letter-spacing: 0.5px;
     text-shadow: 0 2px 4px rgba(0,0,0,0.3);
 }
@@ -74,7 +74,7 @@ footer {
         text-shadow: 0 0 10px rgba(163, 230, 53, 0.5);
     }
 
-/* --- Tarjetas y Login --- */
+/* --- Cards and Login --- */
 .card, .card-login {
     background: var(--bg-card);
     backdrop-filter: blur(16px);
@@ -106,7 +106,7 @@ footer {
         color: white;
     }
 
-/* --- Botones --- */
+/* --- Buttons --- */
 .btn-primary {
     background: var(--brand-primary);
     border: none;
@@ -164,7 +164,7 @@ footer {
         transform: translateY(-1px);
     }
 
-/* --- Tablas de Cristal --- */
+/* --- Glass Tables --- */
 .table {
     --bs-table-bg: transparent;
     --bs-table-color: var(--text-main);
@@ -211,7 +211,7 @@ footer {
         border-bottom-right-radius: 10px;
     }
 
-    /* Botones de acción en tabla */
+    /* Action buttons in table */
     .table a {
         text-decoration: none;
         padding: 5px;
@@ -223,7 +223,7 @@ footer {
             transform: scale(1.1);
         }
 
-/* --- Animación Corazón Latido (Necesario para el footer) --- */
+/* --- Heartbeat Animation (Needed for footer) --- */
 @keyframes heartbeat {
     0% {
         transform: scale(1);
@@ -246,31 +246,31 @@ footer {
     }
 }
 
-/* --- Input Groups (Iconos dentro de los inputs) --- */
+/* --- Input Groups (Icons inside inputs) --- */
 .input-group-text {
-    background-color: rgba(15, 23, 42, 0.6); /* Mismo fondo que el input */
+    background-color: rgba(15, 23, 42, 0.6); /* Same background as input */
     border: 1px solid var(--border-subtle);
-    border-right: none; /* Quitamos la línea derecha para unirlo al input */
+    border-right: none; /* Remove right border to join with input */
     color: var(--brand-primary);
 }
 
-/* Ajuste para cuando el input tiene un grupo */
+/* Adjustment for when input has a group */
 .input-group .form-control {
-    border-left: none; /* Quitamos la línea izquierda del input */
+    border-left: none; /* Remove left border of input */
 }
 
 .input-group:focus-within .input-group-text {
     border-color: var(--brand-primary);
-    box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1); /* El brillo afecta al icono también */
+    box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1); /* Glow affects the icon too */
 }
 
-/* --- FIX PLACEHOLDERS (Hacer visible el texto de ayuda) --- */
+/* --- FIX PLACEHOLDERS (Make helper text visible) --- */
 .form-control::placeholder {
-    color: rgba(255, 255, 255, 0.4) !important; /* Blanco al 40% */
-    opacity: 1; /* Necesario para que Firefox no lo haga transparente */
+    color: rgba(255, 255, 255, 0.4) !important; /* 40% White */
+    opacity: 1; /* Necessary so Firefox doesn't make it transparent */
 }
 
-/* Para navegadores antiguos (Edge viejo / IE) */
+/* For old browsers (Old Edge / IE) */
 .form-control::-ms-input-placeholder {
     color: rgba(255, 255, 255, 0.4) !important;
 }
@@ -292,21 +292,21 @@ input[type="date"]::-webkit-calendar-picker-indicator {
    🟢 NAVBAR BRAND ICON
    =========================== */
 .navbar-brand-icon {
-    width: 50px; /* Tamaño ideal para navbar */
-    height: 50px; /* Debe ser igual al ancho */
-    border-radius: 30%; /* Lo hace circular */
-    object-fit: cover; /* Evita que se deforme la imagen */
-    margin-right: 5px; /* Espacio entre el icono y el texto "GreenBowl" */
-    /* Opcional: Un borde sutil que hace que resalte en el fondo oscuro */
+    width: 50px; /* Ideal size for navbar */
+    height: 50px; /* Must be equal to width */
+    border-radius: 30%; /* Makes it circular */
+    object-fit: cover; /* Prevents image distortion */
+    margin-right: 5px; /* Space between icon and "GreenBowl" text */
+    /* Optional: A subtle border that makes it pop on dark background */
     border: 2px solid rgba(255, 255, 255, 0.15);
     box-shadow: 0 2px 4px rgba(0,0,0,0.3);
     transition: all 0.3s ease;
 }
 
-/* Efecto al pasar el mouse por encima (Opcional) */
+/* Hover effect (Optional) */
 .navbar-brand:hover .navbar-brand-icon {
-    border-color: #10b981; /* Cambia a verde al hacer hover */
-    transform: rotate(5deg); /* Un pequeño giro elegante */
+    border-color: #10b981; /* Turns green on hover */
+    transform: rotate(5deg); /* A small elegant rotation */
 }
 
 /* ===========================
@@ -332,25 +332,25 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     color: #e2e8f0 !important;
 }*/
 
-/* Corrección para que el Menú siempre esté encima de las Tarjetas */
+/* Fix so the Menu is always on top of Cards */
 .navbar, .dropdown-menu {
-    z-index: 1050 !important; /* Un número muy alto para ganar */
+    z-index: 1050 !important; /* A very high number to win */
     position: relative;
 }
 
-/* Opcional: Asegura que el contenido principal esté debajo */
+/* Optional: Ensures main content is underneath */
 main {
     z-index: 1;
     position: relative;
 }
 
-/* Hacer los menús desplegables más anchos y evitar salto de línea */
+/* Make dropdown menus wider and avoid line breaks */
 .dropdown-menu {
-    min-width: 168px !important; /* Más ancho (ajusta el número si quieres más) */
+    min-width: 168px !important; /* Wider (adjust the number if you want more) */
 }
 
 .dropdown-item {
-    white-space: nowrap; /* Obliga al texto a mantenerse en una sola línea */
+    white-space: nowrap; /* Forces text to stay on a single line */
 }
 
 /* =========================================
@@ -358,12 +358,13 @@ main {
    ========================================= */
 input[type="date"]::-webkit-calendar-picker-indicator,
 input[type="datetime-local"]::-webkit-calendar-picker-indicator {
-    filter: invert(1); /* Invierte el color: Negro -> Blanco */
-    cursor: pointer; /* Manito al pasar el mouse */
-    opacity: 0.8; /* Un poco de transparencia para que se vea elegante */
+    filter: invert(1); /* Invert color: Black -> White */
+    cursor: pointer; /* Hand cursor on hover */
+    opacity: 0.8; /* A bit of transparency to look elegant */
 }
 
     input[type="date"]::-webkit-calendar-picker-indicator:hover,
     input[type="datetime-local"]::-webkit-calendar-picker-indicator:hover {
-        opacity: 1; /* Brilla más al pasar el mouse */
+        opacity: 1; /* Shines brighter on hover */
     }
+
