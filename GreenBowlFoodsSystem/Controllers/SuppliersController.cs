@@ -22,9 +22,27 @@ public class SuppliersController : Controller
     }
 
     // GET: Suppliers
-    public async Task<IActionResult> Index()
+    // Displays the directory of approved raw material suppliers.
+    public async Task<IActionResult> Index(string searchString)
     {
-        return View(await _context.Suppliers.ToListAsync());
+        // Save the current search filter to ViewData so it remains in the input field
+        ViewData["CurrentFilter"] = searchString;
+
+        // 1. Initialize query
+        var suppliers = _context.Suppliers.AsQueryable();
+
+        // 2. Apply Search Filter if user entered text
+        if (!string.IsNullOrEmpty(searchString))
+        {
+            // Search by Supplier Name, Contact Person, or Email Address
+            suppliers = suppliers.Where(s => s.SupplierName!.Contains(searchString.ToLower())
+                                          || s.ContactPerson!.Contains(searchString.ToLower())
+                                          || s.Email!.Contains(searchString.ToLower()));
+        }
+
+        // 3. Execute query: Order by Supplier Name (Alphabetical)
+        
+        return View(await suppliers.OrderBy(s => s.SupplierName).ToListAsync());
     }
 
     // GET: Suppliers/Details/5

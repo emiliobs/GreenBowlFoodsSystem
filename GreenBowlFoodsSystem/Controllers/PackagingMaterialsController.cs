@@ -22,9 +22,28 @@ public class PackagingMaterialsController : Controller
     }
 
     // GET: PackagingMaterials
-    public async Task<IActionResult> Index()
+    // Displays the inventory of packaging items (boxes, labels, etc.).
+    public async Task<IActionResult> Index(string searchString)
     {
-        return View(await _context.PackagingMaterials.Include(p => p.Supplier).ToListAsync());
+        // Save the search filter to ViewData to keep it in the input field
+        ViewData["CurrentFilter"] = searchString;
+
+        // 1. Initialize query with eager loading (Include Supplier info)
+        var packaging = _context.PackagingMaterials
+            .Include(p => p.Supplier)
+            .AsQueryable();
+
+        // 2. Apply Search Filter if user entered text
+        if (!string.IsNullOrEmpty(searchString))
+        {
+            // Search by Material Name or Supplier Name
+            packaging = packaging.Where(p => p.MaterialName.Contains(searchString.ToLower())
+                                          || p.Supplier!.SupplierName.Contains(searchString.ToLower()));
+        }
+
+        // 3. Execute query: Order by QuantityInStock (Ascending) to highlight low stock items first
+        
+        return View(await packaging.OrderBy(p => p.QuantityInStock).ToListAsync());
     }
 
     // GET: PackagingMaterials/Details/5

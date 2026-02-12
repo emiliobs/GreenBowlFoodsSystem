@@ -1,0 +1,102 @@
+﻿@model IEnumerable<GreenBowlFoodsSystem.Models.XRayCheck>
+
+@{
+    ViewData["Title"] = "Quality Assurance Report";
+}
+
+<div class="row mb-4 d-print-none">
+    <div class="col-md-4">
+        <div class="card bg-success text-white">
+            <div class="card-body text-center">
+                <h3>@ViewBag.PassRate.ToString("0.0")%</h3>
+                <small>PASS RATE</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card bg-danger text-white">
+            <div class="card-body text-center">
+                <h3>@ViewBag.FailedChecks</h3>
+                <small>FAILED CHECKS</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card bg-dark border-secondary text-white">
+            <div class="card-body text-center">
+                <h3>@ViewBag.TotalChecks</h3>
+                <small>TOTAL INSPECTIONS</small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h3 class="text-white d-print-none">🛡️ X-Ray Inspection Log</h3>
+    <div class="d-flex gap-2">
+        <a asp-action="Index" class="btn btn-outline-light rounded-pill px-4">
+            <i class="bi bi-arrow-left me-2"></i> Back to Reports
+        </a>
+        
+        <button onclick="window.print()" class="btn btn-primary rounded-pill px-4">
+            <i class="bi bi-printer-fill me-2"></i> Print X-Ray Report
+        </button>
+    </div>
+
+</div>
+
+<div class="d-none d-print-block text-center mb-4">
+    <h2>Quality Assurance Log (X-Ray)</h2>
+    <p>Generated: @DateTime.Now</p>
+    <hr />
+</div>
+
+<div class="table-responsive">
+    <table class="table table-dark table-striped align-middle">
+        <thead>
+            <tr>
+                <th>Check Time</th>
+                <th>Batch #</th>
+                <th>Product</th>
+                <th>Result</th>
+                <th>Operator</th>
+                <th>Comments</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                // Highlight row if failed
+                <tr class="@(item.Result == "Fail" ? "table-danger text-dark" : "")">
+                    <td>@item.CheckTime.ToString("yyyy-MM-dd HH:mm")</td>
+                    <td class="fw-bold">@item.ProductionBatch?.BatchNumber</td>
+                    <td>@item.ProductionBatch?.FinishedProduct?.ProductName</td>
+                    
+                    <td class="text-center">
+                        @if (item.Result == "Pass")
+                        {
+                            <span class="badge bg-success"><i class="bi bi-check-circle"></i> PASS</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-danger"><i class="bi bi-exclamation-triangle-fill"></i> FAIL</span>
+                        }
+                    </td>
+                    
+                    <td>@item.Operator?.FirstName</td>
+                    <td class="small fst-italic">@item.Comments</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<style>
+   @@media print {
+        body { background-color: white !important; color: black !important; }
+        .table-dark { color: black !important; background-color: white !important; }
+        .table-danger { background-color: #ffe6e6 !important; }
+        .badge { border: 1px solid #000; color: black !important; background: none !important; }
+        header, footer { display: none; }
+    }
+</style>

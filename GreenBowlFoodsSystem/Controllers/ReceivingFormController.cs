@@ -18,18 +18,32 @@ public class ReceivingFormController : Controller
         this._context = context;
     }
 
-    // GET: ReceivingForm
-    public async Task<IActionResult> Index()
+    // GET: ReceivingForms
+    // Displays the log of received raw materials with filtering and pagination.
+    public async Task<IActionResult> Index(string searchString)
     {
-        // We include supplier and user to show names in the view instead of just IDs
-        var receivingforms = await _context.ReceivingForms
-            .Include(rf => rf.Supplier)
-            .Include(rf => rf.ReceivedBy)
-            .Include(rf => rf.RawMaterial)
-            .OrderByDescending(rf => rf.Date) // show newest receipts first.
-            .ToListAsync();
+        // Store current filter to keep it in the search box after reload
+        ViewData["CurrentFilter"] = searchString;
 
-        return View(receivingforms);
+        // 1. Initialize query with eager loading for related entities
+        // We include RawMaterial, Supplier, and the User who received it
+        var forms = _context.ReceivingForms
+            .Include(r => r.RawMaterial)
+            .Include(r => r.Supplier)
+            .Include(r => r.ReceivedBy)
+            .AsQueryable();
+
+        // 2. Apply Search Filter if searchString is not empty
+        if (!string.IsNullOrEmpty(searchString))
+        {
+            // Filter by Material Name, Supplier Name, or Trailer Number
+            forms = forms.Where(r => r.RawMaterial!.MaterialName.Contains(searchString.ToLower())
+                                  || r.Supplier!.SupplierName.Contains(searchString.ToLower())
+                                  || r.TrailerNumber!.Contains(searchString.ToLower()));
+        }
+
+        // 3. Execute query: Order by Date (newest first) and limit to 50 records for performance
+        return View(await forms.OrderByDescending(r => r.Date).ToListAsync());
     }
 
     // GET: Show Create Form

@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GreenBowlFoodsSystem.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260209165929_SetupInitial")]
-    partial class SetupInitial
+    [Migration("20260211003348_InitialSetup")]
+    partial class InitialSetup
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

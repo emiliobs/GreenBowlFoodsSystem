@@ -16,9 +16,21 @@ public class FinishedProductsController : Controller
         this._context = context;
     }
 
-    public async Task<IActionResult> Index()
+    public async Task<IActionResult> Index(string searchString)
     {
-        return View(await _context.FinishedProducts.ToListAsync());
+        // Empezamos con la consulta base (LINQ)
+        var products = from p in _context.FinishedProducts
+                       select p;
+
+        // Si hay búsqueda, filtramos
+        if (!string.IsNullOrEmpty(searchString))
+        {
+            products = products.Where(s => s.ProductName.Contains(searchString.ToLower())
+                                        || s.SKU.Contains(searchString.ToLower()));
+        }
+
+        //  Devolvemos la lista (agregando AsNoTracking para velocidad)
+        return View(await products.OrderByDescending(p => p.Id).ToListAsync());
     }
 
     // GET: FinishedProducts/Create

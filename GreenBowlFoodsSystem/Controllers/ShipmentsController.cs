@@ -19,17 +19,30 @@ public class ShipmentsController : Controller
         this._context = context;
     }
 
-    //GET Shipments
-    public async Task<IActionResult> Index()
+    // GET: Shipments
+    // Displays the log of outgoing shipments and sales revenue.
+    public async Task<IActionResult> Index(string searchString)
     {
-        // Include relationship to show Names (Customera and Finished Products) isntead Of IDs
-        var namesOfCustomerAndProducts = await _context.Shipments
+        // Save the current search filter to ViewData to keep it in the search box
+        ViewData["CurrentFilter"] = searchString;
+
+        // Initialize query with eager loading (Include Customer and Product details)
+        var shipments = _context.Shipments
             .Include(s => s.Customer)
             .Include(s => s.FinishedProduct)
-            .OrderByDescending(s => s.Date)
-            .ToListAsync();
+            .AsQueryable();
 
-        return View(namesOfCustomerAndProducts);
+        // Apply Search Filter if user entered text
+        if (!string.IsNullOrEmpty(searchString))
+        {
+            // Search by Customer Name, Tracking Number, or Product Name
+            shipments = shipments.Where(s => s.Customer!.CustomerName.Contains(searchString.ToLower())
+                                          || s.TrackingNumber!.Contains(searchString.ToLower())
+                                          || s.FinishedProduct!.ProductName.Contains(searchString.ToLower()));
+        }
+
+        //  Execute query: Order by Date (Descending) to show the most recent shipments first      
+        return View(await shipments.OrderByDescending(s => s.Date).ToListAsync());
     }
 
     // GET: Shipments/Create

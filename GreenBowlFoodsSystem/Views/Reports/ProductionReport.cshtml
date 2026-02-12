@@ -1,0 +1,108 @@
+﻿@model IEnumerable<GreenBowlFoodsSystem.Models.ProductionBatch>
+
+@{
+    ViewData["Title"] = "Production Yield Report";
+    var startDate = ViewData["StartDate"] as string;
+    var endDate = ViewData["EndDate"] as string;
+}
+
+<div class="card bg-dark border-secondary mb-4 d-print-none animate-fade-up">
+    <div class="card-body">
+        <form method="get" asp-action="ProductionReport" class="row g-3 align-items-end">
+            <div class="col-md-3">
+                <label class="text-white small">Start Date</label>
+                <input type="date" name="startDate" class="form-control bg-secondary text-white border-0" value="@startDate">
+            </div>
+            <div class="col-md-3">
+                <label class="text-white small">End Date</label>
+                <input type="date" name="endDate" class="form-control bg-secondary text-white border-0" value="@endDate">
+            </div>
+            <div class="col-md-2">
+                  <button type="submit" class="btn btn-outline-success w-100">
+                     <i class="bi bi-filter"></i> Filter
+                 </button>
+            </div>
+            <div class="col-md-2">
+                <button onclick="window.print()" class="btn btn-primary w-100">
+                     <i class="bi bi-printer-fill"></i> Print
+                 </button>
+            </div>
+            <div class="col-md-2">
+                <a asp-action="Index" class="btn btn-outline-light rounded-pill px-4">
+            <i class="bi bi-arrow-left me-2"></i> Back to Reports
+        </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="d-none d-print-block text-center mb-4">
+    <h1>Green Bowl Foods - Production Report</h1>
+    <p>Period: @startDate to @endDate</p>
+    <p>Generated: @DateTime.Now.ToString("dd/MM/yyyy HH:mm")</p>
+    <hr />
+</div>
+
+<div class="card shadow-sm border-0">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-dark">
+                    <tr>
+                        <th class="ps-4">Batch #</th>
+                        <th>Date</th>
+                        <th>Product</th>
+                        <th>Supervisor</th>
+                        <th class="text-center">Target / Actual</th>
+                        <th class="text-center pe-4">Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td class="ps-4 fw-bold">@item.BatchNumber</td>
+                            <td>@item.ProductionDate.ToString("dd MMM yyyy")</td>
+                            <td>@item.FinishedProduct?.ProductName</td>
+                            <td><small>@item.Supervisor?.FirstName</small></td>
+                            
+                            <td class="text-center">
+                                @item.TargetQuantity /
+                                <span class="@(item.QuantityProduced < item.TargetQuantity ? "text-warning" : "text-success fw-bold")">
+                                    @item.QuantityProduced
+                                </span>
+                            </td>
+
+                            <td class="text-center pe-4">
+                                @if (item.Status == "Completed")
+                                {
+                                    <span class="badge bg-success rounded-pill">Completed</span>
+                                }
+                                else if (item.Status == "In Progress")
+                                {
+                                    <span class="badge bg-primary rounded-pill">In Progress</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-secondary rounded-pill">@item.Status</span>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Print Media Query Optimization */
+    @@media print {
+        body { background-color: white !important; color: black !important; }
+        .table-dark { background-color: #eee !important; color: black !important; border-bottom: 2px solid #000; }
+        .badge { border: 1px solid #000; color: black !important; background: none !important; }
+        .d-print-none { display: none !important; }
+        .card { border: none !important; box-shadow: none !important; }
+        .text-success, .text-warning { color: black !important; font-weight: bold; }
+    }
+</style>

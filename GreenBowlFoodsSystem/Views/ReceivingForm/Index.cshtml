@@ -6,23 +6,49 @@
 
 <div class="container-fluid animate-fade-up">
 
-    <div class="d-flex justify-content-between align-items-center mb-4">
+    <div class="d-none d-print-block text-center mb-4">
+        <h1>Raw Material Receiving Log</h1>
+        <p>Generated: @DateTime.Now.ToString("dd MMM yyyy HH:mm")</p>
+        <hr />
+    </div>
+
+    <div class="d-flex justify-content-between align-items-center mb-4 d-print-none">
         <div>
             <h1 class="display-6 fw-bold text-white">Receiving Form Log</h1>
             <p class="text-white-50">Track incoming raw material shipments.</p>
         </div>
-        <a asp-action="Create" class="btn btn-primary shadow-lg rounded-pill px-4" style="background-color: #10b981; border: none;">
-            <i class="bi bi-plus-lg me-2"></i> New Receipt
-        </a>
+        <div class="d-flex gap-2">
+            <button onclick="window.print()" class="btn btn-outline-info rounded-pill px-4 me-2">
+                <i class="bi bi-printer-fill me-2"></i> Print Log
+            </button>
+            <a asp-action="Create" class="btn btn-primary shadow-lg rounded-pill px-4" style="background-color: #10b981; border: none;">
+                <i class="bi bi-plus-lg me-2"></i> New Receipt
+            </a>
+        </div>
+    </div>
+
+    <div class="card bg-transparent border-0 mb-4 d-print-none">
+        <form asp-action="Index" method="get">
+            <div class="input-group shadow-sm">
+                <span class="input-group-text bg-dark border-secondary text-white-50">
+                    <i class="bi bi-search"></i>
+                </span>
+                <input type="text" name="searchString" class="form-control bg-dark border-secondary text-white" 
+                       placeholder="Search Supplier, Material or Trailer #..." 
+                       value="@ViewData["CurrentFilter"]" />
+                <button type="submit" class="btn btn-outline-success text-white">Search</button>
+                <a asp-action="Index" class="btn btn-outline-success text-white align-content-center">Clean</a>
+            </div>
+           </form>
     </div>
 
     <div class="card shadow-lg border-0" style="background: #1e293b;">
         <div class="card-body p-0">
             <div class="table-responsive">
-                <table class="table table-dark table-hover mb-0 align-middle">
+                <table class="table table-dark table-hover mb-0 align-middle table-print" id="myTable">
                     <thead class="text-white-50 small text-uppercase" style="background-color: rgba(0,0,0,0.2);">
                         <tr>
-                            <th class="ps-4 py-3">ID</th>
+                            <th class="ps-3 py-3">ID</th>
                             <th>Date</th>
                             <th>Trailer #</th>
                             <th>Item</th>
@@ -31,61 +57,60 @@
                             <th>Status</th>
                             <th>Cost</th>
                             <th>Received By</th>
-                            <th class="text-end pe-4">Actions</th>
+                            <th class="text-end pe-3 d-print-none">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach (var item in Model)
                         {
                             <tr>
-                                <td class="ps-4 font-monospace text-info">#@item.Id</td>
-                                <td class="text-white">@item.Date.ToString("MMM dd, yyyy")</td>
+                                <td class="ps-3 font-monospace text-info text-print-dark">#@item.Id</td>
+                                <td class="text-white text-print-dark">@item.Date.ToString("MMM dd, yyyy")</td>
 
-                                <td class="text-warning font-monospace">
-                                    <i class="bi bi-truck me-1"></i> @(item.TrailerNumber ?? "N/A")
+                                <td class="text-warning font-monospace text-print-dark">
+                                    <i class="bi bi-truck me-1 d-print-none"></i> @(item.TrailerNumber ?? "N/A")
                                 </td>
 
-                                <td class="fw-bold text-white">
-                                    <i class="bi bi-box-seam text-info me-1"></i>
+                                <td class="fw-bold text-white text-print-dark">
+                                    <i class="bi bi-box-seam text-info me-1 d-print-none"></i>
                                     @item.RawMaterial?.MaterialName
                                 </td>
 
-                                <td class="fw-bold text-info">
-                                    @item.QuantityReceived.ToString("N2") <small class="text-info">@item.RawMaterial?.Unit</small>
+                                <td class="fw-bold text-info text-print-dark">
+                                    @item.QuantityReceived.ToString("N2") <small class="text-info text-print-dark">@item.RawMaterial?.Unit</small>
                                 </td>
 
-                                <td class="fw-bold text-white">@item.Supplier?.SupplierName</td>
+                                <td class="fw-bold text-white text-print-dark">@item.Supplier?.SupplierName</td>
 
                                 <td>
                                     @if (item.IsAccepted)
                                     {
-                                        <span class="badge bg-success  border border-success border-opacity-25 rounded-pill px-2">
-                                            <i class="bi bi-check-circle-fill me-1"></i> Accepted
+                                        <span class="badge bg-success border border-success border-opacity-25 rounded-pill px-2 badge-print">
+                                            <i class="bi bi-check-circle-fill me-1 d-print-none"></i> Accepted
                                         </span>
                                     }
                                     else
                                     {
-                                        <span class="badge bg-danger  border border-danger border-opacity-25 rounded-pill px-2">
-                                            <i class="bi bi-x-circle-fill me-1"></i> Rejected
+                                        <span class="badge bg-danger border border-danger border-opacity-25 rounded-pill px-2 badge-print">
+                                            <i class="bi bi-x-circle-fill me-1 d-print-none"></i> Rejected
                                         </span>
                                     }
                                 </td>
 
-                                <td class="text-warning fw-bold font-monospace">
+                                <td class="text-warning fw-bold font-monospace text-print-dark">
                                      @Html.DisplayFor(modelItem => item.TotalAmount)
-                                    @* £@item.TotalAmount.ToString("0") *@
                                 </td>
 
                                 <td>
-                                    <span class="text-white small">
-                                        <i class="bi bi-person me-1 text-info"></i> @(item.ReceivedBy?.FirstName ?? "Unknown")
+                                    <span class="text-white small text-print-dark">
+                                        <i class="bi bi-person me-1 text-info d-print-none"></i> @(item.ReceivedBy?.FirstName ?? "Unknown")
                                     </span>
                                 </td>
 
-                                <td class="text-end pe-4">
+                                <td class="text-end pe-4 d-print-none">
                                     <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm" style="color: #a3e635;" title="Details">
-                                    <i class="bi bi-eye-fill"></i> Details
-                                </a>
+                                        <i class="bi bi-eye-fill"></i> Details
+                                    </a>
                                 </td>
                             </tr>
                         }
@@ -95,3 +120,40 @@
         </div>
     </div>
 </div>
+
+@section Scripts  {
+    <script>
+         // $('#myTable').DataTable();
+        $(document).ready(function () {
+            $('#myTable').DataTable({
+                "paging": true,          // Activa paginación
+                "lengthChange": false,   // Oculta el "Ver 10 registros"
+                "searching": false,       // Activa buscador (puedes quitar el tuyo si quieres)
+                "ordering": true,        // Activa ordenamiento por columnas
+                "info": true,            // Muestra "Showing 1 of 10"
+                "autoWidth": true,
+                "pageLength":5 ,        // Registros por página
+                "language": {
+                    "search": "",        // Quita la palabra "Search:"
+                    "searchPlaceholder": "Filter records..."
+                }
+            });
+        });
+    </script>
+}
+
+<style>
+    /* Estilos de Impresión */
+    @@media print {
+         body { background-color: white !important; color: black !important; }
+        .card { box-shadow: none !important; border: 1px solid #ddd !important; }
+        .text-white, .text-white-50, .text-info, .text-warning { color: black !important; }
+        .text-print-dark { color: black !important; }
+        .badge { border: 1px solid #000; color: black !important; background: none !important; }
+        .d-print-none { display: none !important; }
+        .table { color: black !important; }
+        thead th { background-color: #f0f0f0 !important; color: black !important; border-bottom: 2px solid #000; }
+        /* Ocultar elementos de DataTables al imprimir */
+        .dataTables_wrapper .dataTables_filter, .dataTables_paginate, .dataTables_info { display: none !important; }
+    }
+</style>

@@ -43,7 +43,7 @@ namespace GreenBowlFoodsSystem.Data
                         }
                     }
 
-                    // --- CREATE ADMIN USER ---
+                    // CREATE ADMIN USER
                     var AdminUsers = new User
                     {
                         UserName = "admin@yopmail.com", // Login ID
@@ -78,7 +78,7 @@ namespace GreenBowlFoodsSystem.Data
                         await userManager.AddToRoleAsync(emilioAdmin, "Admin");
                     }
 
-                    // --- CREATE STAFF USER ---
+                    // CREATE STAFF USER
                     var staffUser = new User
                     {
                         UserName = "staff@yopmail.com",
@@ -642,7 +642,6 @@ namespace GreenBowlFoodsSystem.Data
                             inv1.TotalAmount = item1.Quantity * item1.UnitPrice; // Total: 5000
                             context.Update(inv1);
 
-
                             // --- ESCENARIO 2: FACTURA PAGADA (PAID) ---
                             // Fecha: hace 10 días
                             var inv2 = new Invoice
@@ -659,7 +658,7 @@ namespace GreenBowlFoodsSystem.Data
                             var item2 = new InvoiceItem
                             {
                                 InvoiceId = inv2.Id,
-                                FinishedProductId = product2.Id,
+                                FinishedProductId = product2!.Id,
                                 Quantity = 150,
                                 UnitPrice = 15.50m
                             };
@@ -667,13 +666,12 @@ namespace GreenBowlFoodsSystem.Data
                             inv2.TotalAmount = item2.Quantity * item2.UnitPrice; // Total: 2325
                             context.Update(inv2);
 
-
                             // --- ESCENARIO 3: FACTURA RECIENTE (UNPAID) ---
                             // Fecha: Ayer
                             var inv3 = new Invoice
                             {
                                 InvoiceNumber = "INV-2026-012",
-                                CustomerId = customer2.Id,
+                                CustomerId = customer2!.Id,
                                 Date = DateTime.Now.AddDays(-1),
                                 Status = "Unpaid",
                                 TotalAmount = 0
@@ -691,7 +689,6 @@ namespace GreenBowlFoodsSystem.Data
                             context.InvoiceItems.Add(item3);
                             inv3.TotalAmount = item3.Quantity * item3.UnitPrice; // Total: 12000
                             context.Update(inv3);
-
 
                             // --- ESCENARIO 4: FACTURA COMPLEJA (MÚLTIPLES ÍTEMS) ---
                             // Demuestra la relación One-to-Many real

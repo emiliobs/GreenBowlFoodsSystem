@@ -4,86 +4,155 @@
     ViewData["Title"] = "Inventory";
 }
 
-<div class="d-flex justify-content-between align-items-center mb-4 animate-fade-up">
-    <div>
-        <h1 class="display-6 fw-bold text-white">Raw Materials</h1>
-        <p class="text-white-50">Track stock levels and expiry dates.</p>
-    </div>
-    <a asp-action="Create" class="btn btn-primary shadow-lg">
-        <i class="bi bi-box-seam-fill me-2"></i> Add Material
-    </a>
-</div>
+<div class="container-fluid animate-fade-up">
 
-<div class="card shadow-lg border-0 animate-fade-up" style="animation-delay: 0.1s;">
-    <div class="card-body p-0">
-        <div class="table-responsive">
-            <table class="table table-hover align-middle mb-0">
-                <thead>
-                    <tr>
-                        <th class="ps-4">Material Name</th>
-                        <th>Lot Number</th>
-                        <th>Stock Level</th>
-                        <th>Expiry Date</th>
-                        <th>Supplier</th>
-                        <th class="text-end pe-4">Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var item in Model)
-                    {
-                        
-                            bool isExpired = item.ExpiryDate < DateTime.Now;
-                            // If expired, set text color to Red, otherwise White
-                            string expiryColor = isExpired ? "text-danger fw-bold" : "text-white";
-                                                
+    <div class="d-none d-print-block text-center mb-4">
+        <h1>Raw Materials Inventory Report</h1>
+        <p>Generated: @DateTime.Now.ToString("dd MMM yyyy HH:mm")</p>
+        <hr />
+    </div>
+
+    <div class="d-flex justify-content-between align-items-center mb-4 d-print-none">
+        <div>
+            <h1 class="display-6 fw-bold text-white">Raw Materials</h1>
+            <p class="text-white-50">Track stock levels and expiry dates.</p>
+        </div>
+        <div class="d-flex gap-2">
+            <button onclick="window.print()" class="btn btn-outline-info rounded-pill px-4 me-2">
+                <i class="bi bi-printer-fill me-2"></i> Print Inventory
+            </button>
+            <a asp-action="Create" class="btn btn-primary shadow-lg">
+                <i class="bi bi-box-seam-fill me-2"></i> Add Material
+            </a>
+        </div>
+    </div>
+
+    <div class="card bg-transparent border-0 mb-4 d-print-none">
+        <form asp-action="Index" method="get">
+            <div class="input-group shadow-sm">
+                <span class="input-group-text bg-dark border-secondary text-white-50">
+                    <i class="bi bi-search"></i>
+                </span>
+                <input type="text" name="searchString" class="form-control bg-dark border-secondary text-white" 
+                       placeholder="Search Material, Lot # or Supplier..." 
+                       value="@ViewData["CurrentFilter"]" />
+                <button type="submit" class="btn btn-outline-success text-white">Search</button>
+                <a asp-action="Index" class="btn btn-outline-success text-white align-content-center">Clean</a>
+            </div>
+            
+        </form>
+    </div>
+
+    <div class="card shadow-lg border-0" style="animation-delay: 0.1s;">
+        <div class="card-body p-0">
+            <div class="table-responsive p-3">
+                <table class="table table-hover align-middle mb-0 table-print" id="rawMaterialsTable">
+                    <thead>
                         <tr>
-                            <td class="ps-4 fw-bold">
-                                <div class="d-flex align-items-center">
-                                    <div class="rounded-circle bg-white bg-opacity-10 p-2 me-3 text-center" style="width:40px; height:40px;">
-                                        <i class="bi bi-box-seam text-info fs-5"></i>
-                                    </div>
-                                    @Html.DisplayFor(modelItem => item.MaterialName)
-                                </div>
-                            </td>
-                            <td>
-                                <span class="badge bg-secondary bg-opacity-50 rounded-pill px-3 text-white">
-                                    @Html.DisplayFor(modelItem => item.LotNumber)
-                                </span>
-                            </td>
-                            <td>
-                                <span class="fw-bold text-white">
-                                    @Html.DisplayFor(modelItem => item.QuantityInStock) 
-                                    <span class="small text-white">@Html.DisplayFor(modelItem => item.Unit)</span>
-                                </span>
-                            </td>
-                            <td>
-                                <span class="@expiryColor">
-                                    <i class="bi bi-calendar-event text-info me-1"></i>
-                                    @item.ExpiryDate.ToShortDateString()
-                                </span>
-                                @if(isExpired) { <span class="badge bg-danger ms-1">EXPIRED</span> }
-                            </td>
-                            <td>
-                                <span class="text-white-50">
-                                    <i class="bi bi-truck text-info me-1"></i>
-                                    @Html.DisplayFor(modelItem => item.Supplier!.SupplierName)
-                                </span>
-                            </td>
-                            <td class="text-end pe-4">
-                                <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm" style="color: #38bdf8;" title="Edit">
-                                    <i class="bi bi-pencil-fill"></i> Edit
-                                </a>
-                                <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm" style="color: #a3e635;" title="Details">
-                                    <i class="bi bi-eye-fill"></i> Details
-                                </a>
-                                <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm" style="color: #f87171;" title="Delete">
-                                    <i class="bi bi-trash-fill"></i> Delete
-                                </a>
-                            </td>
+                            <th class="ps-4">Material Name</th>
+                            <th>Lot Number</th>
+                            <th>Stock Level</th>
+                            <th>Expiry Date</th>
+                            <th>Supplier</th>
+                            <th class="text-end pe-4 d-print-none">Actions</th>
                         </tr>
-                    }
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            // Logic: Check if item is expired
+                            bool isExpired = item.ExpiryDate < DateTime.Now;
+                            // If expired, set text color to Red, otherwise White (Dark in print)
+                            string expiryColor = isExpired ? "text-danger fw-bold" : "text-white text-print-dark";
+                                                
+                            <tr>
+                                <td class="ps-4 fw-bold">
+                                    <div class="d-flex align-items-center">
+                                        <div class="rounded-circle bg-white bg-opacity-10 p-2 me-3 text-center d-print-none" style="width:40px; height:40px;">
+                                            <i class="bi bi-box-seam text-info fs-5"></i>
+                                        </div>
+                                        <span class="text-print-dark">@Html.DisplayFor(modelItem => item.MaterialName)</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="badge bg-secondary bg-opacity-50 rounded-pill px-3 text-white badge-print">
+                                        @Html.DisplayFor(modelItem => item.LotNumber)
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="fw-bold text-white text-print-dark">
+                                        @Html.DisplayFor(modelItem => item.QuantityInStock) 
+                                        <span class="small text-white text-print-dark">@Html.DisplayFor(modelItem => item.Unit)</span>
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="@expiryColor">
+                                        <i class="bi bi-calendar-event text-info me-1 d-print-none"></i>
+                                        @item.ExpiryDate.ToShortDateString()
+                                    </span>
+                                    @if(isExpired) 
+                                    { 
+                                        <span class="badge bg-danger ms-1 badge-print">EXPIRED</span> 
+                                    }
+                                </td>
+                                <td>
+                                    <span class="text-white-50 text-print-dark">
+                                        <i class="bi bi-truck text-info me-1 d-print-none"></i>
+                                        @Html.DisplayFor(modelItem => item.Supplier!.SupplierName)
+                                    </span>
+                                </td>
+                                
+                                <td class="text-end pe-4 d-print-none">
+                                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm" style="color: #38bdf8;" title="Edit">
+                                        <i class="bi bi-pencil-fill"></i> Edit
+                                    </a>
+                                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm" style="color: #a3e635;" title="Details">
+                                        <i class="bi bi-eye-fill"></i> Details
+                                    </a>
+                                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm" style="color: #f87171;" title="Delete">
+                                        <i class="bi bi-trash-fill"></i> Delete
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('#rawMaterialsTable').DataTable({
+                "paging": true,          // Enable pagination
+                "lengthChange": false,   // Hide "Show X records"
+                "searching": false,      // Disable client search (using server-side)
+                "ordering": true,        // Enable sorting
+                "info": true,            // Show "Showing X of Y"
+                "autoWidth": false,
+                "pageLength": 5,         // 5 records per page
+                "language": {
+                    "emptyTable": "No raw materials found"
+                }
+            });
+        });
+    </script>
+}
+
+<style>
+    /* Estilos de Impresión */
+    @@media print {
+         body { background-color: white !important; color: black !important; }
+        .card { box-shadow: none !important; border: 1px solid #ddd !important; }
+        .text-white, .text-white-50, .text-info, .text-warning { color: black !important; }
+        .text-print-dark { color: black !important; }
+        .badge { border: 1px solid #000; color: black !important; background: none !important; }
+        .d-print-none { display: none !important; }
+        .table { color: black !important; }
+        thead th { background-color: #f0f0f0 !important; color: black !important; border-bottom: 2px solid #000; }
+        /* Ocultar elementos de DataTables al imprimir */
+        .dataTables_wrapper .dataTables_filter, .dataTables_paginate, .dataTables_info { display: none !important; }
+    }
+</style>

@@ -21,9 +21,29 @@ public class DeliveryFormsController : Controller
     }
 
     // GET: DeliveryForms
-    public async Task<IActionResult> Index()
+    // Displays the log of outbound delivery checks (Vehicle inspection).
+    public async Task<IActionResult> Index(string searchString)
     {
-        return View(await _context.DeliveryForms.Include(df => df.ApprovedBy).ToListAsync());
+        // Save the current search filter to ViewData to keep it in the search box
+        ViewData["CurrentFilter"] = searchString;
+
+        // Initialize query with eager loading (Include the User who approved it)
+        var forms = _context.DeliveryForms
+            .Include(d => d.ApprovedBy)
+            .AsQueryable();
+
+        // Apply Search Filter if user entered text
+        if (!string.IsNullOrEmpty(searchString))
+        {
+            // Search by Trailer Number, Driver Name, or Approver's Name
+            forms = forms.Where(d => d.TrailerNumber!.Contains(searchString.ToLower())
+                                  || d.DriverName!.Contains(searchString.ToLower())
+                                  || d.ApprovedBy!.UserName!.Contains(searchString.ToLower()));
+        }
+
+        // Execute query: Order by CheckDate (Descending) to show newest checks first
+        
+        return View(await forms.OrderByDescending(d => d.CheckDate).ToListAsync());
     }
 
     // GET: DeliveryForms/Details/5

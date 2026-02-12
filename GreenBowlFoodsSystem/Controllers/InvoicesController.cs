@@ -20,9 +20,24 @@ namespace GreenBowlFoodsSystem.Controllers
         }
 
         // GET: Invoices
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string searchString)
         {
-            return View(await _context.Invoices.Include(i => i.Customer).ToListAsync());
+            ViewData["CurrentFilter"] = searchString;
+
+            var invoices = _context.Invoices
+                .Include(i => i.Customer)
+                .AsQueryable();
+
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                invoices = invoices.Where(i => i.InvoiceNumber.Contains(searchString)
+                                            || i.Customer!.CustomerName.Contains(searchString));
+            }
+
+            // Calcular el total de ingresos (de todo lo filtrado) para mostrar en la tarjeta
+            ViewBag.TotalRevenue = await invoices.SumAsync(i => i.TotalAmount);
+
+            return View(await invoices.OrderByDescending(i => i.Date).ToListAsync());
         }
 
         // GET: Invoices/Details/5

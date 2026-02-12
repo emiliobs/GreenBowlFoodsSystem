@@ -334,7 +334,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 
 /* Fix so the Menu is always on top of Cards */
 .navbar, .dropdown-menu {
-    z-index: 1050 !important; /* A very high number to win */
+    z-index: 1060 !important; /* A very high number to win */
     position: relative;
 }
 
@@ -346,7 +346,7 @@ main {
 
 /* Make dropdown menus wider and avoid line breaks */
 .dropdown-menu {
-    min-width: 168px !important; /* Wider (adjust the number if you want more) */
+    min-width: 185px !important; /* Wider (adjust the number if you want more) */
 }
 
 .dropdown-item {

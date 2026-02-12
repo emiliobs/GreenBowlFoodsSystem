@@ -22,13 +22,29 @@ public class RawMaterialsController : Controller
         _context = context;
     }
 
-    // Display the main List (Inventory)
     // GET: RawMaterials
-    public async Task<IActionResult> Index()
+    // Displays the current inventory levels and expiry dates.
+    public async Task<IActionResult> Index(string searchString)
     {
-        //
-        var applicationDbContext = _context.RawMaterials.Include(r => r.Supplier);
-        return View(await applicationDbContext.ToListAsync());
+        // Save the current search filter to the View
+        ViewData["CurrentFilter"] = searchString;
+
+        //  Initialize query with eager loading (Include Supplier)
+        var rawMaterials = _context.RawMaterials
+            .Include(r => r.Supplier)
+            .AsQueryable();
+
+        //  Apply Search Filter if user entered text
+        if (!string.IsNullOrEmpty(searchString))
+        {
+            // Search by Material Name, Lot Number, or Supplier Name
+            rawMaterials = rawMaterials.Where(s => s.MaterialName.Contains(searchString.ToLower())
+                                                || s.LotNumber.Contains(searchString.ToLower())
+                                                || s.Supplier!.SupplierName.Contains(searchString.ToLower()));
+        }
+
+        //Execute query:  Order by ExpiryDate (Ascending) to show expiring items first
+        return View(await rawMaterials.OrderBy(r => r.ExpiryDate).ToListAsync());
     }
 
     // GET: RawMaterials/Create

@@ -1,15 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using GreenBowlFoodsSystem.Data;
+﻿using GreenBowlFoodsSystem.Data;
 using GreenBowlFoodsSystem.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.FileSystemGlobbing;
 using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.View;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace GreenBowlFoodsSystem.Controllers;
 
@@ -26,16 +27,23 @@ public class ProductionBatchesController : Controller
     }
 
     // GET: ProductionBatches
-    public async Task<IActionResult> Index()
+    public async Task<IActionResult> Index(string searchString)
     {
+        ViewData["CurrentFilter"] = searchString;
         // bring prodcut info ans supervisodr name
-        var applicationDbContext = _context.ProductionBatches
+        var batches = _context.ProductionBatches
             .Include(p => p.FinishedProduct)
             .Include(p => p.Supervisor)
-            .OrderByDescending(p => p.ProductionDate)
-            .ToListAsync();
+            .AsQueryable();
 
-        return View(await applicationDbContext);
+        if (!string.IsNullOrEmpty(searchString))
+        {
+            batches = batches.Where(b => b.BatchNumber.Contains(searchString.ToLower())
+                                  || b.Status.Contains(searchString.ToUpperInvariant())
+                                  || b.FinishedProduct!.ProductName.Contains(searchString.ToLower()));
+        }
+
+        return View(await batches.OrderByDescending(b => b.ProductionDate).ToListAsync());
     }
 
     // GET: ProductionBatches/Create
@@ -285,9 +293,13 @@ public class ProductionBatchesController : Controller
         }
         catch (Exception ex)
         {
+            // If there is an error, stay on Details to show the alert
             TempData["ErrorMessage"] = $"Error finishing batch: {ex.Message}";
+            return RedirectToAction(nameof(Details), new { id = batch.Id });
         }
 
+        // CHANGE: Redirect to Index instead of Details
+        // return RedirectToAction(nameof(Index));
         return RedirectToAction(nameof(Details), new { id = batch.Id });
     }
 

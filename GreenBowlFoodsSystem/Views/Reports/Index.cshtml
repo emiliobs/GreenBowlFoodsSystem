@@ -1,0 +1,72 @@
+﻿@{
+    ViewData["Title"] = "Reports";
+}
+
+<div class="text-center mb-5">
+    <h1 class="display-4 text-white fw-bold">📊 System Reports</h1>
+    <p class="lead text-muted">Select a category to view detailed analytics.</p>
+</div>
+
+<div class="row g-4">
+    
+    <div class="col-md-4">
+        <div class="card bg-dark border-secondary h-100 shadow-sm hover-effect">
+            <div class="card-body text-center p-4">
+                <div class="display-5 text-info mb-3"><i class="bi bi-box-seam"></i></div>
+                <h3 class="card-title text-white">Inventory Valuation</h3>
+                <p class="card-text text-muted">Current stock levels, unit costs, and total warehouse asset value.</p>
+                <a asp-action="InventoryReport" class="btn btn-outline-info w-100 stretched-link">View Report</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card bg-dark border-secondary h-100 shadow-sm hover-effect">
+            <div class="card-body text-center p-4">
+                <div class="display-5 text-warning mb-3"><i class="bi bi-gear-wide-connected"></i></div>
+                <h3 class="card-title text-white">Production Yield</h3>
+                <p class="card-text text-muted">Batch history, efficiency metrics, and output vs. target analysis.</p>
+                <a asp-action="ProductionReport" class="btn btn-outline-warning w-100 stretched-link">View Report</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card bg-dark border-secondary h-100 shadow-sm hover-effect">
+            <div class="card-body text-center p-4">
+                <div class="display-5 text-danger mb-3"><i class="bi bi-shield-check"></i></div>
+                <h3 class="card-title text-white">Quality Assurance</h3>
+                <p class="card-text text-muted">X-Ray inspection logs, pass/fail rates, and safety audit trails.</p>
+                <a asp-action="QualityReport" class="btn btn-outline-danger w-100 stretched-link">View Report</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card bg-dark border-secondary h-100 shadow-sm hover-effect">
+            <div class="card-body text-center p-4">
+                <div class="display-5 text-success mb-3"><i class="bi bi-cash-coin"></i></div>
+                <h3 class="card-title text-white">Financial Sales</h3>
+                <p class="card-text text-muted">Revenue analysis based on paid invoices and customer orders.</p>
+                <a asp-action="SalesReport" class="btn btn-outline-success w-100 stretched-link">View Report</a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card bg-dark border-secondary h-100 shadow-sm hover-effect">
+            <div class="card-body text-center p-4">
+                <div class="display-5 text-primary mb-3"><i class="bi bi-truck"></i></div>
+                <h3 class="card-title text-white">Logistics</h3>
+                <p class="card-text text-muted">Shipment tracking logs, carriers, and delivery status updates.</p>
+                <a asp-action="ShipmentReport" class="btn btn-outline-primary w-100 stretched-link">View Report</a>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<style>
+    .hover-effect { transition: transform 0.3s ease, box-shadow 0.3s ease; }
+    .hover-effect:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.5) !important; }
+</style>

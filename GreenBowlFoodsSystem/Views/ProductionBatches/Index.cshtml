@@ -4,20 +4,47 @@
     ViewData["Title"] = "Production Schedule";
 }
 
-<div class="d-flex justify-content-between align-items-center mb-4 animate-fade-up">
+<div class="d-none d-print-block text-center mb-4">
+    <h1>Production Schedule Report</h1>
+    <p>Generated: @DateTime.Now.ToString("dd MMM yyyy HH:mm")</p>
+    <hr />
+</div>
+
+<div class="d-flex justify-content-between align-items-center mb-4 animate-fade-up d-print-none">
     <div>
-        <h1 class="display-6 fw-bold text-white">Production Batchs Schedule</h1>
+        <h1 class="display-6 fw-bold text-white">Production Batches</h1>
         <p class="text-white-50">Manage daily batch orders and efficiency.</p>
     </div>
-    <a asp-action="Create" class="btn btn-primary shadow-lg">
-        <i class="bi bi-calendar-plus me-2"></i> Schedule Batch
-    </a>
+    <div class="d-flex gap-2">
+        <button onclick="window.print()" class="btn btn-outline-info rounded-pill px-4 me-2">
+            <i class="bi bi-printer-fill me-2"></i> Print Report
+        </button>
+        
+        <a asp-action="Create" class="btn btn-primary shadow-lg">
+            <i class="bi bi-calendar-plus me-2"></i> Schedule Batch
+        </a>
+    </div>
+</div>
+
+<div class="card bg-transparent border-0 mb-4 animate-fade-up d-print-none" style="animation-delay: 0.05s;">
+    <form asp-action="Index" method="get">
+        <div class="input-group shadow-sm">
+            <span class="input-group-text bg-dark border-secondary text-white-50">
+                <i class="bi bi-search"></i>
+            </span>
+            <input type="text" name="searchString" class="form-control bg-dark border-secondary text-white" 
+                   placeholder="Search Batch #, Status or Product..." 
+                   value="@ViewData["CurrentFilter"]" />
+            <button type="submit" class="btn btn-outline-success text-white">Search</button>
+            <a asp-action="Index" class="btn btn-outline-success text-white align-content-center">Clean</a>
+        </div>
+    </form>
 </div>
 
 <div class="card shadow-lg border-0 animate-fade-up" style="animation-delay: 0.1s;">
     <div class="card-body p-0">
         <div class="table-responsive">
-            <table class="table table-hover align-middle mb-0">
+            <table class="table table-hover align-middle mb-0 table-print" id="myTable">
                 <thead>
                     <tr>
                         <th class="ps-4">Batch #</th>
@@ -26,50 +53,61 @@
                         <th>Target vs Actual</th>
                         <th>Status</th>
                         <th>Supervisor</th>
-                        <th class="text-end pe-4">Actions</th>
+                        <th class="text-end pe-4 d-print-none">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach (var item in Model)
                     {
-                        // Dynamic Status Badge Color
+                        // Lógica de colores de estado (Badge Logic)
                         string badgeClass = item.Status switch
                         {
-                                    "Completed" => "bg-success",
-                                    "In Progress" => "bg-warning text-dark",
-                                    "QA Hold" => "bg-danger",
-                                    "Cancelled" => "bg-secondary",
+                            "Completed" => "bg-success",
+                            "In Progress" => "bg-warning text-dark",
+                            "QA Hold" => "bg-danger",
+                            "Cancelled" => "bg-secondary",
                             _ => "bg-primary" // Planned
                         };
 
                         <tr>
-                            <td class="ps-4 fw-bold font-monospace text-info">
+                            <td class="ps-4 fw-bold font-monospace text-info text-print-dark">
                                 @Html.DisplayFor(modelItem => item.BatchNumber)
                             </td>
-                            <td class="text-white">
+                            <td class="text-white text-print-dark">
                                 @item.ProductionDate.ToShortDateString()
                             </td>
-                            <td class="fw-bold text-white">
+                            <td class="fw-bold text-white text-print-dark">
                                 @Html.DisplayFor(modelItem => item.FinishedProduct!.ProductName)
                             </td>
+                            
                             <td>
                                 <div class="d-flex flex-column">
-                                    <span class="text-info small">Target: @item.TargetQuantity</span>
-                                    <span class="text-white small">Actual: @item.QuantityProduced</span>
+                                    <span class="text-info small text-print-dark">Target: @item.TargetQuantity</span>
+                                    
+                                    @if(item.QuantityProduced < item.TargetQuantity && item.Status == "Completed")
+                                    {
+                                         <span class="text-warning fw-bold small text-print-dark">Actual: @item.QuantityProduced ⚠️</span>
+                                    }
+                                    else
+                                    {
+                                         <span class="text-white small text-print-dark">Actual: @item.QuantityProduced</span>
+                                    }
                                 </div>
                             </td>
+
                             <td>
-                                <span class="badge @badgeClass rounded-pill">
+                                <span class="badge @badgeClass rounded-pill badge-print">
                                     @Html.DisplayFor(modelItem => item.Status)
                                 </span>
                             </td>
                             <td>
-                                <div class="d-flex align-items-center text-white">
-                                    <i class="bi bi-person-circle me-2 text-info"></i>
+                                <div class="d-flex align-items-center text-white text-print-dark">
+                                    <i class="bi bi-person-circle me-2 text-info d-print-none"></i>
                                     @Html.DisplayFor(modelItem => item.Supervisor!.UserName)
                                 </div>
                             </td>
-                            <td class="text-end pe-4">
+                            
+                            <td class="text-end pe-4 d-print-none">
                                 <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm" style="color: #38bdf8;" title="Edit">
                                     <i class="bi bi-pencil-fill"></i> Edit
                                 </a>
@@ -87,3 +125,53 @@
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('#myTable').DataTable({
+                "paging": true,          // Activa paginación
+                "lengthChange": false,   // Oculta el "Ver 10 registros"
+                "searching": false,      // DESACTIVADO: Usamos tu buscador C#
+                "ordering": true,        // Activa ordenamiento por columnas
+                "info": true,            // Muestra "Showing 1 of 10"
+                "autoWidth": true,
+                "pageLength": 5,         // 5 Registros por página
+                "language": {
+                    "search": "",
+                    "searchPlaceholder": "Filter records..."
+                }
+            });
+        });
+    </script>
+}
+
+<style>
+    @@media print {
+        body { background-color: white !important; color: black !important; }
+        .card { box-shadow: none !important; border: 1px solid #ddd !important; }
+        .text-white, .text-white-50, .text-info, .text-warning { color: black !important; }
+        .text-print-dark { color: black !important; }
+        .badge { border: 1px solid #000; color: black !important; background: none !important; }
+        .d-print-none { display: none !important; }
+        .table { color: black !important; }
+        thead th { background-color: #f0f0f0 !important; color: black !important; border-bottom: 2px solid #000; }
+        /* Ocultar elementos de DataTables al imprimir */
+        .dataTables_wrapper .dataTables_filter, .dataTables_paginate, .dataTables_info { display: none !important; }
+    }
+
+    /* Dark Mode DataTables Styles */
+    .dataTables_wrapper .dataTables_paginate .paginate_button {
+        color: white !important;
+    }
+    .dataTables_wrapper .dataTables_filter input {
+        background-color: #333;
+        color: white;
+        border: 1px solid #555;
+        border-radius: 5px;
+        padding: 5px;
+    }
+    .dataTables_wrapper .dataTables_info {
+        color: #aaa !important;
+    }
+</style>
