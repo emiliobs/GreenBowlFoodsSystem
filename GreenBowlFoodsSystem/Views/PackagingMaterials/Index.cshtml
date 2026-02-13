@@ -44,7 +44,7 @@
 <div class="card shadow-lg border-0 animate-fade-up" style="background-color: #1e293b; border-radius: 15px;">
     <div class="card-body p-0">
         <div class="table-responsive p-3">
-            <table class="table table-dark table-hover mb-0 align-middle table-print" id="packagingTable" style="background-color: transparent;">
+            <table class="table table-dark table-hover mb-0 align-middle table-print" id="myTable" style="background-color: transparent;">
                 <thead class="bg-black bg-opacity-25 text-uppercase text-white-50 small">
                     <tr>
                         <th class="ps-4 py-3">Material Name</th>
@@ -106,16 +106,18 @@
 @section Scripts {
     <script>
         $(document).ready(function () {
-            $('#packagingTable').DataTable({
-                "paging": true,          // Enable pagination
-                "lengthChange": false,   // Hide "Show X records"
-                "searching": false,      // Disable client search (using server-side)
-                "ordering": true,        // Enable sorting
-                "info": true,            // Show "Showing X of Y"
-                "autoWidth": false,
-                "pageLength": 5,         // 5 records per page
+            $('#myTable').DataTable({
+                "paging": true,          // Activa paginación
+                "lengthChange": true,   // Oculta el "Ver 10 registros"
+                "searching": false,       // Activa buscador (puedes quitar el tuyo si quieres)
+                "ordering": true,        // Activa ordenamiento por columnas
+                "info": true,            // Muestra "Showing 1 of 10"
+                "autoWidth": true,
+                "pageLength": 5,        // Registros por página
+                "lengthMenu": [[5, 10, 25, 50, -1],[5, 10, 25, 50, "All"]],
                 "language": {
-                    "emptyTable": "No packaging materials found"
+                    "search": "",        // Quita la palabra "Search:"
+                    "searchPlaceholder": "Filter records..."
                 }
             });
         });

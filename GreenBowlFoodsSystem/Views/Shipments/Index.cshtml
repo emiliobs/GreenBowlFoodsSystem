@@ -43,7 +43,7 @@
 <div class="card shadow-lg border-0 animate-fade-up" style="animation-delay: 0.1s;">
     <div class="card-body p-0">
         <div class="table-responsive p-3">
-            <table class="table table-hover align-middle mb-0 table-print" id="shipmentsTable">
+            <table class="table table-hover align-middle mb-0 table-print" id="myTable">
                 <thead class="text-white-50 text-uppercase small">
                     <tr>
                         <th class="ps-4 py-3">Date</th>
@@ -132,17 +132,19 @@
 
 @section Scripts {
     <script>
-        $(document).ready(function () {
-            $('#shipmentsTable').DataTable({
-                "paging": true,          // Enable pagination
-                "lengthChange": false,   // Hide "Show X records" dropdown
-                "searching": false,      // Disable client-side search (we use server-side)
-                "ordering": true,        // Enable column sorting
-                "info": true,            // Show "Showing 1 of X"
-                "autoWidth": false,
-                "pageLength": 5,         // Show 5 records per page
+         $(document).ready(function () {
+            $('#myTable').DataTable({
+                "paging": true,          // Activa paginación
+                "lengthChange": true,   // Oculta el "Ver 10 registros"
+                "searching": false,       // Activa buscador (puedes quitar el tuyo si quieres)
+                "ordering": true,        // Activa ordenamiento por columnas
+                "info": true,            // Muestra "Showing 1 of 10"
+                "autoWidth": true,
+                "pageLength": 5,        // Registros por página
+                "lengthMenu": [[5, 10, 25, 50, -1],[5, 10, 25, 50, "All"]],
                 "language": {
-                    "emptyTable": "No shipments found"
+                    "search": "",        // Quita la palabra "Search:"
+                    "searchPlaceholder": "Filter records..."
                 }
             });
         });
@@ -160,7 +162,12 @@
         .d-print-none { display: none !important; }
         .table { color: black !important; }
         thead th { background-color: #f0f0f0 !important; color: black !important; border-bottom: 2px solid #000; }
-        /* Ocultar elementos de DataTables al imprimir */
-        .dataTables_wrapper .dataTables_filter, .dataTables_paginate, .dataTables_info { display: none !important; }
+        /* Hide DataTables controls only when printing */
+        .dataTables_wrapper .dataTables_length, 
+        .dataTables_wrapper .dataTables_filter, 
+        .dataTables_wrapper .dataTables_info, 
+        .dataTables_wrapper .dataTables_paginate {
+            display: none !important;
+        }
     }
 </style>

@@ -25,9 +25,21 @@ public class UsersController : Controller
     }
 
     // GET: Users
-    public async Task<IActionResult> Index()
+    public async Task<IActionResult> Index(string searchString)
     {
-        return View(await _context.Users.ToListAsync());
+        ViewData["CurrentFilter"] = searchString;
+
+        var users =  _context.Users.AsQueryable();
+
+        if (!string.IsNullOrEmpty(searchString))
+        {
+            users = users.Where(u => u.FirstName.Contains(searchString.ToLower())
+                                  || u.LastName.Contains(searchString.ToLower())
+                                  || u.Email!.Contains(searchString.ToLower())
+                                  || u.Role.Contains(searchString.ToLower()));
+        }
+
+        return View(await users.OrderByDescending(u => u.LastName).ToListAsync());
     }
 
     // GET: Users/Details/5

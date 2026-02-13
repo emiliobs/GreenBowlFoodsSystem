@@ -115,12 +115,13 @@
         $(document).ready(function () {
             $('#myTable').DataTable({
                 "paging": true,          // Activa paginación
-                "lengthChange": false,   // Oculta el "Ver 10 registros"
+                "lengthChange": true,   // Oculta el "Ver 10 registros"
                 "searching": false,       // Activa buscador (puedes quitar el tuyo si quieres)
                 "ordering": true,        // Activa ordenamiento por columnas
                 "info": true,            // Muestra "Showing 1 of 10"
                 "autoWidth": true,
-                "pageLength":5 ,        // Registros por página
+                "pageLength": 5,        // Registros por página
+                "lengthMenu": [[5, 10, 25, 50, -1],[5, 10, 25, 50, "All"]],
                 "language": {
                     "search": "",        // Quita la palabra "Search:"
                     "searchPlaceholder": "Filter records..."
@@ -141,8 +142,13 @@
         .d-print-none { display: none !important; }
         .table { color: black !important; }
         thead th { background-color: #f0f0f0 !important; color: black !important; border-bottom: 2px solid #000; }
-        /* Ocultar elementos de DataTables al imprimir */
-        .dataTables_wrapper .dataTables_filter, .dataTables_paginate, .dataTables_info { display: none !important; }
+        /* Hide DataTables controls only when printing */
+        .dataTables_wrapper .dataTables_length, 
+        .dataTables_wrapper .dataTables_filter, 
+        .dataTables_wrapper .dataTables_info, 
+        .dataTables_wrapper .dataTables_paginate {
+            display: none !important;
+        }
     }
 
     /* Hace que los controles de paginación sean oscuros */

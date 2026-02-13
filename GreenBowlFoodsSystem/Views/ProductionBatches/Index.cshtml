@@ -131,14 +131,15 @@
         $(document).ready(function () {
             $('#myTable').DataTable({
                 "paging": true,          // Activa paginación
-                "lengthChange": false,   // Oculta el "Ver 10 registros"
-                "searching": false,      // DESACTIVADO: Usamos tu buscador C#
+                "lengthChange": true,   // Oculta el "Ver 10 registros"
+                "searching": false,       // Activa buscador (puedes quitar el tuyo si quieres)
                 "ordering": true,        // Activa ordenamiento por columnas
                 "info": true,            // Muestra "Showing 1 of 10"
                 "autoWidth": true,
-                "pageLength": 5,         // 5 Registros por página
+                "pageLength": 5,        // Registros por página
+                "lengthMenu": [[5, 10, 25, 50, -1],[5, 10, 25, 50, "All"]],
                 "language": {
-                    "search": "",
+                    "search": "",        // Quita la palabra "Search:"
                     "searchPlaceholder": "Filter records..."
                 }
             });
