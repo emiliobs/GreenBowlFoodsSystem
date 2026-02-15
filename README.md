@@ -1,191 +1,76 @@
-🥗 Green Bowl Foods System
+# 🥗 Green Bowl Foods System
+### Inventory & Quality Management System – Web-Based Prototype
 
-Inventory & Quality Management System – Web-Based Prototype
+---
 
-📌 Project Overview
+## 📌 Project Overview
+The **Green Bowl Foods System** is a full-stack web application designed to support food manufacturing operations. It centralises inventory control, production tracking, quality assurance, logistics, and financials into a secure, audit-ready platform.
 
-The Green Bowl Foods System is a full-stack web-based management application designed to support food manufacturing operations. The system centralizes inventory control, production tracking, quality assurance, logistics, and financial records into a single secure platform.
+Developed for the **CC6012 Coursework** at London Metropolitan University, this prototype demonstrates modern software engineering principles applied to real-world business challenges.
 
-This project was developed as part of the CC6012 Coursework Project for the BSc (Hons) Computing programme and demonstrates the practical application of modern software engineering principles in a real-world business context.
+---
 
-🎯 Key Features
+## 🎯 Key Features
+* **Authentication:** Secure Identity-based access with Admin and Staff roles.
+* **Traceability:** End-to-end tracking from Raw Materials to Finished Goods.
+* **Quality Control:** Digital logs for X-Ray inspections (CCP) and Vehicle Hygiene.
+* **Inventory Automation:** Real-time stock deduction during shipments and production.
+* **Financials:** Invoicing system with Paid/Overdue status tracking.
+* **Reporting:** Business Intelligence views for Production Yield and Inventory Valuation.
 
-Secure authentication and role-based access control (Admin / Staff)
+---
 
-Full CRUD functionality across all operational modules
+## 🛠 Technologies Used
+* **.NET 8.0 / ASP.NET Core MVC**
+* **Entity Framework Core** (Code-First)
+* **SQL Server** (Relational Database)
+* **ASP.NET Core Identity** (Security)
+* **Bootstrap 5 & Custom CSS3** (Responsive Glassmorphism UI)
+* **SweetAlert2 & DataTables** (Enhanced UX)
 
-Inventory management for raw materials, packaging, and finished products
+---
 
-Production batch tracking with material consumption and stages
+## 🚀 Live Demo
+🔗 **Access System:** [https://greenbowlfoodssystem.runasp.net/](https://greenbowlfoodssystem.runasp.net/)
 
-Quality assurance logging, including X-Ray inspections
+### 🔐 Demo Credentials
+* **Admin User:** `admin@yopmail.com`
+* **Password:** `123`
 
-Distribution management with shipments and delivery verification
+---
 
-Financial invoicing with status tracking (Paid, Unpaid, Overdue)
+## 📸 System Showcase
 
-Dashboards and reports for operational visibility
+### 🔐 Authentication & Security
+<p align="center"><img src="TU_ENLACE_AQUÍ" width="90%"></p>
+> Secured via RBAC. Sensitive modules are restricted to authorised personnel.
 
-Print-friendly reports and audit-ready records
+### 📊 Operational Dashboard
+<p align="center"><img src="TU_ENLACE_AQUÍ" width="90%"></p>
+> Business Intelligence: Real-time visibility of inventory value, safety alerts, and revenue.
 
-🛠 Technologies Used
+### 📦 Inventory & Supply Chain
+<p align="center">
+  <img src="TU_ENLACE_AQUÍ" width="45%">
+  <img src="TU_ENLACE_AQUÍ" width="45%">
+</p>
+> Raw Materials tracking and Quality-verified Receiving Forms.
 
-.NET 10
+### ⚙️ Production & QA (CCP)
+<p align="center">
+  <img src="TU_ENLACE_AQUÍ" width="45%">
+  <img src="TU_ENLACE_AQUÍ" width="45%">
+</p>
+> Production Batch management and mandatory X-Ray safety checkpoints.
 
-ASP.NET Core MVC
+### 📈 Analytical Reports
+<p align="center"><img src="TU_ENLACE_AQUÍ" width="90%"></p>
+> Data-driven reports optimised for Food Safety audits and Financial management.
 
-Entity Framework Core (Code-First)
+---
 
-SQL Server
-
-ASP.NET Core Identity
-
-Bootstrap 5
-
-Bootstrap Icons
-
-DataTables
-
-SweetAlert2
-
-Visual Studio 2026
-
-🚀 Live Demo
-
-🔗 Live System (MVP Prototype):
-https://greenbowlfoodssystem.runasp.net/
-
-🔐 Demo Credentials
-
-Admin User: admin@yopmail.com
-
-Password: 123
-
-These credentials are provided for demonstration and assessment purposes only.
-
-📂 Repository Contents
-
-This repository includes:
-
-ASP.NET Core MVC source code
-
-Entity Framework Core models and migrations
-
-Database seeding logic for demo data
-
-MVC Controllers and Views
-
-UI styling and client-side scripts
-
-Coursework documentation and diagrams
-
-📊 System Modules
-
-Users & Roles (Admin only)
-
-Inventory
-
-Receiving Forms
-
-Raw Materials
-
-Packaging Materials
-
-Suppliers
-
-Production
-
-Production Batches
-
-Production Stages
-
-X-Ray Quality Checks
-
-Finished Products
-
-Distribution & Sales
-
-Shipments
-
-Delivery Forms
-
-Invoices
-
-Reports
-
-Inventory Valuation
-
-Production Yield
-
-Quality Assurance
-
-Sales & Logistics
-
-🧪 Testing & Data
-
-Pre-seeded demo data for all modules
-
-Edge cases included (low stock, expired materials, failed inspections, overdue invoices)
-
-Manual functional testing was performed on all CRUD operations
-
-Role-based access and validation tested across modules
-
-👨‍🎓 Academic Information
-
-Student: Emilio Antonio Barrera Sepúlveda
-
-Student ID: 22047090
-
-Course: BSc (Hons) Computing
-
-Module: CC6012
-
-Academic Year: 2025–2026
-
-University: London Metropolitan University
-
-📜 License & Disclaimer
-
-This system was developed for academic purposes only.
-All data used in the live system is fictional and intended solely for demonstration and assessment.
-
-📸 Screenshots
-
-The following screenshots illustrate key features and user interfaces of the Green Bowl Foods System, demonstrating how the application supports inventory management, production tracking, quality assurance, distribution, and financial operations.
-
-🔐 Authentication & Access Control
-## <img width="2542" height="1351" alt="image" src="https://github.com/user-attachments/assets/cab45436-0c48-46e0-b4e8-51218ca2a2ec" />
-
-
-Login interface secured with ASP.NET Core Identity. Role-based access ensures that only authorized users can access system modules.
-
-📊 Dashboard (Post-Login Overview)
-
-Operational dashboard providing real-time visibility of inventory status, production batches, quality alerts, shipments, and financial indicators.
-
-👥 System Users Management (Admin Only)
-
-System Users Index view showing role badges, search, pagination, and administrative actions.
-
-📦 Inventory Management
-
-Raw Materials Index view displaying stock levels, expiry dates, and low-stock indicators.
-
-Receiving Forms module used to register incoming deliveries and inspection results.
-
-⚙️ Production & Quality Control
-
-Production Batches view showing batch status (Planned, In Progress, Completed, QA Hold).
-
-X-Ray Quality Checks module used to log inspection results and ensure food safety compliance.
-
-🚚 Distribution & Sales
-
-Shipments module tracking outgoing deliveries, carriers, and delivery status.
-
-Invoices Index view displaying financial records with status indicators (Paid, Unpaid, Overdue).
-
-📈 Reports Module
-
-Reports module providing read-only analytical views for inventory valuation, production yield, quality assurance, sales, and logistics.
+## 👨‍🎓 Academic Information
+* **Student:** Emilio Antonio Barrera Sepúlveda
+* **Student ID:** 22047090
+* **Course:** BSc (Hons) Computing
+* **University:** London Metropolitan University
