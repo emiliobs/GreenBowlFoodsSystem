@@ -42,7 +42,8 @@ Developed for the **CC6012 Coursework** at London Metropolitan University, this 
 ## 📸 System Showcase
 
 ### 🔐 Authentication & Security
-<p align="center"><img src="TU_ENLACE_AQUÍ" width="90%"></p>
+<p align="center"><img src="<img width="2527" height="1361" alt="image" src="https://github.com/user-attachments/assets/23bf98df-3815-482b-b048-dd2bbe77c57e" />
+" width="90%"></p>
 > Secured via RBAC. Sensitive modules are restricted to authorised personnel.
 
 ### 📊 Operational Dashboard
