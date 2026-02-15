@@ -42,30 +42,36 @@ Developed for the **CC6012 Coursework** at London Metropolitan University, this 
 ## 📸 System Showcase
 
 ### 🔐 Authentication & Security
-<p align="center"><img src="<img width="2527" height="1361" alt="image" src="https://github.com/user-attachments/assets/23bf98df-3815-482b-b048-dd2bbe77c57e" />
-" width="90%"></p>
-> Secured via RBAC. Sensitive modules are restricted to authorised personnel.
+<img width="2527" height="1361" alt="image" src="https://github.com/user-attachments/assets/3e124b90-a422-47b0-aeb3-72770e9fe1d1" />
+
+Secured via RBAC. Sensitive modules are restricted to authorised personnel.
 
 ### 📊 Operational Dashboard
-<p align="center"><img src="TU_ENLACE_AQUÍ" width="90%"></p>
-> Business Intelligence: Real-time visibility of inventory value, safety alerts, and revenue.
+<img width="2521" height="1340" alt="image" src="https://github.com/user-attachments/assets/f17552f2-7b63-4590-97d8-8b24b43fde9b" />
+
+ Business Intelligence: Real-time visibility of inventory value, safety alerts, and revenue.
 
 ### 📦 Inventory & Supply Chain
 <p align="center">
-  <img src="TU_ENLACE_AQUÍ" width="45%">
-  <img src="TU_ENLACE_AQUÍ" width="45%">
+ <img width="2503" height="1333" alt="image" src="https://github.com/user-attachments/assets/73f42dd7-8f79-4875-830b-bafd56b24e8d" />
+
+  <img width="2522" height="1335" alt="image" src="https://github.com/user-attachments/assets/a5f64ab9-742e-4a88-8a52-3f5179afc628" />
+
 </p>
 > Raw Materials tracking and Quality-verified Receiving Forms.
 
 ### ⚙️ Production & QA (CCP)
 <p align="center">
-  <img src="TU_ENLACE_AQUÍ" width="45%">
-  <img src="TU_ENLACE_AQUÍ" width="45%">
+  <img width="2533" height="1331" alt="image" src="https://github.com/user-attachments/assets/e9191073-4293-4d74-a12d-97e908d7f45c" />
+
+ <img width="2522" height="1338" alt="image" src="https://github.com/user-attachments/assets/5b642c47-baa9-4c23-b9ba-91db6d912de6" />
+
 </p>
 > Production Batch management and mandatory X-Ray safety checkpoints.
 
 ### 📈 Analytical Reports
-<p align="center"><img src="TU_ENLACE_AQUÍ" width="90%"></p>
+<img width="2512" height="1350" alt="image" src="https://github.com/user-attachments/assets/7b25ad48-30b8-4e40-b2be-b5ceb6a74327" />
+
 > Data-driven reports optimised for Food Safety audits and Financial management.
 
 ---
