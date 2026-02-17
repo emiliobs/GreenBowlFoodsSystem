@@ -13,7 +13,7 @@ public class AccountController : Controller
     private readonly SignInManager<User> _signInManager;
     private readonly UserManager<User> _userManager;
 
-    // Constructor: We inject the database context to be able to search for users
+    // Constructor: Dependency Injection of Identity managers to handle user sessions and data
     public AccountController(SignInManager<User> signInManager, UserManager<User> userManager)
     {
         this._signInManager = signInManager;
@@ -21,12 +21,13 @@ public class AccountController : Controller
     }
 
     // GET: /Account/Login
-    // This method just shows the Login screen (the HTML form)
+    // Displays the login view. Redirects to Home if the user is already authenticated.
     [HttpGet]
     public IActionResult Login()
     {
         if (_signInManager.IsSignedIn(User))
         {
+            // Prevents authenticated users from accessing the login page again
             return RedirectToAction("Index", "Home");
         }
 
@@ -34,50 +35,54 @@ public class AccountController : Controller
     }
 
     // POST: /Account/Login
-    // This method receives the data from the form and validates it
-
+    // Validates credentials and initiates the secure session
     [HttpPost]
     public async Task<IActionResult> Login(string email, string password)
     {
+        // Basic validation to ensure both fields are provided before processing
         if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(password))
         {
             ViewData["ErrorMessage"] = "Please fill all fields.";
             return View();
         }
 
-        // 2. BUSCAR POR EMAIL PRIMERO
-        // Como tu sistema usa Email = UserName, buscamos el usuario por su email
-        // para asegurarnos de pasar el UserName correcto al SignInManager.
+        // SEARCH BY EMAIL FIRST
+        // Since the system uses Email as the primary identifier, we fetch the user entity by email.
+        // This ensures the correct UserName is passed to the SignInManager.
         var user = await _userManager.FindByEmailAsync(email);
 
         if (user != null)
         {
-            // Intentamos hacer login usando el UserName del usuario encontrado (que es igual al email)
+            // Attempt to sign in using the retrieved UserName and provided password
+            // isPersistent: false (session cookie only), lockoutOnFailure: false (standard login)
             var result = await _signInManager.PasswordSignInAsync(user.UserName!, password, isPersistent: false, lockoutOnFailure: false);
 
             if (result.Succeeded)
             {
+                // Successful authentication redirects to the main dashboard
                 return RedirectToAction("Index", "Home");
             }
         }
 
-        // Si falla
+        // If authentication fails, notify the user with a generic message for security
         ViewBag.ErrorMessage = "Invalid Email or Password.";
         return View();
     }
 
+    // Sign out method to terminate the user session
     public async Task<IActionResult> Logout()
     {
-        // Delete the identity cookies
+        // Delete the identity cookies from the browser
         await _signInManager.SignOutAsync();
 
-        // Clear we custon session data
+        // Clear all custom session data stored in the server
         HttpContext.Session.Clear();
 
-        // Go back to Login
+        // Redirect the user back to the login screen
         return RedirectToAction("Login");
     }
 
+    // Handles redirection when a user attempts to access a restricted module without permissions
     [HttpGet]
     public IActionResult AccessDenied()
     {

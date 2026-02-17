@@ -21,7 +21,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 // IDentity Configuration (Especificar <int>)
 builder.Services.AddIdentity<User, IdentityRole<int>>(options =>
 {
-    // Reglas de PasswordHash relajadas para el desarrollo
+    // Relaxed Password Hash Rules for Development
     options.User.RequireUniqueEmail = true;
     options.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
     options.Password.RequireDigit = false;
@@ -56,7 +56,6 @@ using (var scope = app.Services.CreateScope())
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 
@@ -66,8 +65,8 @@ app.UseRouting();
 app.UseSession();
 
 // Security Active
-app.UseAuthentication(); // Identifica el usaurio
-app.UseAuthorization();  // Verifica permisos
+app.UseAuthentication();// Identity Middleware for Authentication to users
+app.UseAuthorization();// Identity Middleware for Authorization to users
 
 app.MapStaticAssets();
 

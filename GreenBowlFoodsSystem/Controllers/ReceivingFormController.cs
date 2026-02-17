@@ -11,8 +11,10 @@ namespace GreenBowlFoodsSystem.Controllers;
 [Authorize] // Only logged-in users can see this page
 public class ReceivingFormController : Controller
 {
+    // Database context field for data persistence operations
     private readonly ApplicationDbContext _context;
 
+    // Constructor: Dependency Injection of the ApplicationDbContext to interact with the SQL database
     public ReceivingFormController(ApplicationDbContext context)
     {
         this._context = context;
@@ -22,124 +24,134 @@ public class ReceivingFormController : Controller
     // Displays the log of received raw materials with filtering and pagination.
     public async Task<IActionResult> Index(string searchString)
     {
-        // Store current filter to keep it in the search box after reload
+        // Persistence: Store current filter to keep it in the search box after page reload
         ViewData["CurrentFilter"] = searchString;
 
-        // 1. Initialize query with eager loading for related entities
-        // We include RawMaterial, Supplier, and the User who received it
+        // Initialize query with Eager Loading for related entities to prevent N+1 query problems
+        // We include RawMaterial, Supplier, and the User who received it to show names instead of IDs
         var forms = _context.ReceivingForms
             .Include(r => r.RawMaterial)
             .Include(r => r.Supplier)
             .Include(r => r.ReceivedBy)
             .AsQueryable();
 
-        // 2. Apply Search Filter if searchString is not empty
+        //  Server side Filtering: Apply search filters if the user provided criteria
         if (!string.IsNullOrEmpty(searchString))
         {
-            // Filter by Material Name, Supplier Name, or Trailer Number
+            // Case-insensitive filtering by Material Name, Supplier Name, or Trailer Number
             forms = forms.Where(r => r.RawMaterial!.MaterialName.Contains(searchString.ToLower())
                                   || r.Supplier!.SupplierName.Contains(searchString.ToLower())
                                   || r.TrailerNumber!.Contains(searchString.ToLower()));
         }
 
-        // 3. Execute query: Order by Date (newest first) and limit to 50 records for performance
+        //  Execution: Sort by Date (newest first) to ensure chronological traceability
         return View(await forms.OrderByDescending(r => r.Date).ToListAsync());
     }
 
     // GET: Show Create Form
+    // Prepares the environment for a new material receipt record
     public async Task<IActionResult> Create()
     {
-        // Pupulate dropdowns for suppliers and raw Materials
+        // Populate DropdownLists for Suppliers and Raw Materials to feed the UI select menus
         ViewData["SupplierId"] = new SelectList(_context.Suppliers, "Id", "SupplierName");
         ViewData["RawMaterialId"] = new SelectList(_context.RawMaterials, "Id", "MaterialName");
 
         return View();
     }
 
-    [HttpPost] // Process the receip
-    [AutoValidateAntiforgeryToken]
+    // POST: Process the receipt
+    // Handles the core business logic for material arrival and inventory updates
+    [HttpPost]
+    [AutoValidateAntiforgeryToken] // Security: Protect against CSRF attacks
     public async Task<IActionResult> Create(ReceivingForm receivingForm)
     {
         try
         {
-            // 1. Logic: Automatically assign the logged-in user
-            // Using "User.Identity?.Name" prevents potential null reference if Identity is not fully loaded
+            //  Logic: Automatically assign the identity of the user performing the receipt
+            // Fetching the user from the database using the identity name from the current session
             var user = await _context.Users.FirstOrDefaultAsync(u => u.UserName == User.Identity!.Name);
             receivingForm.ReceivedById = user?.Id ?? 0;
 
-            // 2. Logic: Set default date if missing
+            // Data Integrity: Set default system date/time if no specific date was provided in the form
             if (receivingForm.Date == DateTime.MinValue)
             {
                 receivingForm.Date = DateTime.Now;
             }
 
-            // 3. Validation Check
+            // Model Validation: Verify if the submitted form data meets the data annotation requirements
             if (ModelState.IsValid)
             {
-                // Now we access properties directly from the objects
+                // Business Rule: Only increment inventory if the material shipment was accepted after inspection
                 if (receivingForm.IsAccepted)
                 {
-                    var rawMaterial = await _context.RawMaterials.FindAsync(receivingForm);
+                    // Look up the specific RawMaterial record in the database
+                    var rawMaterial = await _context.RawMaterials.FindAsync(receivingForm.RawMaterialId);
 
                     if (rawMaterial != null)
                     {
-                        // Increase stock (update)
+                        // STOCK UPDATE: Add the newly received quantity to the current warehouse stock levels
                         rawMaterial.QuantityInStock += receivingForm.QuantityReceived;
+
+                        // Mark the raw material entity as modified for the EF tracking system
                         _context.Update(rawMaterial);
 
-                        // Success message
-                        // Note: Included "C" format string for Currency in TotalAmount
+                        // UI Feedback: Create a successful notification string with summary data
                         TempData["SuccessMessage"] = $"Success! Added {receivingForm.QuantityReceived} {rawMaterial.Unit} of {rawMaterial.MaterialName}. " +
                                                      $"Cost: {receivingForm.TotalAmount}";
                     }
                 }
                 else
                 {
-                    // Rejection message (Stock remains unchanged)
+                    // Quality Alert: If rejected, we save the record for audit but DO NOT update inventory
                     TempData["ErrorMessage"] = "Receipt saved as REJECTED. Inventory was NOT updated.";
                 }
 
-                // C. Commit changes to Database
+                // TRANSACTION COMMIT: Save both the ReceivingForm record and the RawMaterial stock update simultaneously
                 await _context.SaveChangesAsync();
 
+                // Redirect back to the history log
                 return RedirectToAction(nameof(Index));
             }
         }
         catch (Exception ex)
         {
-            // add a visible error th the form if something goes wrong during processing
+            // Exception Handling: Catch database or logic errors and notify the UI without crashing
             ModelState.AddModelError("", "An unexpected error cocurred while saving. Please try again.");
             TempData["ErroMessage"] = $"Error creating receipt.: {ex.Message}";
         }
 
-        //Reload dropdowns if validation fails
+        // Re-populate DropdownLists if validation fails to prevent UI rendering errors
         ViewData["SupplierId"] = new SelectList(_context.Suppliers, "Id", "SupplierName");
         ViewData["RawMaterialId"] = new SelectList(_context.RawMaterials, "Id", "MaterialName");
 
         return View();
     }
 
-    // GET: Show details of a receipt
+    // GET: Show details of a specific receipt
+    // Provides a full view of a single transaction including supplier and inspector metadata
     public async Task<IActionResult> Details(int? id)
     {
+        // Safety check for null ID parameters
         if (id is null)
         {
             return View("NotFound");
         }
 
-        // We use .Include() to eager load the related tables,
-        // this ensure we can display Supplier Name and operator Name
+        // Eager Loading Implementation: Ensures all related data is fetched in a single efficient query
+        // This allows the display of the Supplier Name, Operator Name, and Material Name in the view
         var receivingform = await _context.ReceivingForms
             .Include(rf => rf.Supplier)
             .Include(rf => rf.ReceivedBy)
             .Include(rf => rf.RawMaterial)
             .FirstOrDefaultAsync(rf => rf.Id == id);
 
+        // Validation: Verify if the record exists in the database
         if (receivingform is null)
         {
             return View("NotFound");
         }
 
+        // Return the fully hydrated model to the details view
         return View(receivingform);
     }
 }

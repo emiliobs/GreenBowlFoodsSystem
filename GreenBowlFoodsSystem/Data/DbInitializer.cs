@@ -396,48 +396,48 @@ namespace GreenBowlFoodsSystem.Data
                         {
                             var receipts = new ReceivingForm[]
                             {
-            // Receipt 1: Accepted Spinach Load
-            new ReceivingForm
-            {
-                Date = DateTime.Now.AddDays(-10),
-                SupplierId = freshFarms.Id,
-                TrailerNumber = "TR-8854",
-                IsAccepted = true,
-                InspectionNotes = "Fresh shipment of Spinach. Temp OK. Seals intact.",
-                TotalAmount = 450.00m,
-                ReceivedById = adminUser.Id,
-                // --- NEW REQUIRED FIELDS ---
-                RawMaterialId = spinach.Id,
-                QuantityReceived = 100.00m
-            },
-            // Receipt 2: Rejected Quinoa Load (Damaged)
-            new ReceivingForm
-            {
-                Date = DateTime.Now.AddDays(-5),
-                SupplierId = organicGlobal.Id,
-                TrailerNumber = "OG-9921",
-                IsAccepted = false,
-                InspectionNotes = "REJECTED: Pallets arrived water damaged. Mold visible.",
-                TotalAmount = 1200.00m,
-                ReceivedById = adminUser.Id,
-                // --- NEW REQUIRED FIELDS ---
-                RawMaterialId = quinoa.Id,
-                QuantityReceived = 500.00m
-            },
-            // Receipt 3: Accepted Carrots
-            new ReceivingForm
-            {
-                Date = DateTime.Now.AddDays(-2),
-                SupplierId = freshFarms.Id,
-                TrailerNumber = "TR-9901",
-                IsAccepted = true,
-                InspectionNotes = "Standard weekly delivery. All good.",
-                TotalAmount = 800.50m,
-                ReceivedById = adminUser.Id,
-                // --- NEW REQUIRED FIELDS ---
-                RawMaterialId = carrots.Id,
-                QuantityReceived = 200.00m
-            }
+                                // Receipt 1: Accepted Spinach Load
+                                new ReceivingForm
+                                {
+                                    Date = DateTime.Now.AddDays(-10),
+                                    SupplierId = freshFarms.Id,
+                                    TrailerNumber = "TR-8854",
+                                    IsAccepted = true,
+                                    InspectionNotes = "Fresh shipment of Spinach. Temp OK. Seals intact.",
+                                    TotalAmount = 450.00m,
+                                    ReceivedById = adminUser.Id,
+                                    // --- NEW REQUIRED FIELDS ---
+                                    RawMaterialId = spinach.Id,
+                                    QuantityReceived = 100.00m
+                                },
+                                // Receipt 2: Rejected Quinoa Load (Damaged)
+                                new ReceivingForm
+                                {
+                                    Date = DateTime.Now.AddDays(-5),
+                                    SupplierId = organicGlobal.Id,
+                                    TrailerNumber = "OG-9921",
+                                    IsAccepted = false,
+                                    InspectionNotes = "REJECTED: Pallets arrived water damaged. Mold visible.",
+                                    TotalAmount = 1200.00m,
+                                    ReceivedById = adminUser.Id,
+                                    // --- NEW REQUIRED FIELDS ---
+                                    RawMaterialId = quinoa.Id,
+                                    QuantityReceived = 500.00m
+                                },
+                                // Receipt 3: Accepted Carrots
+                                new ReceivingForm
+                                {
+                                    Date = DateTime.Now.AddDays(-2),
+                                    SupplierId = freshFarms.Id,
+                                    TrailerNumber = "TR-9901",
+                                    IsAccepted = true,
+                                    InspectionNotes = "Standard weekly delivery. All good.",
+                                    TotalAmount = 800.50m,
+                                    ReceivedById = adminUser.Id,
+                                    // --- NEW REQUIRED FIELDS ---
+                                    RawMaterialId = carrots.Id,
+                                    QuantityReceived = 200.00m
+                                }
                             };
                             context.ReceivingForms.AddRange(receipts);
                             await context.SaveChangesAsync();
@@ -609,17 +609,17 @@ namespace GreenBowlFoodsSystem.Data
                     // =============================================================
                     if (!context.Invoices.Any())
                     {
-                        // Obtener referencias (Clientes y Productos)
-                        var customer1 = context.Customers.OrderBy(c => c.Id).FirstOrDefault(); // Ej: Costco
-                        var customer2 = context.Customers.OrderBy(c => c.Id).Skip(1).FirstOrDefault() ?? customer1; // Ej: Tesco (o Costco si no hay más)
+                        // Get references (Customers and Products)
+                        var customer1 = context.Customers.OrderBy(c => c.Id).FirstOrDefault(); // E.g.: Costco
+                        var customer2 = context.Customers.OrderBy(c => c.Id).Skip(1).FirstOrDefault() ?? customer1; // E.g.: Tesco
 
-                        var product1 = context.FinishedProducts.OrderBy(p => p.Id).FirstOrDefault(); // Ej: Quinopea
-                        var product2 = context.FinishedProducts.OrderBy(p => p.Id).Skip(1).FirstOrDefault() ?? product1; // Ej: Otro producto
+                        var product1 = context.FinishedProducts.OrderBy(p => p.Id).FirstOrDefault(); // E.g.: Quinopea
+                        var product2 = context.FinishedProducts.OrderBy(p => p.Id).Skip(1).FirstOrDefault() ?? product1; // E.g.: Other product
 
                         if (customer1 != null && product1 != null)
                         {
-                            // --- ESCENARIO 1: FACTURA VENCIDA (OVERDUE) ---
-                            // Fecha: hace 45 días (venció hace 15)
+                            // --- SCENARIO 1: OVERDUE INVOICE ---
+                            // Date: 45 days ago (overdue for 15 days)
                             var inv1 = new Invoice
                             {
                                 InvoiceNumber = "INV-2025-901",
@@ -642,8 +642,8 @@ namespace GreenBowlFoodsSystem.Data
                             inv1.TotalAmount = item1.Quantity * item1.UnitPrice; // Total: 5000
                             context.Update(inv1);
 
-                            // --- ESCENARIO 2: FACTURA PAGADA (PAID) ---
-                            // Fecha: hace 10 días
+                            // --- SCENARIO 2: PAID INVOICE ---
+                            // Date: 10 days ago
                             var inv2 = new Invoice
                             {
                                 InvoiceNumber = "INV-2026-005",
@@ -666,8 +666,8 @@ namespace GreenBowlFoodsSystem.Data
                             inv2.TotalAmount = item2.Quantity * item2.UnitPrice; // Total: 2325
                             context.Update(inv2);
 
-                            // --- ESCENARIO 3: FACTURA RECIENTE (UNPAID) ---
-                            // Fecha: Ayer
+                            // --- SCENARIO 3: RECENT INVOICE (UNPAID) ---
+                            // Date: Yesterday
                             var inv3 = new Invoice
                             {
                                 InvoiceNumber = "INV-2026-012",
@@ -690,8 +690,8 @@ namespace GreenBowlFoodsSystem.Data
                             inv3.TotalAmount = item3.Quantity * item3.UnitPrice; // Total: 12000
                             context.Update(inv3);
 
-                            // --- ESCENARIO 4: FACTURA COMPLEJA (MÚLTIPLES ÍTEMS) ---
-                            // Demuestra la relación One-to-Many real
+                            // --- SCENARIO 4: COMPLEX INVOICE (MULTIPLE ITEMS) ---
+                            // Demonstrates a real One-to-Many relationship
                             var inv4 = new Invoice
                             {
                                 InvoiceNumber = "INV-2026-015",
@@ -703,7 +703,7 @@ namespace GreenBowlFoodsSystem.Data
                             context.Invoices.Add(inv4);
                             await context.SaveChangesAsync();
 
-                            // Ítem A: Ensaladas
+                            // Item A: Salads
                             var item4a = new InvoiceItem
                             {
                                 InvoiceId = inv4.Id,
@@ -711,7 +711,7 @@ namespace GreenBowlFoodsSystem.Data
                                 Quantity = 200,
                                 UnitPrice = 12.00m
                             };
-                            // Ítem B: Sopas (u otro producto)
+                            // Item B: Soups (or other product)
                             var item4b = new InvoiceItem
                             {
                                 InvoiceId = inv4.Id,
@@ -722,11 +722,11 @@ namespace GreenBowlFoodsSystem.Data
 
                             context.InvoiceItems.AddRange(item4a, item4b);
 
-                            // Sumar ambos ítems para el total
+                            // Sum both items for the grand total
                             inv4.TotalAmount = (item4a.Quantity * item4a.UnitPrice) + (item4b.Quantity * item4b.UnitPrice);
                             context.Update(inv4);
 
-                            // GUARDAR TODO FINALMENTE
+                            // FINAL SAVE ALL
                             await context.SaveChangesAsync();
                         }
                     }

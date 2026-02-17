@@ -289,7 +289,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     }
 
 /* ===========================
-   🟢 NAVBAR BRAND ICON
+    🟢 NAVBAR BRAND ICON
    =========================== */
 .navbar-brand-icon {
     width: 50px; /* Ideal size for navbar */
@@ -310,10 +310,10 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 }
 
 /* ===========================
-   🟢 ACTIVE NAV PILL STYLE
+    🟢 ACTIVE NAV PILL STYLE
    =========================== */
 .nav-pills-custom .nav-link.active {
-    background-color: #10b981; /* The specific dark green from your image */
+    background-color: #10b981; /* The specific dark green from your branding */
     color: #ffffff !important; /* White text */
     border-radius: 30px; /* Rounded pill shape */
     font-weight: 600; /* Make text slightly bolder */
@@ -334,7 +334,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 
 /* Fix so the Menu is always on top of Cards */
 .navbar, .dropdown-menu {
-    z-index: 1060 !important; /* A very high number to win */
+    z-index: 1060 !important; /* A very high number to prioritize stacking */
     position: relative;
 }
 
@@ -346,7 +346,7 @@ main {
 
 /* Make dropdown menus wider and avoid line breaks */
 .dropdown-menu {
-    min-width: 185px !important; /* Wider (adjust the number if you want more) */
+    min-width: 185px !important; /* Wider dropdown container */
 }
 
 .dropdown-item {
@@ -354,17 +354,16 @@ main {
 }
 
 /* =========================================
-   FIX: Calendar Icon in Dark Mode
+    FIX: Calendar Icon in Dark Mode
    ========================================= */
 input[type="date"]::-webkit-calendar-picker-indicator,
 input[type="datetime-local"]::-webkit-calendar-picker-indicator {
     filter: invert(1); /* Invert color: Black -> White */
     cursor: pointer; /* Hand cursor on hover */
-    opacity: 0.8; /* A bit of transparency to look elegant */
+    opacity: 0.8; /* A bit of transparency for elegance */
 }
 
     input[type="date"]::-webkit-calendar-picker-indicator:hover,
     input[type="datetime-local"]::-webkit-calendar-picker-indicator:hover {
         opacity: 1; /* Shines brighter on hover */
     }
-

@@ -8,12 +8,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace GreenBowlFoodsSystem.Controllers;
 
-[Authorize]
+[Authorize] // Restricts access to authenticated users only
 public class DeliveryFormsController : Controller
 {
     private readonly ApplicationDbContext _context;
     private readonly UserManager<User> _userManager;
 
+    // Constructor: Dependency Injection of the Database Context and Identity User Manager
     public DeliveryFormsController(ApplicationDbContext context, UserManager<User> userManager)
     {
         this._context = context;
@@ -24,29 +25,29 @@ public class DeliveryFormsController : Controller
     // Displays the log of outbound delivery checks (Vehicle inspection).
     public async Task<IActionResult> Index(string searchString)
     {
-        // Save the current search filter to ViewData to keep it in the search box
+        // Persistence: Save the current search filter to ViewData to maintain UI state
         ViewData["CurrentFilter"] = searchString;
 
-        // Initialize query with eager loading (Include the User who approved it)
+        // Initialize query with Eager Loading to include the User who approved the form
         var forms = _context.DeliveryForms
             .Include(d => d.ApprovedBy)
             .AsQueryable();
 
-        // Apply Search Filter if user entered text
+        // Apply Server-Side Filtering based on user input
         if (!string.IsNullOrEmpty(searchString))
         {
-            // Search by Trailer Number, Driver Name, or Approver's Name
+            // Multi-field search: Trailer Number, Driver Name, or Approver's Username
             forms = forms.Where(d => d.TrailerNumber!.Contains(searchString.ToLower())
                                   || d.DriverName!.Contains(searchString.ToLower())
                                   || d.ApprovedBy!.UserName!.Contains(searchString.ToLower()));
         }
 
-        // Execute query: Order by CheckDate (Descending) to show newest checks first
-        
+        // Execution: Sort by date descending so the most recent inspections appear first
         return View(await forms.OrderByDescending(d => d.CheckDate).ToListAsync());
     }
 
     // GET: DeliveryForms/Details/5
+    // Shows full inspection details and all shipments loaded onto the specific vehicle
     public async Task<IActionResult> Details(int? id)
     {
         if (id == null)
@@ -63,7 +64,7 @@ public class DeliveryFormsController : Controller
             return View("NotFound");
         }
 
-        // Return the details view with the delivery form data ( load the shipments associated with this delivery)
+        // Business Logic: Load and display all shipments associated with this specific delivery vehicle
         ViewBag.RelatedShipments = await _context.Shipments
             .Include(s => s.Customer)
             .Include(s => s.FinishedProduct)
@@ -74,27 +75,28 @@ public class DeliveryFormsController : Controller
     }
 
     // GET: DeliveryForms/Create
+    // Prepares data for a new inspection, filtering for shipments ready for dispatch
     public IActionResult Create()
     {
-        // We need show a list of Pending shipments that  don't have a deliveryForm yet,
-        // so the user can select which shipments to include in this delivery form
-
+        // UI Logic: Fetch only "Pending" shipments that haven't been assigned to a truck yet
         var pendingShipments = _context.Shipments
                .Include(s => s.Customer)
                .Where(s => s.DeliveryFormId == null && s.Status != "Cancelled")
                .ToList();
 
+        // Populate MultiSelectList for the view's shipment selection UI
         ViewBag.PendingShipments = new MultiSelectList(pendingShipments, "Id", "TrackingNumber");
 
         return View();
     }
 
     // POST: DeliveryForms/Create
+    // Saves the inspection form and updates the status of all selected shipments
     [HttpPost]
-    [ValidateAntiForgeryToken]
+    [ValidateAntiForgeryToken] // Security: Prevents Cross-Site Request Forgery attacks
     public async Task<IActionResult> Create(DeliveryForm deliveryForm, int[] selectedShipmentIds)
     {
-        // Auto-assing Approver (Logged User)
+        // Audit Trail: Automatically assign the currently logged-in user as the Approver
         var currentUser = await _userManager.GetUserAsync(User);
         deliveryForm.ApprovedById = currentUser?.Id ?? 0;
 
@@ -102,11 +104,11 @@ public class DeliveryFormsController : Controller
         {
             if (ModelState.IsValid)
             {
-                // Save delivery form first to get aan ID
+                // Transactional Logic: 1. Save the Master record (DeliveryForm)
                 _context.Add(deliveryForm);
                 await _context.SaveChangesAsync();
 
-                // Link selected shipments to this delivery form
+                // 2. Update child records (Shipments) to link them to the truck and update status
                 if (selectedShipmentIds != null && selectedShipmentIds.Length > 0)
                 {
                     var shipmentsToUpdate = await _context.Shipments
@@ -116,7 +118,7 @@ public class DeliveryFormsController : Controller
                     foreach (var shipment in shipmentsToUpdate)
                     {
                         shipment.DeliveryFormId = deliveryForm.Id;
-                        shipment.Status = "Shipped"; // Update status to Shipped when included in a delivery form
+                        shipment.Status = "Shipped"; // Status transition to 'Shipped' upon vehicle assignment
                         _context.Update(shipment);
                     }
 
@@ -129,6 +131,7 @@ public class DeliveryFormsController : Controller
         }
         catch (Exception ex)
         {
+            // Error Handling: Log and notify user of database exceptions
             TempData["ErrorMessagge"] = $"Error creating Delivery: {ex.Message}";
         }
 
@@ -154,6 +157,7 @@ public class DeliveryFormsController : Controller
     }
 
     // POST: DeliveryForms/Edit/5
+    // Updates inspection data (e.g., correcting trailer numbers or driver names)
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Edit(int id, DeliveryForm deliveryForm)
@@ -174,7 +178,7 @@ public class DeliveryFormsController : Controller
             }
             catch (Exception ex)
             {
-                TempData["ErrorMessage"] = $"Error deleting Delivey: {ex.Message}";
+                TempData["ErrorMessage"] = $"Error updating Delivery: {ex.Message}";
             }
 
             return RedirectToAction(nameof(Index));
@@ -190,10 +194,10 @@ public class DeliveryFormsController : Controller
             return View("NotFound");
         }
 
-        // Load the delivery form with approver details for confirmation
         var deliveryform = await _context.DeliveryForms
-            .Include(df => df.ApprovedBy) // Include Approver details for confirmation
+            .Include(df => df.ApprovedBy)
             .FirstOrDefaultAsync(df => df.Id == id);
+
         if (deliveryform is null)
         {
             return View("NotFound");
@@ -203,6 +207,7 @@ public class DeliveryFormsController : Controller
     }
 
     // POST: DeliveryForms/Delete/5
+    // Safely removes a form after unlinking associated shipments
     [HttpPost, ActionName("Delete")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> DeleteConfirmed(int id)
@@ -211,18 +216,19 @@ public class DeliveryFormsController : Controller
 
         if (deliveryForm != null)
         {
-            //  Unlink Shipments before deleting the form, We find all shipments currently on this truck.
+            // Data Integrity Logic: Unlink Shipments before deleting the parent form.
+            // This prevents foreign key constraint issues and ensures shipments aren't lost.
             var linkedShipenments = await _context.Shipments.Where(s => s.DeliveryFormId == id).ToListAsync();
 
-            // we unload  them (set back to pendig)
+            // Status Rollback: Return shipments to 'Pending' status so they can be reassigned to a new truck
             foreach (var shipment in linkedShipenments)
             {
-                shipment.DeliveryFormId = null; // Remove link to delivery form
-                shipment.Status = "Pending"; // Reset status to Pending when unlinked from a delivery form
+                shipment.DeliveryFormId = null;
+                shipment.Status = "Pending";
                 _context.Update(shipment);
             }
 
-            // Now it is safe to delete the delivery form
+            // Final step: Delete the delivery form once children are safe
             _context.DeliveryForms.Remove(deliveryForm);
             await _context.SaveChangesAsync();
             TempData["SuccessMessage"] = "Delivery form deleted successfully.";

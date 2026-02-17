@@ -10,10 +10,10 @@ namespace GreenBowlFoodsSystem.Controllers;
 
 public class HomeController : Controller
 {
-    private readonly ApplicationDbContext _context; // Add the database context
+    private readonly ApplicationDbContext _context; // Database context for analytical queries
     private readonly ILogger<HomeController> _logger;
 
-    // Inject the contex into the constructor
+    // Constructor: Injecting the ApplicationDbContext and Logger service
     public HomeController(ApplicationDbContext context, ILogger<HomeController> logger)
     {
         this._context = context;
@@ -22,38 +22,37 @@ public class HomeController : Controller
 
     public async Task<IActionResult> Index()
     {
-        // Check if the user is logged in (optiona but recomended),
-        // If using Session, we might want to show data only if logged in
+        // Authentication Check: Displays an empty dashboard or landing state if not logged in
         if (!User.Identity!.IsAuthenticated)
         {
             return View(new DashboardViewModel());
         }
 
-        // IF LOGGED IN: Load the Dashboard Data
+        // IF LOGGED IN: Aggregate Business Intelligence (BI) Data
         try
         {
-            // KPI: Total Revenue (From Invoices module)
+            // Financial Performance - Total Revenue aggregated from the Invoices module
             var revenue = await _context.Invoices.SumAsync(i => i.TotalAmount);
 
-            //  KPI: Total Inventory Value (Money)
+            // Asset Management - Total Monetary Value of finished goods currently in stock
             var totalValue = await _context.FinishedProducts
                 .SumAsync(p => p.UnitPrice * p.QuantityAvailable);
 
-            // KPI: Active Shipments (Not Delivered)
+            // Logistics Pipeline - Count of active shipments that have not reached 'Delivered' status
             var activeShipments = await _context.Shipments
                 .CountAsync(s => s.Status != "Delivered");
 
-            //  KPI: Quality Issues (Last 24h)
+            //  Quality Compliance - Safety incidents (Failed X-Ray checks) in the last 24 hours
             var yesterday = DateTime.Now.AddHours(-24);
             var failedChecks = await _context.XRayChecks
                 .CountAsync(x => x.Result == "Fail" && x.CheckTime >= yesterday);
 
-            //  KPI: Expiry Risk (Next 7 Days)
+            // Supply Chain Risk - Count of raw materials nearing their expiration date (7-day window)
             var warningDate = DateTime.Now.AddDays(7);
             var expiringCount = await _context.RawMaterials
                 .CountAsync(m => m.ExpiryDate <= warningDate);
 
-            // Build Viewmodel
+            // ViewModel Construction: Mapping raw data to the Dashboard display model
             var dashboardViewModel = new DashboardViewModel
             {
                 TotalInventoryValue = totalValue,
@@ -62,28 +61,28 @@ public class HomeController : Controller
                 QualityIssuesToday = failedChecks,
                 ExpiringSoonCount = expiringCount,
 
-                // Feed 1: Recent Batches
+                // Data Feed 1: Recent Manufacturing Activity (Last 5 Production Batches)
                 RecentBatches = await _context.ProductionBatches
                     .Include(pb => pb.FinishedProduct)
                     .OrderByDescending(pb => pb.ProductionDate)
                     .Take(5)
                     .ToListAsync(),
 
-                // Feed 2: Recent Shipments (NEW!)
+                // Data Feed 2: Recent Logistics Activity (Last 5 Shipments dispatched)
                 RecentShipments = await _context.Shipments
                     .Include(s => s.Customer)
                     .OrderByDescending(s => s.Date)
                     .Take(5)
                     .ToListAsync(),
 
-                // Alert 1: Low Stock Products (< 20 units)
+                // Critical Alert 1: Inventory Depletion - Finished products with stock below 20 units
                 LowStockProducts = await _context.FinishedProducts
                     .Where(p => p.QuantityAvailable < 20)
                     .OrderBy(p => p.QuantityAvailable)
                     .Take(5)
                     .ToListAsync(),
 
-                // Alert 2: Low Stock Ingredients (< 50kg) OR Expiring Soon (NEW!)
+                // Critical Alert 2: Material Shortage & Expiry - Ingredients with low stock (< 50kg) or near expiration
                 CriticalLowStockMaterials = await _context.RawMaterials
                     .Where(m => m.QuantityInStock < 50 || m.ExpiryDate <= warningDate)
                     .OrderBy(m => m.ExpiryDate)
@@ -95,14 +94,13 @@ public class HomeController : Controller
         }
         catch (Exception ex)
         {
-            // Ilogged: record the technical error silently (for the developer), this writes dtabases connection failed,to the server console
-            _logger.LogError(ex, "Critical failure loading Dashworad stats.");
+            // Technical Logging: Records the stack trace for developer debugging (e.g., DB connection issues)
+            _logger.LogError(ex, "Critical failure loading Dashboard stats.");
 
-            // Show a user-friendly message on the dashboard, but don't crash the app.
-            // This way, the user knows something went wrong, but we don't expose technical details.
+            // Graceful Degradation: Notify the user of the partial failure without crashing the entire application
             TempData["ErrorMessage"] = $"System is busy. Some charts might not load.: {ex.Message}";
 
-            // Return the view anyway (maybe empty) so the app doesn't crash completely
+            // Return a safe, empty state to maintain UI stability
             return View(new DashboardViewModel());
         }
     }
@@ -117,6 +115,7 @@ public class HomeController : Controller
         return View();
     }
 
+    // Error Handling: Standard MVC error page with RequestId for support tracking
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
     public IActionResult Error()
     {
