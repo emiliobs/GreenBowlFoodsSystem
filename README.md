@@ -21,7 +21,7 @@ Developed for the **CC6012 Coursework** at London Metropolitan University, this 
 ---
 
 ## 🛠 Technologies Used
-* **.NET 8.0 / ASP.NET Core MVC**
+* **.NET 10.0 / ASP.NET Core MVC**
 * **Entity Framework Core** (Code-First)
 * **SQL Server** (Relational Database)
 * **ASP.NET Core Identity** (Security)
