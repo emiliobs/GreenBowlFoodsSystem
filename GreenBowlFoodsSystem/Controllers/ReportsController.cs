@@ -87,36 +87,53 @@ public class ReportsController : Controller
         return View(checks);
     }
 
-    // FINANCIAL SALES REPORT (Revenue tracking)
-    // Extracts financial data based on realized income (paid invoices)
-    public async Task<IActionResult> SalesReport()
+    // FINANCIAL SALES REPORT (Revenue tracking by period)
+    // This method calculates total revenue from paid invoices within a specific timeframe.
+    public async Task<IActionResult> SalesReport(DateTime? startDate, DateTime? endDate)
     {
-        // Fetching paid invoices to represent real cash flow
+        // Default Logic: If no dates are provided, it defaults to the last 30 days.
+        var start = startDate ?? DateTime.Now.AddDays(-30);
+        var end = endDate ?? DateTime.Now;
+
+        // Database Query: Retrieves invoices filtered by status and the selected date range.
         var invoices = await _context.Invoices
-            .Include(i => i.Customer) // Link each invoice to its corresponding customer
-            .Where(i => i.Status == "Paid") // Business Logic: Only count confirmed revenue
-            .OrderByDescending(i => i.Date)
-            .AsNoTracking()
+            .Include(i => i.Customer) // Eager loading to include customer metadata.
+            .Where(i => i.Status == "Paid" && i.Date >= start && i.Date <= end) // Filters by specific period.
+            .OrderByDescending(i => i.Date) // Sorts records from newest to oldest.
+            .AsNoTracking() // Optimization for read-only data processing.
             .ToListAsync();
 
-        // Aggregate Calculation: Summing the total revenue directly in the controller for the view
+        // Business Intelligence: Sums the total amount of all filtered invoices.
         ViewBag.TotalRevenue = invoices.Sum(i => i.TotalAmount);
+
+        // Persistence: Stores the selected dates in ViewData to keep them visible in the UI inputs.
+        ViewData["StartDate"] = start.ToString("yyyy-MM-dd");
+        ViewData["EndDate"] = end.ToString("yyyy-MM-dd");
 
         return View(invoices);
     }
 
-    // LOGISTICS AND SHIPMENT REPORT (Outbound traceability)
-    // Tracks product distribution and vehicle safety status
-    public async Task<IActionResult> ShipmentReport()
+    // LOGISTICS AND SHIPMENT REPORT (Outbound traceability by period)
+    // This method tracks distribution activities and logistical value for a selected duration.
+    public async Task<IActionResult> ShipmentReport(DateTime? startDate, DateTime? endDate)
     {
-        // Eager Loading of the complete shipping chain
+        // Temporal Logic: Ensures a default period is set if the user hasn't selected one.
+        var start = startDate ?? DateTime.Now.AddDays(-30);
+        var end = endDate ?? DateTime.Now;
+
+        // Data Retrieval: Joins multiple tables to provide a full audit trail of shipments.
         var shipments = await _context.Shipments
-            .Include(s => s.Customer) // Recipient identification
-            .Include(s => s.FinishedProduct) // Product identification
-            .Include(s => s.DeliveryForm) // Link to the vehicle inspection record
-            .OrderByDescending(s => s.Date)
-            .AsNoTracking()
+            .Include(s => s.Customer) // Links the destination client.
+            .Include(s => s.FinishedProduct) // Identifies the physical product dispatched.
+            .Include(s => s.DeliveryForm) // Includes the mandatory vehicle safety check record.
+            .Where(s => s.Date >= start && s.Date <= end) // Strict period-based filtering.
+            .OrderByDescending(s => s.Date) // Chronological sorting for audit purposes.
+            .AsNoTracking() // Reduces memory overhead for reporting.
             .ToListAsync();
+
+        // UI Mapping: Passes the dates back to the view's date-picker components.
+        ViewData["StartDate"] = start.ToString("MM-dd-yyyy");
+        ViewData["EndDate"] = end.ToString("MM-dd-yyyy");
 
         return View(shipments);
     }

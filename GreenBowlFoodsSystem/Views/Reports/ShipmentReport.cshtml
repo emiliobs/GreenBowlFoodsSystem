@@ -6,6 +6,25 @@
     var totalShipments = Model.Count();
     decimal totalValue = Model.Sum(s => s.TotalValue);
 }
+<div class="card bg-dark border-secondary mb-4 d-print-none">
+    <div class="card-body">
+        <form method="get" asp-action="ShipmentReport" class="row g-3 align-items-end">
+            <div class="col-md-4">
+                <label class="text-white small">From Date</label>
+                <input type="date" name="startDate" class="form-control bg-secondary text-white border-0">
+            </div>
+            <div class="col-md-4">
+                <label class="text-white small">To Date</label>
+                <input type="date" name="endDate" class="form-control bg-secondary text-white border-0">
+            </div>
+            <div class="col-md-4">
+                <button type="submit" class="btn btn-primary w-100">
+                    <i class="bi bi-truck"></i> Filter Shipments
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
 
 <div class="row mb-4 d-print-none animate-fade-up">
     <div class="col-md-6">
@@ -27,7 +46,7 @@
 </div>
 
 <div class="d-flex justify-content-between align-items-center mb-3">
-    <h3 class="text-white d-print-none"><i class="bi bi-truck me-2"></i> Logistics Audit Log</h3>
+    <h3 class="text-white d-print-none"><i class="bi bi-truck text-info me-2"></i> Logistics Audit Log</h3>
     
     <div class="d-flex gap-2 d-print-none">
         <a asp-action="Index" class="btn btn-outline-light rounded-pill px-4">
@@ -71,7 +90,7 @@
                                 <td class="fw-bold">@item.Date.ToString("dd MMM yyyy")</td>
                                 <td>@item.Customer?.CustomerName</td>
                                 <td><small>@item.FinishedProduct?.ProductName</small></td>
-                                <td class="text-center text-muted">@item.Carrier</td>
+                                <td class="text-center text-info">@item.Carrier</td>
                                 <td class="text-center font-monospace">
                                     <span class="badge bg-secondary">@(item.TrackingNumber ?? "N/A")</span>
                                 </td>
